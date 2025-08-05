@@ -1,0 +1,43 @@
+@import "tailwindcss";
+@plugin 'tailwind-scrollbar' {
+    nocompatible: true;
+}
+
+:root {
+  /* Cores */
+  --primary-color: #ffffff;
+  --secondary-color: #cce3fa;
+  --text-color: #323232;
+  --background-color: #cce3fa;
+  --white: #ffffff;
+  --black: #000000;
+
+  /* Fontes */
+  --font-family-base: 'Poppins', Arial, sans-serif;
+  --font-size-base: 14px;
+  --line-height-base: 1.6;
+
+  /* Bordas e sombras */
+  --border-radius: 4px;
+  --box-shadow-sm: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.075);
+  height: 100%;
+}
+
+html {
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  scroll-behavior: smooth;
+  height: 100%;
+}
+
+body {
+  margin: 0;
+  font-family: var(--font-family-base);
+  font-size: var(--font-size-base);
+  line-height: var(--line-height-base);
+  color: var(--text-color);
+  background-color: white;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  height: 100%;
+}

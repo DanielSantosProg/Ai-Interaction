@@ -1,0 +1,155 @@
+import { HoverCard } from "radix-ui";
+import { Card } from "./Card";
+import { Building, Building2, Calendar, Pin } from "lucide-react";
+
+interface CardData {
+    title: string;
+    date: string;
+    owner: string;
+    prompt: string;
+    filters: string;
+}
+
+const HoverCardComponent = ({ title, date, owner, prompt, filters }: CardData) => {
+    const separatedFilters = filters
+        .split(",")
+        .map(item => item.trim())
+        .filter(item => item !== '');
+
+    return (
+        <HoverCard.Root>
+            <HoverCard.Trigger asChild>
+                <a
+                    className="inline-block cursor-pointer rounded-full shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] outline-none focus:shadow-[0_0_0_2px_white]"
+                    href="/"
+                    target="_blank"
+                    rel="noreferrer noopener"
+                >
+                    <Card className="my-1">
+                        <h2 className="text-sm font-bold mb-2 text-[#3A3939]">{title}</h2>
+                        <p className="text-xs text-[#3A3939] py-2"><span className="font-semibold">Data de Criação: </span>{date}</p>
+                        <p className="text-xs text-[#3A3939] py-2">
+                            <span className="font-semibold">Solicitante: </span>
+                            {owner}
+                        </p>
+                    </Card>
+                </a>
+            </HoverCard.Trigger>
+            <HoverCard.Portal>
+                <HoverCard.Content
+                    className="w-[300px] xl:w-[400px] rounded-md bg-gray-200 ml-2 p-5 shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade data-[state=open]:transition-all"
+                    side="right"
+                    sideOffset={5}
+                >
+                    <div className="flex flex-col gap-[7px]">
+                        <div className="flex flex-col gap-[15px]">
+                            <div>
+                                <div className="m-0 text-[14px] font-medium text-[#323232]">
+                                    <span className="font-semibold">{title}</span>
+                                </div>
+                                <div className="m-0 pt-2 flex items-center text-[14px] text-[#323232]">
+                                    <Calendar className="m-2" size={14} />
+                                    <p className="text-[12px]">
+                                        {date}
+                                    </p>
+                                </div>
+                            </div>
+                            <div className="m-0 text-[14px] text-[#323232]">
+                                <span className="font-semibold">Solicitante:</span>
+                                <p className="py-2 text-[12px]">{owner}</p>
+                            </div>
+                            
+                            <div className="m-0 text-[14px] text-[#323232]">
+                                <span className="font-semibold">Filtros utilizados:</span>
+                                {separatedFilters[0] != "" ?  (
+                                    <div className="flex flex-row items-center gap-1 mt-2">
+                                        <Calendar size={14}/>
+                                        <span 
+                                            className="text-[#323232] rounded-full py-1 text-[12px]"
+                                        >
+                                            {separatedFilters[0]}
+                                        </span>                                    
+                                    </div> ) : (
+                                        <div className="flex flex-row items-center gap-1 mt-2">
+                                            <Calendar size={14}/>
+                                            <span 
+                                                className="text-[#323232] rounded-full py-1 text-[12px]"
+                                            >
+                                                - 
+                                            </span>                                    
+                                        </div>
+                                    )
+                                }
+                                {separatedFilters[1] != "" ?  (
+                                    <div className="flex flex-row items-center gap-1 mt-2">
+                                        <Building2 size={14}/>
+                                        <span 
+                                            className="text-[#323232] rounded-full py-1 text-[12px]"
+                                        >
+                                            {separatedFilters[1]}
+                                        </span>                                    
+                                    </div> ) : (
+                                        <div className="flex flex-row items-center gap-1 mt-2">
+                                            <Building2 size={14}/>
+                                            <span 
+                                                className="text-[#323232] rounded-full py-1 text-[12px]"
+                                            >
+                                                - 
+                                            </span>                                    
+                                        </div>
+                                    )
+                                }
+                                {separatedFilters[2] != "" ?  (
+                                    <div className="flex flex-row items-center gap-1 mt-2">
+                                        <Building size={14}/>
+                                        <span 
+                                            className="text-[#323232] rounded-full py-1 text-[12px]"
+                                        >
+                                            {separatedFilters[2]}
+                                        </span>                                    
+                                    </div> ) : (
+                                        <div className="flex flex-row items-center gap-1 mt-2">
+                                            <Building size={14}/>
+                                            <span 
+                                                className="text-[#323232] rounded-full py-1 text-[12px]"
+                                            >
+                                                - 
+                                            </span>                                    
+                                        </div>
+                                    )
+                                }
+                                {separatedFilters[3] != "" ?  (
+                                    <div className="flex flex-row items-center gap-1 mt-2">
+                                        <Pin size={14}/>
+                                        <span 
+                                            className="text-[#323232] rounded-full py-1 text-[12px]"
+                                        >
+                                            {separatedFilters[3]}
+                                        </span>                                    
+                                    </div> ) : (
+                                        <div className="flex flex-row items-center gap-1 mt-2">
+                                            <Pin size={14}/>
+                                            <span 
+                                                className="text-[#323232] rounded-full py-1 text-[12px]"
+                                            >
+                                                - 
+                                            </span>                                    
+                                        </div>
+                                    )
+                                }                                  
+                            </div>
+                            <div className="m-0 text-[14px] text-[#323232]">
+                                <span className="font-semibold">Prompt Utilizado:</span>
+                                <p className="py-2 text-[12px]">{prompt.substring(0, 200)}...</p>
+                            </div>
+                        </div>
+                    </div>
+
+                    <HoverCard.Arrow className="fill-white" />
+                </HoverCard.Content>
+            </HoverCard.Portal>
+        </HoverCard.Root>
+    );
+};
+
+export default HoverCardComponent;
