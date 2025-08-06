@@ -11,11 +11,14 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 
 // Libraries/Hooks
 import { z } from "zod"
-import { useState, useEffect } from "react"
+import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { MoveRight, Loader2Icon } from "lucide-react"
+import { MoveRight, Loader2Icon, Menu, GalleryVerticalEnd } from "lucide-react"
 import { useForm } from "react-hook-form"
 
+interface NewInteractionProps {
+  isSidebarOpen: boolean;
+}
 
 // Schema de validação Zod
 const formSchema = z.object({
@@ -36,8 +39,13 @@ const formSchema = z.object({
   })
 })
 
-const NewInteraction = () => {
+const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
   const [loading, setLoading] = useState(false)
+  const [isHistoryOpen, setIsHistoryOpen] = useState(true);
+
+    const toggleHistory = () => {
+        setIsHistoryOpen(!isHistoryOpen);
+    };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -66,11 +74,21 @@ const NewInteraction = () => {
 
   return (
     <div className="flex flex-row h-screen">
-      <div className="w-[285px] xl:w-[400px] flex-shrink-0">
-        <History />
+      <button
+          className={`fixed top-16 left-4 z-50 p-2 text-gray-500 rounded-lg bg-gray-300 hover:bg-gray-100 focus:outline-none transition-all duration-300 ease-in-out
+          ${isSidebarOpen ? "transform translate-x-[72px]" : ""}
+          sm:hidden`}          
+          onClick={toggleHistory}
+      >
+          <span className="sr-only">Toggle History</span>
+          <GalleryVerticalEnd className='text-[#323232]' size={18}/>
+      </button>
+            
+      {/* Passa o estado e a função para o componente History */}
+      <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[285px] xl:w-[400px]' : 'w-0'}`}>
+          <History isOpen={isHistoryOpen} />
       </div>
-
-      <div className="flex flex-col flex-grow items-center py-12 overflow-y-auto scrollbar-thin ">
+      <div className={`flex flex-col flex-grow items-center py-12 overflow-y-auto scrollbar-thin`}>
         <div className="flex flex-col items-center">
           <h2 className="text-[32px] pb-[12px]">Nova Interação</h2>
           <p className="text-[#1F3D58]">Preencha as informações abaixo para iniciar a interação</p>
@@ -78,9 +96,9 @@ const NewInteraction = () => {
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="px-8 xl:px-0 space-y-8">
-            <div className="flex flex-col max-w-4xl items-center py-12">
+            <div className="flex flex-col max-w-4xl items-center my-12">
               {/* Título */}
-              <FormLabel className="font-semibold pb-3 lg:self-start lg:pr-4 text-[#1F3D58]">Título</FormLabel>
+              <FormLabel className="font-semibold mb-3 lg:self-start lg:mr-4 text-[#1F3D58]">Título</FormLabel>
               <FormField
                 control={form.control}
                 name="titulo"
@@ -95,12 +113,12 @@ const NewInteraction = () => {
               />
 
               {/* Filtros */}
-              <div className="flex flex-col w-full items-center mb-6 pt-8">
+              <div className="flex flex-col w-full items-center mt-8">
                 <FormLabel className="font-semibold lg:self-start text-[#1F3D58]">Selecione os filtros:</FormLabel>
                 <div className="flex flex-col lg:flex-row justify-center w-full lg:items-center mt-4">
                   {/* Período */}
                   <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
-                    <FormLabel className="pb-3 lg:pl-4">Período</FormLabel>
+                    <FormLabel className="mb-3 lg:ml-4">Período</FormLabel>
                     <div className="flex flex-row w-full justify-center lg:justify-baseline items-center gap-2">
                       <FormField
                         control={form.control}
@@ -144,7 +162,7 @@ const NewInteraction = () => {
 
                   {/* Empresa */}
                   <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
-                    <FormLabel className="p-3 lg:pb-3 lg:pt-0 self-center lg:self-baseline lg:pl-4">Empresa</FormLabel>
+                    <FormLabel className="m-3 lg:mb-3 lg:mt-0 self-center lg:self-baseline lg:ml-4">Empresa</FormLabel>
                     <FormField
                       control={form.control}
                       name="empresa"
@@ -168,7 +186,7 @@ const NewInteraction = () => {
                 {/* Estabelecimento e Localização */}
                 <div className="flex flex-col lg:flex-row w-full justify-evenly mt-4">
                   <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
-                    <FormLabel className="pb-3 self-center lg:self-baseline lg:pl-4">Estabelecimento</FormLabel>
+                    <FormLabel className="mb-3 self-center lg:self-baseline lg:ml-4">Estabelecimento</FormLabel>
                     <FormField
                       control={form.control}
                       name="estabelecimento"
@@ -190,7 +208,7 @@ const NewInteraction = () => {
                   </div>
 
                   <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
-                    <FormLabel className="p-3 lg:pb-3 lg:pt-0 self-center lg:self-baseline lg:pl-4">Localização</FormLabel>
+                    <FormLabel className="m-3 lg:mb-3 lg:mt-0 self-center lg:self-baseline lg:ml-4">Localização</FormLabel>
                     <FormField
                       control={form.control}
                       name="localizacao"
@@ -214,8 +232,8 @@ const NewInteraction = () => {
               </div>
 
               {/* Prompt */}
-              <div className="flex flex-col w-full justify-center items-center">
-                <FormLabel className="font-semibold lg:self-start text-[#1F3D58]">Prompt:</FormLabel>
+              <div className="flex flex-col w-full mt-8 justify-center items-center">
+                <FormLabel className="font-semibold mb-3 lg:self-start text-[#1F3D58]">Prompt:</FormLabel>
                 <FormField
                   control={form.control}
                   name="prompt"
@@ -225,7 +243,7 @@ const NewInteraction = () => {
                       <FormControl>
                         <Textarea
                           placeholder="Digite seu prompt aqui"
-                          className="mt-4 max-w-full self-start resize-none"
+                          className="max-w-full self-start resize-none min-h-28 overflow-y-auto scrollbar-thin"
                           {...field}
                         />
                       </FormControl>
