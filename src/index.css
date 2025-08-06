@@ -5,8 +5,8 @@
 
 :root {
   /* Cores */
-  --primary-color: #ffffff;
-  --secondary-color: #cce3fa;
+  --primary-color: #495057;
+  --secondary-color: #1F3D58;
   --text-color: #323232;
   --background-color: #cce3fa;
   --white: #ffffff;
@@ -28,6 +28,7 @@ html {
   line-height: var(--line-height-base);
   scroll-behavior: smooth;
   height: 100%;
+  width: 100%;
 }
 
 body {
@@ -40,4 +41,5 @@ body {
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   height: 100%;
+  width: 100%;
 }

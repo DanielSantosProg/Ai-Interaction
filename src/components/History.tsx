@@ -27,8 +27,8 @@ const History = () => {
           <SelectComponent placeholder="Interações" items={[{value:"todas", label:"Todas"}, {value:"minhas", label:"Minhas"}]} />
         </div>
         <div className="flex flex-col items-center w-full scrollbar-thin overflow-y-auto">
-          {cards.map((card) => (
-            <HoverCardComponent title={card.title} date={card.date} owner={card.owner} prompt={card.prompt} filters={card.filters} />
+          {cards.map((card, index) => (
+            <HoverCardComponent key={index} title={card.title} date={card.date} owner={card.owner} prompt={card.prompt} filters={card.filters} />
           ))}          
         </div>
     </div>
