@@ -7,11 +7,11 @@ import { ThemeProvider } from "@/components/theme-provider"
 function App() {
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
-      <div className="flex min-h-screen flex-row">        
+      <div className="flex min-h-screen flex-row overflow-hidden">        
         <BrowserRouter>
           <Sidebar />
 
-          <div className='flex-grow ml-2 sm:ml-22'>
+          <div className='flex-grow ml-2 sm:ml-22 overflow-hidden'>
             <Routes>
               <Route path="/" element={<NewInteraction />}/>
             </Routes>

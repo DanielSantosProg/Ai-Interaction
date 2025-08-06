@@ -66,28 +66,28 @@ const NewInteraction = () => {
 
   return (
     <div className="flex flex-row h-screen">
-      <div className="w-[285px] xl:w-[400px] flex-shrink-0 overflow-y-auto">
+      <div className="w-[285px] xl:w-[400px] flex-shrink-0">
         <History />
       </div>
 
-      <div className="flex flex-col flex-grow items-center py-12 overflow-y-auto">
+      <div className="flex flex-col flex-grow items-center py-12 overflow-y-auto scrollbar-thin ">
         <div className="flex flex-col items-center">
           <h2 className="text-[32px] pb-[12px]">Nova Interação</h2>
-          <p>Preencha as informações abaixo para iniciar a interação</p>
+          <p className="text-[#1F3D58]">Preencha as informações abaixo para iniciar a interação</p>
         </div>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="px-8 xl:px-0 space-y-8">
-            <div className="flex flex-col w-2xl xl:w-4xl items-center py-12">
+            <div className="flex flex-col max-w-4xl items-center py-12">
               {/* Título */}
+              <FormLabel className="font-semibold pb-3 lg:self-start lg:pr-4 text-[#1F3D58]">Título</FormLabel>
               <FormField
                 control={form.control}
                 name="titulo"
                 render={({ field }) => (
-                  <FormItem className="flex flex-row items-center w-full">
-                    <FormLabel className="font-semibold pr-4">Título</FormLabel>
+                  <FormItem className="flex flex-col lg:flex-row items-center w-full">                    
                     <FormControl>
-                      <Input placeholder="Digite o título da interação" className="w-full" {...field} />
+                      <Input placeholder="Digite o título da interação" className="w-2xs lg:w-full" {...field} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -95,13 +95,13 @@ const NewInteraction = () => {
               />
 
               {/* Filtros */}
-              <div className="flex flex-col w-full items-center mb-6 pt-6">
-                <FormLabel className="font-semibold self-start">Selecione os filtros:</FormLabel>
-                <div className="flex flex-row w-full justify-evenly my-4">
+              <div className="flex flex-col w-full items-center mb-6 pt-8">
+                <FormLabel className="font-semibold lg:self-start text-[#1F3D58]">Selecione os filtros:</FormLabel>
+                <div className="flex flex-col lg:flex-row justify-center w-full lg:items-center mt-4">
                   {/* Período */}
-                  <div className="flex flex-col w-full mr-4 xl:mr-12">
-                    <FormLabel className="pb-4 pl-6">Período</FormLabel>
-                    <div className="flex flex-row w-full items-center gap-2">
+                  <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
+                    <FormLabel className="pb-3 lg:pl-4">Período</FormLabel>
+                    <div className="flex flex-row w-full justify-center lg:justify-baseline items-center gap-2">
                       <FormField
                         control={form.control}
                         name="dataInicio"
@@ -143,13 +143,13 @@ const NewInteraction = () => {
                   </div>
 
                   {/* Empresa */}
-                  <div className="flex flex-col w-full">
+                  <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
+                    <FormLabel className="p-3 lg:pb-3 lg:pt-0 self-center lg:self-baseline lg:pl-4">Empresa</FormLabel>
                     <FormField
                       control={form.control}
                       name="empresa"
                       render={({ field }) => (
-                        <FormItem>
-                          <FormLabel className="pb-4 pl-6">Empresa</FormLabel>
+                        <FormItem>                          
                           <FormControl>
                             <SelectScrollable
                               placeholder="Selecione a empresa"
@@ -166,14 +166,15 @@ const NewInteraction = () => {
                 </div>
 
                 {/* Estabelecimento e Localização */}
-                <div className="flex flex-row w-full justify-evenly m-4">
-                  <div className="flex flex-col w-full mr-4 xl:mr-12">
+                <div className="flex flex-col lg:flex-row w-full justify-evenly mt-4">
+                  <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
+                    <FormLabel className="pb-3 self-center lg:self-baseline lg:pl-4">Estabelecimento</FormLabel>
                     <FormField
                       control={form.control}
                       name="estabelecimento"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="pb-4 pl-6">Estabelecimento</FormLabel>
+                          
                           <FormControl>
                             <SelectScrollable
                               placeholder="Selecione o estabelecimento"
@@ -188,13 +189,14 @@ const NewInteraction = () => {
                     />
                   </div>
 
-                  <div className="flex flex-col w-full">
+                  <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
+                    <FormLabel className="p-3 lg:pb-3 lg:pt-0 self-center lg:self-baseline lg:pl-4">Localização</FormLabel>
                     <FormField
                       control={form.control}
                       name="localizacao"
                       render={({ field }) => (
                         <FormItem>
-                          <FormLabel className="pb-4 pl-6">Localização</FormLabel>
+                          
                           <FormControl>
                             <SelectScrollable
                               placeholder="Selecione a localização"
@@ -212,13 +214,14 @@ const NewInteraction = () => {
               </div>
 
               {/* Prompt */}
-              <div className="flex flex-col w-full items-center">
+              <div className="flex flex-col w-full justify-center items-center">
+                <FormLabel className="font-semibold lg:self-start text-[#1F3D58]">Prompt:</FormLabel>
                 <FormField
                   control={form.control}
                   name="prompt"
                   render={({ field }) => (
                     <FormItem className="w-full">
-                      <FormLabel className="font-semibold self-start">Prompt:</FormLabel>
+                      
                       <FormControl>
                         <Textarea
                           placeholder="Digite seu prompt aqui"
