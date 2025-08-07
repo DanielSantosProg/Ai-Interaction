@@ -1,8 +1,15 @@
 import './App.css'
-import { BrowserRouter, Route, Routes } from 'react-router-dom';
+
+// pages
 import NewInteraction from './pages/NewInteraction';
+import ViewInteraction from './pages/ViewInteraction';
+
+// components
 import Sidebar from './components/Sidebar';
 import { ThemeProvider } from "@/components/theme-provider"
+
+// hooks
+import { BrowserRouter, Route, Routes } from 'react-router-dom';
 import { useState } from 'react';
 import React from 'react';
 
@@ -24,6 +31,12 @@ function App() {
                 path="/" 
                 element={
                   React.cloneElement(<NewInteraction isSidebarOpen={isSidebarOpen}/>)
+                }
+              />
+              <Route 
+                path="/interaction/:id" 
+                element={
+                  React.cloneElement(<ViewInteraction isSidebarOpen={isSidebarOpen}/>)
                 }
               />
             </Routes>

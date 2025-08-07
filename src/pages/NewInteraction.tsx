@@ -74,6 +74,9 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
 
   return (
     <div className="flex flex-row h-screen">
+
+      {/* Uso do Componente History */}
+
       <button
           className={`group fixed top-16 left-4 z-50 p-2 rounded-lg bg-white hover:bg-black border-black hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
           ${isSidebarOpen ? "transform translate-x-[72px]" : ""}
@@ -88,6 +91,9 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
       <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
           <History isOpen={isHistoryOpen} />
       </div>
+
+      {/* Conteúdo da página */}
+
       <div className={`flex flex-col flex-grow items-center py-12 overflow-y-auto scrollbar-thin`}>
         <div className="flex flex-col items-center">
           <h2 className="text-[26px] sm:text-[32px] pb-[12px] text-center">Nova Interação</h2>

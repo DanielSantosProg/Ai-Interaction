@@ -1,8 +1,10 @@
 import { HoverCard } from "radix-ui";
 import { Card } from "./Card";
 import { Building, Building2, Calendar, Pin } from "lucide-react";
+import { Link } from 'react-router-dom'
 
 interface CardData {
+    id: number;
     title: string;
     date: string;
     owner: string;
@@ -10,7 +12,7 @@ interface CardData {
     filters: string;
 }
 
-const HoverCardComponent = ({ title, date, owner, prompt, filters }: CardData) => {
+const HoverCardComponent = ({ id, title, date, owner, prompt, filters }: CardData) => {
     const separatedFilters = filters
         .split(",")
         .map(item => item.trim())
@@ -19,20 +21,22 @@ const HoverCardComponent = ({ title, date, owner, prompt, filters }: CardData) =
     return (
         <HoverCard.Root>
             <HoverCard.Trigger asChild>
-                <a
-                    className="inline-block max-w-full cursor-pointer rounded-full shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] outline-none focus:shadow-[0_0_0_2px_white]"                    href="/"
-                    target="_blank"
-                    rel="noreferrer noopener"
+                <Link
+                    to={`/interaction/${id}`}
+                    state={{ titulo: title, dataCriacao: date, solicitante: owner, prompt: prompt,
+                             dataInicio: separatedFilters[0], dataFim: separatedFilters[1], empresa: separatedFilters[2],
+                             estabelecimento: separatedFilters[3], localizacao: separatedFilters[4]}}                    
+                    className="group inline-block max-w-full cursor-pointer rounded-full shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] outline-none focus:shadow-[0_0_0_2px_white]"
                 >
                     <Card className="my-1 h-20 w-2 sm:h-26">
-                        <h2 className="text-[10px] sm:text-sm font-bold sm:mb-2 text-[#3A3939]">{title}</h2>
-                        <p className="text-[8px] sm:text-xs text-[#3A3939] py-1 sm:py-2"><span className="font-semibold">Data de Criação: </span>{date}</p>
-                        <p className="text-[8px] sm:text-xs text-[#3A3939] py-1 sm:py-2">
+                        <h2 className="text-[10px] group-hover:text-white sm:text-sm font-bold sm:mb-2 text-[#3A3939]">{title}</h2>
+                        <p className="text-[8px] group-hover:text-white sm:text-xs text-[#3A3939] py-1 sm:py-2"><span className="font-semibold">Data de Criação: </span>{date}</p>
+                        <p className="text-[8px] group-hover:text-white sm:text-xs text-[#3A3939] py-1 sm:py-2">
                             <span className="font-semibold">Solicitante: </span>
                             {owner}
                         </p>
                     </Card>
-                </a>
+                </Link>
             </HoverCard.Trigger>
             <HoverCard.Portal>
                 <HoverCard.Content

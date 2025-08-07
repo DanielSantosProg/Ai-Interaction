@@ -11,7 +11,7 @@ export const Card = ({ children, className }: CardProps) => {
   return (
     <div
       className={classnames(
-        "w-[180px] self-center sm:w-[270px] xl:w-[385px] px-4 py-2 rounded-lg bg-[#D9D9D9] shadow-md border border-gray-200",
+        "w-[180px] self-center sm:w-[270px] xl:w-[385px] px-4 py-2 rounded-lg bg-[#D9D9D9] hover:bg-[#1F3D58] shadow-lg border border-gray-400",
         className
       )}
     >
