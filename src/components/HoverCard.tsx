@@ -20,15 +20,14 @@ const HoverCardComponent = ({ title, date, owner, prompt, filters }: CardData) =
         <HoverCard.Root>
             <HoverCard.Trigger asChild>
                 <a
-                    className="inline-block cursor-pointer rounded-full shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] outline-none focus:shadow-[0_0_0_2px_white]"
-                    href="/"
+                    className="inline-block max-w-full cursor-pointer rounded-full shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] outline-none focus:shadow-[0_0_0_2px_white]"                    href="/"
                     target="_blank"
                     rel="noreferrer noopener"
                 >
-                    <Card className="my-1">
-                        <h2 className="text-sm font-bold mb-2 text-[#3A3939]">{title}</h2>
-                        <p className="text-xs text-[#3A3939] py-2"><span className="font-semibold">Data de Criação: </span>{date}</p>
-                        <p className="text-xs text-[#3A3939] py-2">
+                    <Card className="my-1 h-20 w-2 sm:h-26">
+                        <h2 className="text-[10px] sm:text-sm font-bold sm:mb-2 text-[#3A3939]">{title}</h2>
+                        <p className="text-[8px] sm:text-xs text-[#3A3939] py-1 sm:py-2"><span className="font-semibold">Data de Criação: </span>{date}</p>
+                        <p className="text-[8px] sm:text-xs text-[#3A3939] py-1 sm:py-2">
                             <span className="font-semibold">Solicitante: </span>
                             {owner}
                         </p>
@@ -37,7 +36,7 @@ const HoverCardComponent = ({ title, date, owner, prompt, filters }: CardData) =
             </HoverCard.Trigger>
             <HoverCard.Portal>
                 <HoverCard.Content
-                    className="w-[300px] xl:w-[400px] rounded-md bg-gray-200 ml-2 p-5 shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade data-[state=open]:transition-all"
+                    className="w-[300px] xl:w-[400px] relative right-12 sm:right-0 rounded-md bg-gray-200 sm:ml-2 p-5 shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] data-[side=bottom]:animate-slideUpAndFade data-[side=left]:animate-slideRightAndFade data-[side=right]:animate-slideLeftAndFade data-[side=top]:animate-slideDownAndFade data-[state=open]:transition-all"
                     side="right"
                     sideOffset={5}
                 >

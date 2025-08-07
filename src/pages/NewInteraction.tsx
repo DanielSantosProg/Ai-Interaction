@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { z } from "zod"
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { MoveRight, Loader2Icon, Menu, GalleryVerticalEnd } from "lucide-react"
+import { MoveRight, Loader2Icon, GalleryVerticalEnd } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 interface NewInteractionProps {
@@ -75,23 +75,23 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
   return (
     <div className="flex flex-row h-screen">
       <button
-          className={`fixed top-16 left-4 z-50 p-2 text-gray-500 rounded-lg bg-gray-300 hover:bg-gray-100 focus:outline-none transition-all duration-300 ease-in-out
+          className={`group fixed top-16 left-4 z-50 p-2 rounded-lg bg-white hover:bg-black border-black hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
           ${isSidebarOpen ? "transform translate-x-[72px]" : ""}
           sm:hidden`}          
           onClick={toggleHistory}
       >
           <span className="sr-only">Toggle History</span>
-          <GalleryVerticalEnd className='text-[#323232]' size={18}/>
+          <GalleryVerticalEnd className='text-[#323232] group-hover:text-white' size={18}/>
       </button>
             
       {/* Passa o estado e a função para o componente History */}
-      <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[285px] xl:w-[400px]' : 'w-0'}`}>
+      <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
           <History isOpen={isHistoryOpen} />
       </div>
       <div className={`flex flex-col flex-grow items-center py-12 overflow-y-auto scrollbar-thin`}>
         <div className="flex flex-col items-center">
-          <h2 className="text-[32px] pb-[12px]">Nova Interação</h2>
-          <p className="text-[#1F3D58]">Preencha as informações abaixo para iniciar a interação</p>
+          <h2 className="text-[26px] sm:text-[32px] pb-[12px] text-center">Nova Interação</h2>
+          <p className="text-[#1F3D58] text-center">Preencha as informações abaixo para iniciar a interação</p>
         </div>
 
         <Form {...form}>

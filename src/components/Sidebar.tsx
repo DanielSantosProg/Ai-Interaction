@@ -1,4 +1,3 @@
-import { useState } from 'react'
 import { Plus, Bot, Ellipsis, Wrench, Menu } from 'lucide-react';
 import UserIcon from '../assets/UserIcon.png'
 
@@ -14,13 +13,13 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen }: SidebarProps) => {
       {/* Botão para mobile */}
       <button 
         className={`
-          fixed top-4 z-50 p-2 text-gray-500 rounded-lg sm:hidden bg-gray-300 hover:bg-gray-100 focus:outline-none transition-all duration-300 ease-in-out
+          group fixed top-4 z-50 p-2 rounded-lg sm:hidden bg-white hover:bg-[#1F3D58] border-[#1F3D58] hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
           ${isSidebarOpen ? 'left-[85px]' : 'left-4'}
         `}
         onClick={handleSidebarOpen}
       >
         <span className="sr-only">Toggle sidebar</span>
-        <Menu className='text-[#323232]' size={18}/>
+        <Menu className='text-black group-hover:text-white' size={18}/>
       </button>
 
       {/* Overlay para mobile */}

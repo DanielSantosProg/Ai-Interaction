@@ -18,7 +18,7 @@ function App() {
       <div className="flex min-h-screen flex-row overflow-hidden">        
         <BrowserRouter>
           <Sidebar handleSidebarOpen={handleSidebarOpen} isSidebarOpen={isSidebarOpen}/>
-          <div className='flex-grow ml-2 sm:ml-22 overflow-hidden'>
+          <div className='flex-grow sm:ml-22 overflow-hidden'>
             <Routes>
               <Route 
                 path="/" 

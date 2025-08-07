@@ -28,8 +28,8 @@ const History = ({ isOpen }: HistoryProps) => {
   ] 
 
   return (
-        <div className={`w-full flex-col justify-center h-full sm:flex transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-            <img src={logo} className="w-40 self-center max-h-30" alt="" />
+        <div className={`w-full flex-col items-center h-full flex transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
+            <img src={logo} className="w-26 sm:w-40 self-center max-h-30" alt="" />
             {isOpen && 
             <div className="self-baseline p-4 flex-shrink-0">
                 <SelectComponent placeholder="Interações" items={[{value:"todas", label:"Todas"}, {value:"minhas", label:"Minhas"}]} />

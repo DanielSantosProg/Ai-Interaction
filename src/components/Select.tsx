@@ -50,7 +50,7 @@ interface SelectComponentProps {
 const SelectComponent = ({placeholder, items}: SelectComponentProps) => (
   <Select.Root>
     <Select.Trigger
-      className="inline-flex h-[25px] items-center justify-center gap-[5px] rounded border-[#3a39393d] border-[.5px] bg-white px-[15px] text-[13px] leading-none text-violet11 shadow-[0_2px_10px] shadow-black/10 outline-none hover:bg-[#3a39393d]/10 data-[placeholder]:text-[#3A3939]/75"
+      className="inline-flex h-[20px] sm:h-[25px] items-center justify-center gap-[5px] rounded border-[#3a39393d] border-[.5px] bg-white px-[8px] sm:px-[15px] text-[10px] sm:text-[13px] leading-none text-violet11 shadow-[0_2px_10px] shadow-black/10 outline-none hover:bg-[#3a39393d]/10 data-[placeholder]:text-[#3A3939]/75"
       aria-label="Food"
     >
       <Select.Value placeholder={placeholder} />
@@ -59,15 +59,15 @@ const SelectComponent = ({placeholder, items}: SelectComponentProps) => (
       </Select.Icon>
     </Select.Trigger>
     <Select.Portal>
-      <Select.Content className="overflow-hidden rounded-md bg-white shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
+      <Select.Content className="overflow-hidden rounded-md rounded-t-none bg-white shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]">
         <Select.ScrollUpButton className="flex h-[25px] cursor-default items-center justify-center bg-white text-violet11">
           <ChevronUpIcon />
         </Select.ScrollUpButton>
-        <Select.Viewport className="p-[5px]">
+        <Select.Viewport>
           <Select.Group>
-            <SelectLabel className="flex justify-center">Interações:</SelectLabel>         
+            <SelectLabel className="flex justify-center border-b-2 bg-slate-500 text-[12px] text-white font-medium">Interações:</SelectLabel>         
             {items.map((item) => (
-                <SelectItem key={item.value} value={item.value} disabled={item.disabled} className="hover:bg-[#3a39393d]/25">{item.label}</SelectItem>
+                <SelectItem key={item.value} value={item.value} disabled={item.disabled} className="hover:bg-[#3a39393d]/25 text-[2px] !important">{item.label}</SelectItem>
             ))}
           </Select.Group>          
         </Select.Viewport>
