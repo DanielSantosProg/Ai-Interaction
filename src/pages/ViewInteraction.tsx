@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 // Libraries/Hooks
 import { useState } from "react"
 import { useParams, useLocation } from "react-router-dom";
-import { Building, Building2, Calendar, CalendarPlus, FileDown, GalleryVerticalEnd, ListFilter, Loader2Icon, ScanText, Sparkles, Wallet } from "lucide-react"
+import { Building, Building2, Calendar, CalendarPlus, FileDown, GalleryVerticalEnd, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, Wallet } from "lucide-react"
 
 interface ViewInteractionProps {
     isSidebarOpen: boolean;     
@@ -61,15 +61,21 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
 
         {/* Conteúdo da página */}
 
-        <div className={`flex flex-col flex-grow items-center py-12 overflow-y-auto scrollbar-thin`}>
+        <div className={`flex flex-col flex-grow bg-[#323232]/3 items-center py-12 overflow-y-auto scrollbar-thin`}>            
             <div className="flex flex-col items-center">
-                <h2 className="text-[22px] lg:text-[28px] pb-[12px] text-center">{titulo}</h2>
-                <div className="flex flex-row items-center">
-                    <CalendarPlus className="text-[#323232]" size={18}/>
-                    <p className="px-2">{dataCriacao}</p>
+                <h2 className="text-[26px] font-bold sm:text-[32px] text-center bg-gradient-to-r from-[#1F3D58] to-teal-500 text-transparent bg-clip-text">{titulo}</h2>
+                <div className="flex flex-row justify-center gap-8 mt-2">
+                    <div className="flex flex-row items-center">
+                        <CalendarPlus className="text-[#323232]" size={18}/>
+                        <p className="px-2 text-[#323232]/85 font-medium">{dataCriacao}</p>
+                    </div>
+                    <div className="flex flex-row items-center">
+                        <Paperclip className="text-[#323232]" size={18}/>
+                        <p className="px-2 text-[#323232]/85 font-regular">Relatório gerado.pdf</p>
+                    </div>
                 </div>
             </div>
-            <div className="flex flex-col w-full lg:px-17 max-w-4xl items-center my-8">
+            <div className="flex flex-col bg-white border-2 rounded-md w-sm lg:w-full px-4 py-10 lg:px-17 max-w-4xl items-center my-8">
                 <div className="flex flex-row items-center gap-2 mb-4 lg:self-start">
                     <ScanText className="text-[#1F3D58]" size={18} />
                     <p className="font-semibold lg:self-start text-[#1F3D58]">Prompt</p>
@@ -109,7 +115,7 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
                     <p className="text-[#323232] self-center whitespace-pre-wrap">{retorno}</p>                                       
                 </div>  
 
-                <Button type="button" onClick={onDownload} className="bg-white hover:bg-white  border-1 border-[#323232] hover:border-[#4CAF50] text-[#323232] hover:text-[#4CAF50] mb-4 w-40 hover:w-42 rounded-md shadow-lg hover:shadow-2xl lg:self-start lg:ml-7">
+                <Button type="button" onClick={onDownload} className="bg-white hover:bg-white  border-1 border-[#323232] hover:border-[#4CAF50] text-[#323232] hover:text-[#4CAF50] w-40 hover:w-42 rounded-md shadow-lg hover:shadow-2xl lg:self-start lg:ml-7">
                     {loading ? <Loader2Icon className="animate-spin" />: (<><FileDown size={18}/><p>Baixar Resposta</p></>)}
                 </Button>             
             </div> 

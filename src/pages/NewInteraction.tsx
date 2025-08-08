@@ -13,7 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { z } from "zod"
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { MoveRight, Loader2Icon, GalleryVerticalEnd } from "lucide-react"
+import { MoveRight, Loader2Icon, GalleryVerticalEnd, Sparkles, Pen, Funnel, Text } from "lucide-react"
 import { useForm } from "react-hook-form"
 
 interface NewInteractionProps {
@@ -78,7 +78,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
       {/* Uso do Componente History */}
 
       <button
-          className={`group fixed top-16 left-4 z-50 p-2 rounded-lg bg-white hover:bg-black border-black hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
+          className={`group fixed top-16 left-4 z-50 p-2 rounded-lg hover:bg-black border-black hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
           ${isSidebarOpen ? "transform translate-x-[72px]" : ""}
           sm:hidden`}          
           onClick={toggleHistory}
@@ -94,34 +94,47 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
 
       {/* Conteúdo da página */}
 
-      <div className={`flex flex-col flex-grow items-center py-12 overflow-y-auto scrollbar-thin`}>
+      <div className={`flex flex-col bg-[#323232]/3 flex-grow items-center py-12 overflow-y-auto scrollbar-thin`}>
         <div className="flex flex-col items-center">
-          <h2 className="text-[26px] sm:text-[32px] pb-[12px] text-center">Nova Interação</h2>
-          <p className="text-[#1F3D58] text-center">Preencha as informações abaixo para iniciar a interação</p>
+          <div className="flex flex-row items-center gap-2 pb-[12px]">
+            <div className="flex w-[40px] h-[40px] items-center justify-center bg-gradient-to-r rounded-md from-teal-500 via-teal-400 to-teal-200">
+              <Sparkles className="text-white" size={24}/>
+            </div>
+            <h2 className="text-[26px] font-bold sm:text-[32px] text-center bg-gradient-to-r from-[#1F3D58] to-teal-500 text-transparent bg-clip-text">Nova Interação</h2>
+          </div>
+          <p className="text-[#323232]/85 font-regular text-center">Preencha as informações abaixo para iniciar a interação</p>
         </div>
 
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="px-8 xl:px-0 space-y-8">
-            <div className="flex flex-col max-w-4xl items-center my-12">
+            <div className="flex flex-col w-[300px] md:w-md lg:w-3xl items-center my-12">
               {/* Título */}
-              <FormLabel className="font-semibold mb-3 lg:self-start lg:mr-4 text-[#1F3D58]">Título</FormLabel>
-              <FormField
-                control={form.control}
-                name="titulo"
-                render={({ field }) => (
-                  <FormItem className="flex flex-col lg:flex-row items-center w-full">                    
-                    <FormControl>
-                      <Input placeholder="Digite o título da interação" className="w-2xs lg:w-full" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
+              <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 items-center">
+                <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
+                  <Pen className="text-[#1F3D58]" size={18}/>
+                  <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">Título</FormLabel>
+                </div>
+                <FormField
+                  control={form.control}
+                  name="titulo"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-col md:flex-row items-center w-full">                    
+                      <FormControl>
+                        <Input placeholder="Digite o título da interação" className="w-2xs md:w-full" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
 
               {/* Filtros */}
-              <div className="flex flex-col w-full items-center mt-8">
-                <FormLabel className="font-semibold lg:self-start text-[#1F3D58]">Selecione os filtros:</FormLabel>
-                <div className="flex flex-col lg:flex-row justify-center w-full lg:items-center mt-4">
+              <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 items-center mt-8">
+                <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
+                  <Funnel className="text-[#1F3D58]" size={18}/>
+                  <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">Selecione os filtros:</FormLabel>
+                </div>
+                <div className="flex flex-col lg:flex-row justify-center w-full lg:items-center mt-2">
                   {/* Período */}
                   <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
                     <FormLabel className="mb-3 lg:ml-4">Período</FormLabel>
@@ -238,8 +251,11 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
               </div>
 
               {/* Prompt */}
-              <div className="flex flex-col w-full mt-8 justify-center items-center">
-                <FormLabel className="font-semibold mb-3 lg:self-start text-[#1F3D58]">Prompt:</FormLabel>
+              <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 mt-8 justify-center items-center">
+                <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
+                  <Text className="text-[#1F3D58]" size={18}/>
+                  <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">Prompt:</FormLabel>
+                </div>
                 <FormField
                   control={form.control}
                   name="prompt"
@@ -259,9 +275,33 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                 />
               </div>
 
-              <Button type="submit" className="bg-slate-600 mt-8 mb-4 w-32 shadow-lg rounded-md hover:shadow-2xl text-white hover:bg-slate-500 hover:w-36">
-                {loading ? <Loader2Icon className="animate-spin" />: "Enviar"}
-              </Button>
+              <div className="flex justify-center pt-4">
+                <Button 
+                  type="submit" 
+                  className="
+                        bg-gradient-to-r from-[#1F3D58] to-teal-500 mt-8 mb-4 
+                        w-32 lg:w-40 lg:h-12 shadow-lg rounded-md 
+                        text-white text-[12px] lg:text-[16px] 
+                        transition-all duration-300
+                        hover:shadow-xs hover:shadow-teal-500
+                        hover:border-1 hover:border-white
+                        hover:w-36
+                      " 
+                      disabled={loading}
+                >
+                  {loading ? (
+                    <>
+                      <Loader2Icon className="animate-spin mr-2" size={20} />
+                      Processando...
+                    </>
+                  ) : (
+                    <>
+                      <Sparkles className="mr-2" size={20} />
+                      Enviar
+                    </>
+                  )}
+                </Button>
+              </div>
             </div>
           </form>
         </Form>
