@@ -14,18 +14,30 @@ interface CardData {
     owner: string;
     prompt: string;
     filters: string;
+    retorno: string;
 }
 
 const History = ({ isOpen }: HistoryProps) => { 
   const cards: CardData[] = [
-      {id: 1, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1"},
-      {id: 2, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1"},
-      {id: 3, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1"},
-      {id: 4, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1"},
-      {id: 5, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1"},
-      {id: 6, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1"},
-      {id: 7, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1"},
-      {id: 8, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1"},
+      {id: 1, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: `Com base nos dados enviados para o período de 15/06/2025, segue uma análise dos indicadores por tipo de operação:
+---
+
+### **Resumo Geral das Operações (15/06/2025)**
+
+*   **Total de Transações:** 69
+*   **Valor Total Processado:** R$ 17.273,85
+*   **Valor Total Autorizado:** R$ 16.356,57
+*   **Taxa de Sucesso Geral:** 86,96% (60 transações autorizadas de 69)
+
+---
+`},
+      {id: 2, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
+      {id: 3, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
+      {id: 4, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
+      {id: 5, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
+      {id: 6, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
+      {id: 7, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
+      {id: 8, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
   ] 
 
   return (
@@ -37,7 +49,7 @@ const History = ({ isOpen }: HistoryProps) => {
             </div>}            
             <div className="flex flex-col items-center w-full scrollbar-thin overflow-y-auto flex-grow">
                 {cards.map((card) => (
-                    <HoverCardComponent key={card.id} id={card.id} title={card.title} date={card.date} owner={card.owner} prompt={card.prompt} filters={card.filters} />
+                    <HoverCardComponent key={card.id} id={card.id} title={card.title} date={card.date} owner={card.owner} prompt={card.prompt} filters={card.filters} retorno={card.retorno}/>
                 ))}
             </div>
         </div>

@@ -10,9 +10,10 @@ interface CardData {
     owner: string;
     prompt: string;
     filters: string;
+    retorno: string;
 }
 
-const HoverCardComponent = ({ id, title, date, owner, prompt, filters }: CardData) => {
+const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno }: CardData) => {
     const separatedFilters = filters
         .split(",")
         .map(item => item.trim())
@@ -25,7 +26,7 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters }: CardDat
                     to={`/interaction/${id}`}
                     state={{ titulo: title, dataCriacao: date, solicitante: owner, prompt: prompt,
                              dataInicio: separatedFilters[0], dataFim: separatedFilters[1], empresa: separatedFilters[2],
-                             estabelecimento: separatedFilters[3], localizacao: separatedFilters[4]}}                    
+                             estabelecimento: separatedFilters[3], localizacao: separatedFilters[4], retorno: retorno}}                    
                     className="group inline-block max-w-full cursor-pointer rounded-full shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] outline-none focus:shadow-[0_0_0_2px_white]"
                 >
                     <Card className="my-1 h-20 w-2 sm:h-26">
