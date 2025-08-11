@@ -24,6 +24,12 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
         empresa, estabelecimento, localizacao, retorno
     } = location.state;
 
+    const dataCriacaoFormat = new Date(dataCriacao).toLocaleDateString('pt-BR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
+
     const toggleHistory = () => {
         setIsHistoryOpen(!isHistoryOpen);
     };
@@ -67,7 +73,7 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
                 <div className="flex flex-row justify-center gap-8 mt-2">
                     <div className="flex flex-row items-center">
                         <CalendarPlus className="text-[#323232]" size={18}/>
-                        <p className="px-2 text-[#323232]/85 font-medium">{dataCriacao}</p>
+                        <p className="px-2 text-[#323232]/85 font-medium">{dataCriacaoFormat}</p>
                     </div>
                     <div className="flex flex-row items-center">
                         <Paperclip className="text-[#323232]" size={18}/>

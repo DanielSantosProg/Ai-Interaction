@@ -30,15 +30,16 @@ function isValidDate(date: Date | undefined) {
 interface DatePickerProps {
   valor?: string;
   onSelect: (date: Date | undefined) => void;
+  placeholder: string;
 }
 
-export function DatePicker({valor, onSelect}:DatePickerProps) {
+export function DatePicker({valor, onSelect, placeholder}:DatePickerProps) {
   const [open, setOpen] = React.useState(false)
   const [date, setDate] = React.useState<Date | undefined>(
-    new Date()
+    undefined
   )
-  const [month, setMonth] = React.useState<Date | undefined>(date)
-  const [value, setValue] = React.useState(formatDate(date))
+  const [month, setMonth] = React.useState<Date | undefined>(undefined)
+  const [value, setValue] = React.useState("")
 
   return (
     <div className="flex flex-col gap-3">
@@ -46,7 +47,7 @@ export function DatePicker({valor, onSelect}:DatePickerProps) {
         <Input
           id="date"
           value={value}
-          placeholder="01 de Janeiro de 2025"
+          placeholder={placeholder}
           className="bg-background w-36"
           onChange={(e) => {
             const date = new Date(e.target.value)
@@ -84,7 +85,7 @@ export function DatePicker({valor, onSelect}:DatePickerProps) {
               mode="single"
               selected={date}
               captionLayout="dropdown"
-              month={month}
+              month={date || new Date()}
               onMonthChange={setMonth}
               onSelect={(date) => {
                 setDate(date)

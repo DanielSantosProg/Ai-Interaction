@@ -18,6 +18,12 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno }
         .split(",")
         .map(item => item.trim())
         .filter(item => item !== '');
+    
+    const dataCriacao = new Date(date).toLocaleDateString('pt-BR', {
+        year: 'numeric',
+        month: '2-digit',
+        day: '2-digit'
+    });
 
     return (
         <HoverCard.Root>
@@ -31,7 +37,7 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno }
                 >
                     <Card className="my-1 h-20 w-2 sm:h-26">
                         <h2 className="text-[10px] group-hover:text-white sm:text-sm font-bold sm:mb-2 text-[#3A3939]">{title}</h2>
-                        <p className="text-[8px] group-hover:text-white sm:text-xs text-[#3A3939] py-1 sm:py-2"><span className="font-semibold">Data de Criação: </span>{date}</p>
+                        <p className="text-[8px] group-hover:text-white sm:text-xs text-[#3A3939] py-1 sm:py-2"><span className="font-semibold">Data de Criação: </span>{dataCriacao}</p>
                         <p className="text-[8px] group-hover:text-white sm:text-xs text-[#3A3939] py-1 sm:py-2">
                             <span className="font-semibold">Solicitante: </span>
                             {owner}

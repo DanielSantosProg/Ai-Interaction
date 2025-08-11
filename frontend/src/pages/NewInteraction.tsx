@@ -166,6 +166,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                             <FormControl>
                               <DatePicker
                               valor={field.value}
+                              placeholder="Data Inicial"
                               onSelect={(date: Date | undefined) => {
                                 // Converte a data para string
                                 field.onChange(date ? date.toLocaleDateString("pt-BR") : "");
@@ -185,6 +186,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                             <FormControl>
                               <DatePicker
                               valor={field.value}
+                              placeholder="Data Final"
                               onSelect={(date: Date | undefined) => {
                                 // Converte a data para string
                                 field.onChange(date ? date.toLocaleDateString("pt-BR") : "");
@@ -209,7 +211,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                           <FormControl>
                             <SelectScrollable
                               placeholder="Selecione a empresa"
-                              items={[{ value: "rei", label: "Rei Informática" }, { value: "empresa 2", label: "Empresa 2" }]}
+                              items={[{ value: "Rei Informática", label: "Rei Informática" }, { value: "Empresa 2", label: "Empresa 2" }]}
                               onValueChange={field.onChange}
                               defaultValue={field.value}
                             />
@@ -234,7 +236,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                           <FormControl>
                             <SelectScrollable
                               placeholder="Selecione o estabelecimento"
-                              items={[{ value: "filial", label: "Filial" }, { value: "filial 2", label: "Filial 2" }]}
+                              items={[{ value: "Filial", label: "Filial" }, { value: "Filial 2", label: "Filial 2" }]}
                               onValueChange={field.onChange}
                               defaultValue={field.value}
                             />
@@ -256,7 +258,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                           <FormControl>
                             <SelectScrollable
                               placeholder="Selecione a localização"
-                              items={[{ value: "local 1", label: "Local 1" }, { value: "local 2", label: "Local 2" }]}
+                              items={[{ value: "Carteira", label: "Carteira" }, { value: "Caixa", label: "Caixa" }]}
                               onValueChange={field.onChange}
                               defaultValue={field.value}
                             />

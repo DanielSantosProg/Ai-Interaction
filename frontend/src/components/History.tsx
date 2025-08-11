@@ -1,6 +1,8 @@
+import React from "react";
 import logo from "../assets/logo.png"
 import HoverCardComponent from "./HoverCard"
 import SelectComponent from "./Select"
+import axios from "axios"
 
 // Interfaces
 interface HistoryProps {
@@ -8,37 +10,42 @@ interface HistoryProps {
 }
 
 interface CardData {
-    id: number;
-    title: string;
-    date: string;
-    owner: string;
-    prompt: string;
-    filters: string;
-    retorno: string;
+    ID: number;
+    USR_NOME: string;
+    PROMPT: string;
+    TITULO: string;
+    DT_CRIACAO: string;
+    FILTROS: string;
+    RETORNO: string;
 }
 
-const History = ({ isOpen }: HistoryProps) => { 
-  const cards: CardData[] = [
-      {id: 1, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: `Com base nos dados enviados para o período de 15/06/2025, segue uma análise dos indicadores por tipo de operação:
----
+const History = ({ isOpen }: HistoryProps) => {
+    const userId = 11;
+    const [cards, setCards] = React.useState<CardData[]>([]);
+    React.useEffect(() => {
+        async function getHistory() {
+            try {
+                const response = await axios.get(`${API_URL}?userId=${userId}`);
 
-### **Resumo Geral das Operações (15/06/2025)**
+                console.log("Dados do histórico: ", response.data);
+                
+                setCards(response.data);
+                
+            } catch (error) {
+                if (error instanceof Error) {
+                console.error("Erro ao buscar o histórico:", error.message);
+                } else {
+                console.error("Erro ao buscar o histórico:", error);
+                }
+                throw error;
+            }
+        }
+        getHistory();
+    }, []);
 
-*   **Total de Transações:** 69
-*   **Valor Total Processado:** R$ 17.273,85
-*   **Valor Total Autorizado:** R$ 16.356,57
-*   **Taxa de Sucesso Geral:** 86,96% (60 transações autorizadas de 69)
+    const API_URL = "http://localhost:3000/interactions"
 
----
-`},
-      {id: 2, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
-      {id: 3, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
-      {id: 4, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
-      {id: 5, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
-      {id: 6, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
-      {id: 7, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
-      {id: 8, title: "Análise de KPIs por relatório", date: "31/07/2025", owner: "João da Silva", prompt: "Com base nos dados enviados, me forneça indicadores por tipo de operação.", filters: "01/07/2025,30/07/2025,Rei Informática,Filial,Local 1", retorno: ""},
-  ] 
+    
 
   return (
         <div className={`w-full flex-col items-center h-full flex transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -49,7 +56,7 @@ const History = ({ isOpen }: HistoryProps) => {
             </div>}            
             <div className="flex flex-col items-center w-full scrollbar-thin overflow-y-auto flex-grow">
                 {cards.map((card) => (
-                    <HoverCardComponent key={card.id} id={card.id} title={card.title} date={card.date} owner={card.owner} prompt={card.prompt} filters={card.filters} retorno={card.retorno}/>
+                    <HoverCardComponent key={card.ID} id={card.ID} title={card.TITULO} date={card.DT_CRIACAO} owner={card.USR_NOME} prompt={card.PROMPT} filters={card.FILTROS} retorno={card.RETORNO}/>
                 ))}
             </div>
         </div>
