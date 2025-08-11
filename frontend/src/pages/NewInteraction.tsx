@@ -42,6 +42,7 @@ const formSchema = z.object({
 const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
   const [loading, setLoading] = useState(false)
   const [isHistoryOpen, setIsHistoryOpen] = useState(true);
+  const userId = 11
 
     const toggleHistory = () => {
         setIsHistoryOpen(!isHistoryOpen);
@@ -64,12 +65,30 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
     setLoading(true);
     console.log("Submetendo formulário...", values);
 
-    await new Promise(resolve => setTimeout(resolve, 2000));
+    try {
+      const response = await fetch("http://localhost:3000/analyze", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({values, userId}),
+      });
 
-    // 3. Desativa o estado de loading após a conclusão
-    setLoading(false);
-    console.log("Dados enviados:");
-    console.log(values)
+      if (!response.ok) {
+        throw new Error("Erro ao enviar dados para o servidor.");
+      }
+
+      const data = await response.json();
+      console.log("Resposta do servidor:", data);
+      if (data.error) {
+        console.error(data.error);
+        // Criar alerta com o erro.
+      }
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   } 
 
   return (
