@@ -16,6 +16,7 @@ import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { MoveRight, Loader2Icon, GalleryVerticalEnd, Sparkles, Pen, Funnel, Text } from "lucide-react"
 import { useForm } from "react-hook-form"
+import { useNavigate } from 'react-router-dom';
 
 interface NewInteractionProps {
   isSidebarOpen: boolean;
@@ -46,10 +47,11 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(true);
   const userId = 11
+  const navigate = useNavigate();
 
-    const toggleHistory = () => {
-        setIsHistoryOpen(!isHistoryOpen);
-    };
+  const toggleHistory = () => {
+    setIsHistoryOpen(!isHistoryOpen);
+  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -82,11 +84,14 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
       }
 
       const data = await response.json();
-      console.log("Resposta do servidor:", data);
+      
       if (data.error) {
         console.error(data.error);
         setError(data.error);
         setIsAlertOpen(true);
+      } else {
+        console.log("Resposta do servidor:", data);
+        navigate(`/interaction/${data.id}`);
       }
     } catch (error) {
       console.error(error);

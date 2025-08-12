@@ -47,6 +47,7 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
             doc.setFont('helvetica', 'normal');
             doc.setFontSize(10); 
 
+            // Função para adicionar texto com quebra de linha
             const addText = (text: string, x: number, y: number, options = {}) => {
                 const textLines = doc.splitTextToSize(text, 210 - 2 * margin);
                 let currentY = y;
@@ -158,7 +159,6 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
             <GalleryVerticalEnd className='text-[#323232] group-hover:text-white' size={18}/>
         </button>
             
-        {/* Passa o estado e a função para o componente History */}
         <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
             <History isOpen={isHistoryOpen} />
         </div>
@@ -188,6 +188,7 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
                     <p className="text-[#323232] self-center">{prompt}</p>                                       
                 </div>
 
+                
                 <div className="flex flex-row items-center gap-2 mb-4 lg:self-start">
                     <ListFilter className="text-[#1F3D58]" size={18} />
                     <p className="font-semibold lg:self-start text-[#1F3D58]">Filtros Selecionados</p>
@@ -195,20 +196,22 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
                 <div className="flex flex-col lg:self-start mb-6 gap-3">
                     <div className="flex flex-row items-center gap-2 lg:ml-7 lg:self-start">
                         <Calendar className="text-[#323232]" size={16}/>
-                        <p className="text-[#323232] text-[12px]">{dataInicio} - {dataFim}</p>
+                        <p className="text-[#323232] text-[12px]">
+                            {(dataInicio || dataFim) ? `${dataInicio || 'Não informado'} - ${dataFim || 'Não informado'}` : '-'}
+                        </p>
                     </div>
-                    <div className="flex flex-row items-center  gap-2 lg:ml-7 lg:self-start">
+                    <div className="flex flex-row items-center gap-2 lg:ml-7 lg:self-start">
                         <Building2 className="text-[#323232]" size={16}/>
-                        <p className="text-[#323232] text-[12px]">{empresa}</p>
+                        <p className="text-[#323232] text-[12px]">{empresa || '-'}</p>
                     </div>
-                    <div className="flex flex-row items-center  gap-2 lg:ml-7 lg:self-start">
+                    <div className="flex flex-row items-center gap-2 lg:ml-7 lg:self-start">
                         <Building className="text-[#323232]" size={16}/>
-                        <p className="text-[#323232] text-[12px]">{estabelecimento}</p>
+                        <p className="text-[#323232] text-[12px]">{estabelecimento || '-'}</p>
                     </div>
                     <div className="flex flex-row items-center gap-2 lg:ml-7 lg:self-start">
                         <Wallet className="text-[#323232]" size={16}/>
-                        <p className="text-[#323232] text-[12px]">{localizacao}</p>
-                    </div>                    
+                        <p className="text-[#323232] text-[12px]">{localizacao || '-'}</p>
+                    </div>
                 </div>
 
                 <div className="flex flex-row items-center gap-2 mb-4 lg:self-start">
