@@ -36,7 +36,7 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno }
                     className="group inline-block max-w-full cursor-pointer rounded-full shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] outline-none focus:shadow-[0_0_0_2px_white]"
                 >
                     <Card className="my-1 h-20 w-2 sm:h-26">
-                        <h2 className="text-[10px] group-hover:text-white sm:text-sm font-bold sm:mb-2 text-[#3A3939]">{title}</h2>
+                        <h2 className="text-[10px] group-hover:text-white sm:text-sm font-bold sm:mb-2 text-[#3A3939] truncate overflow-hidden whitespace-nowrap">{title}</h2>
                         <p className="text-[8px] group-hover:text-white sm:text-xs text-[#3A3939] py-1 sm:py-2"><span className="font-semibold">Data de Criação: </span>{dataCriacao}</p>
                         <p className="text-[8px] group-hover:text-white sm:text-xs text-[#3A3939] py-1 sm:py-2">
                             <span className="font-semibold">Solicitante: </span>

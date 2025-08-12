@@ -5,8 +5,9 @@ import History from "../components/History"
 import { Button } from "@/components/ui/button"
 
 // Libraries/Hooks
+import jsPDF from 'jspdf';
 import { useState } from "react"
-import { useParams, useLocation } from "react-router-dom";
+import { useParams, useLocation, data } from "react-router-dom";
 import { Building, Building2, Calendar, CalendarPlus, FileDown, GalleryVerticalEnd, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, Wallet } from "lucide-react"
 
 interface ViewInteractionProps {
@@ -14,7 +15,6 @@ interface ViewInteractionProps {
 }
 
 const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
-    //const [loading, setLoading] = useState(false)
     const [isHistoryOpen, setIsHistoryOpen] = useState(true);
     const [loading, setLoading] = useState(false);
 
@@ -37,13 +37,111 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
     async function onDownload() {
         setLoading(true);
         console.log("Iniciando Download...");
-    
-        await new Promise(resolve => setTimeout(resolve, 2000));
-    
-        // 3. Desativa o estado de loading após a conclusão
-        setLoading(false);
-        console.log("Download finalizado.");
-    } 
+
+        try {
+            const doc = new jsPDF();
+            const margin = 16;
+            const lineHeight = 7;
+            let yPosition = margin;
+
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10); 
+
+            const addText = (text: string, x: number, y: number, options = {}) => {
+                const textLines = doc.splitTextToSize(text, 210 - 2 * margin);
+                let currentY = y;
+
+                textLines.forEach((line: string | string[]) => {
+                    if (currentY > 297 - margin) {
+                        doc.addPage();
+                        currentY = margin;
+                    }
+                    doc.text(line, x, currentY, options);
+                    currentY += lineHeight;
+                });
+                return currentY;
+            };
+
+            // Título
+            doc.setFontSize(14);
+            doc.setTextColor("#1F3D58"); 
+            doc.setFont('helvetica', 'bold');
+            yPosition = addText(`${titulo}`, margin, yPosition);
+            
+            doc.setTextColor("#000000");
+            doc.setFont('helvetica', 'normal');
+
+            // Separador
+            doc.line(margin, yPosition, 210 - margin, yPosition);
+            yPosition += lineHeight;
+
+            // Título da seção de Filtros Selecionados
+            yPosition += lineHeight;
+            doc.setFontSize(12);
+            doc.setTextColor("#1F3D58");
+            doc.setFont('helvetica', 'bold');
+            yPosition = addText("Filtros Selecionados:", margin, yPosition);
+            
+            // Texto dos Filtros
+            doc.setTextColor("#000000");
+            doc.setFont('helvetica', 'normal'); 
+            doc.setFontSize(10); 
+            yPosition += lineHeight;
+
+            const dataInicioFormat = dataInicio ? dataInicio : " ";
+            const dataFimFormat = dataFim ? dataFim : " ";
+            const empresaFormat = empresa ? empresa : "-";
+            const estabelecimentoFormat = estabelecimento ? estabelecimento : "-";
+            const localizacaoFormat = localizacao ? localizacao : "-";
+
+            const filters = [
+                `Data: ${dataInicioFormat} - ${dataFimFormat}`,
+                `Empresa: ${empresaFormat}`,
+                `Estabelecimento: ${estabelecimentoFormat}`,
+                `Localização: ${localizacaoFormat}`
+            ];
+            filters.forEach(filter => {
+                yPosition = addText(filter, margin, yPosition);
+            });
+            yPosition += lineHeight;
+
+            // Título da seção de Prompt
+            doc.setFontSize(12);
+            doc.setTextColor("#1F3D58");
+            doc.setFont('helvetica', 'bold');
+            yPosition = addText(`Prompt:`, margin, yPosition);
+            
+            // Texto do prompt
+            doc.setTextColor("#000000");
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            yPosition += lineHeight;
+            
+            yPosition = addText(prompt, margin, yPosition);
+            yPosition += lineHeight;
+
+            // Título da seção de Resposta
+            doc.setFontSize(12);
+            doc.setTextColor("#1F3D58");
+            doc.setFont('helvetica', 'bold');
+            yPosition = addText("Resposta da IA:", margin, yPosition);
+            
+            // Texto da resposta
+            doc.setTextColor("#000000");
+            doc.setFont('helvetica', 'normal');
+            doc.setFontSize(10);
+            yPosition += lineHeight;
+
+            addText(retorno, margin, yPosition);
+
+            doc.save(`relatorio_${titulo.replace(/\s/g, '_')}.pdf`);
+            setLoading(false);
+            console.log("Download finalizado.");
+        } catch (error) {
+            console.error("Erro ao gerar PDF:", error);
+            setLoading(false);
+        }
+    }  
 
     return (
     <div className="flex flex-row h-screen">
@@ -92,7 +190,7 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
 
                 <div className="flex flex-row items-center gap-2 mb-4 lg:self-start">
                     <ListFilter className="text-[#1F3D58]" size={18} />
-                    <p className="font-semibold lg:self-start text-[#1F3D58]">Filtros Selecionados:</p>
+                    <p className="font-semibold lg:self-start text-[#1F3D58]">Filtros Selecionados</p>
                 </div>
                 <div className="flex flex-col lg:self-start mb-6 gap-3">
                     <div className="flex flex-row items-center gap-2 lg:ml-7 lg:self-start">
@@ -121,7 +219,7 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
                     <p className="text-[#323232] self-center whitespace-pre-wrap">{retorno}</p>                                       
                 </div>  
 
-                <Button type="button" onClick={onDownload} className="bg-white hover:bg-white  border-1 border-[#323232] hover:border-[#4CAF50] text-[#323232] hover:text-[#4CAF50] w-40 hover:w-42 rounded-md shadow-lg hover:shadow-2xl lg:self-start lg:ml-7">
+                <Button type="button" onClick={onDownload} disabled={loading} className="bg-white hover:bg-white  border-1 border-[#323232] hover:border-[#4CAF50] text-[#323232] hover:text-[#4CAF50] w-40 hover:w-42 rounded-md shadow-lg hover:shadow-2xl lg:self-start lg:ml-7">
                     {loading ? <Loader2Icon className="animate-spin" />: (<><FileDown size={18}/><p>Baixar Resposta</p></>)}
                 </Button>             
             </div> 
