@@ -60,7 +60,7 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno }
                                 <div className="m-0 pt-2 flex items-center text-[14px] text-[#323232]">
                                     <Calendar className="m-2" size={14} />
                                     <p className="text-[12px]">
-                                        {date}
+                                        {dataCriacao}
                                     </p>
                                 </div>
                             </div>
@@ -71,13 +71,13 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno }
                             
                             <div className="m-0 text-[14px] text-[#323232]">
                                 <span className="font-semibold">Filtros utilizados:</span>
-                                {separatedFilters[0] != "" ?  (
+                                {separatedFilters[0] != "" || separatedFilters[1] != "" ?  (
                                     <div className="flex flex-row items-center gap-1 mt-2">
                                         <Calendar size={14}/>
                                         <span 
                                             className="text-[#323232] rounded-full py-1 text-[12px]"
                                         >
-                                            {separatedFilters[0]}
+                                            {separatedFilters[0]} - {separatedFilters[1]}
                                         </span>                                    
                                     </div> ) : (
                                         <div className="flex flex-row items-center gap-1 mt-2">
@@ -96,7 +96,7 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno }
                                         <span 
                                             className="text-[#323232] rounded-full py-1 text-[12px]"
                                         >
-                                            {separatedFilters[1]}
+                                            {separatedFilters[2]}
                                         </span>                                    
                                     </div> ) : (
                                         <div className="flex flex-row items-center gap-1 mt-2">
@@ -115,7 +115,7 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno }
                                         <span 
                                             className="text-[#323232] rounded-full py-1 text-[12px]"
                                         >
-                                            {separatedFilters[2]}
+                                            {separatedFilters[3]}
                                         </span>                                    
                                     </div> ) : (
                                         <div className="flex flex-row items-center gap-1 mt-2">
@@ -134,7 +134,7 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno }
                                         <span 
                                             className="text-[#323232] rounded-full py-1 text-[12px]"
                                         >
-                                            {separatedFilters[3]}
+                                            {separatedFilters[4]}
                                         </span>                                    
                                     </div> ) : (
                                         <div className="flex flex-row items-center gap-1 mt-2">

@@ -7,6 +7,7 @@ import { SelectScrollable } from "@/components/Select2"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Textarea } from "@/components/ui/textarea"
+import { AlertDialogError } from "@/components/AlertDialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 
 // Libraries/Hooks
@@ -41,6 +42,8 @@ const formSchema = z.object({
 
 const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
   const [loading, setLoading] = useState(false)
+  const [error, setError] = useState<string | null>(null);
+  const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(true);
   const userId = 11
 
@@ -65,7 +68,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
     setLoading(true);
     console.log("Submetendo formulário...", values);
 
-    try {
+    try {  
       const response = await fetch("http://localhost:3000/analyze", {
         method: "POST",
         headers: {
@@ -82,10 +85,13 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
       console.log("Resposta do servidor:", data);
       if (data.error) {
         console.error(data.error);
-        // Criar alerta com o erro.
+        setError(data.error);
+        setIsAlertOpen(true);
       }
     } catch (error) {
       console.error(error);
+      setError(error instanceof Error ? error.message : String(error));
+      setIsAlertOpen(true);
     } finally {
       setLoading(false);
     }
@@ -109,6 +115,12 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
       {/* Passa o estado e a função para o componente History */}
       <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
           <History isOpen={isHistoryOpen} />
+      </div>
+
+      <div className="flex justify-center absolute top-1/2 left-1/2 z-50">
+        {isAlertOpen && error && (
+          <AlertDialogError isOpen={isAlertOpen} message={error} onClose={() => setIsAlertOpen(false)} />
+        )}
       </div>
 
       {/* Conteúdo da página */}
