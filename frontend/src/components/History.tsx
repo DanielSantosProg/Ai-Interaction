@@ -21,7 +21,9 @@ interface CardData {
 
 const History = ({ isOpen }: HistoryProps) => {
     const userId = 11;
+    const API_URL = "http://localhost:3000/interactions"
     const [cards, setCards] = React.useState<CardData[]>([]);
+    
     React.useEffect(() => {
         async function getHistory() {
             try {
@@ -41,11 +43,7 @@ const History = ({ isOpen }: HistoryProps) => {
             }
         }
         getHistory();
-    }, []);
-
-    const API_URL = "http://localhost:3000/interactions"
-
-    
+    }, []);  
 
   return (
         <div className={`w-full flex-col items-center h-full flex transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>

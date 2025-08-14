@@ -14,12 +14,37 @@ interface ViewInteractionProps {
     isSidebarOpen: boolean;     
 }
 
+interface ViewInteractionState {
+    titulo: string;
+    dataCriacao: string;
+    solicitante: string;
+    prompt: string;
+    dataInicio: string;
+    dataFim: string;
+    empresa: string;
+    estabelecimento: string;
+    localizacao: string;
+    retorno: string;
+}
+
 const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
     const [isHistoryOpen, setIsHistoryOpen] = useState(true);
     const [loading, setLoading] = useState(false);
 
     const { id } = useParams();
     const location = useLocation();
+
+    const state = location.state as ViewInteractionState | null;
+
+    if (!state) {
+        return (
+            <div className="flex flex-col flex-grow items-center justify-center h-screen">
+                <p>Dados da interação não encontrados. Por favor, volte para a página inicial.</p>
+                <Button onClick={() => window.location.href = '/'}>Voltar</Button>
+            </div>
+        );
+    }
+    
     const {titulo, dataCriacao, solicitante, prompt, dataInicio, dataFim,
         empresa, estabelecimento, localizacao, retorno
     } = location.state;

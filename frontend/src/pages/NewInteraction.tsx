@@ -11,12 +11,15 @@ import { AlertDialogError } from "@/components/AlertDialog"
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 
 // Libraries/Hooks
+import React from "react"
 import { z } from "zod"
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { MoveRight, Loader2Icon, GalleryVerticalEnd, Sparkles, Pen, Funnel, Text } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom';
+import axios from "axios"
+
 
 interface NewInteractionProps {
   isSidebarOpen: boolean;
@@ -41,12 +44,39 @@ const formSchema = z.object({
   })
 })
 
+type Empresa = {
+  id: number;
+  nome: string;
+};
+
+type Estabelecimento = {
+  id: number;
+  nome: string;
+  empresaId: number;
+}
+
+type Localizacao = {
+  id: number;
+  nome: string;
+}
+
 const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
   const [isHistoryOpen, setIsHistoryOpen] = useState(true);
+  const [empresas, setEmpresas] = useState<Empresa[]>([]);
+  const [selectedEmpresa, setSelectedEmpresa] = useState<Empresa | null>(null);
+  const [estabelecimentos, setEstabelecimentos] = useState<Estabelecimento[]>([]);
+  const [selectedEstabelecimento, setSelectedEstabelecimento] = useState<Estabelecimento | null>(null);
+  const [localizacoes, setLocalizacoes] = useState<Localizacao[]>([]);
+  const [selectedLocalizacao, setSelectedLocalizacao] = useState<Localizacao | null>(null);
+
+
   const userId = 11
+  const URL_EMPRESAS = "http://localhost:3000/empresas"
+  const URL_ESTABELECIMENTOS = "http://localhost:3000/estabelecimentos"
+  const URL_LOCALIZACOES = "http://localhost:3000/localizacoes"
   const navigate = useNavigate();
 
   const toggleHistory = () => {
@@ -91,7 +121,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
         setIsAlertOpen(true);
       } else {
         console.log("Resposta do servidor:", data);
-        navigate(`/interaction/${data.id}`);
+        navigate(`/interaction/${data.id}`, { state: data });
       }
     } catch (error) {
       console.error(error);
@@ -101,6 +131,86 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
       setLoading(false);
     }
   } 
+
+  React.useEffect(() => {
+    async function getEmpresas() {
+      try {
+        const response = await axios.get(URL_EMPRESAS);
+        console.log("Dados brutos das empresas: ", response.data);
+
+        const empresasFormatadas = response.data.map((empresa: { GER_EMP_ID: number; GER_EMP_NOME_FANTASIA: string }) => ({
+          id: empresa.GER_EMP_ID,
+          nome: empresa.GER_EMP_NOME_FANTASIA
+        }));
+
+        setEmpresas(empresasFormatadas);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error("Erro ao buscar as empresas:", error.message);
+        } else {
+          console.error("Erro ao buscar as empresas:", error);
+        }
+        throw error;
+      }
+    }
+    getEmpresas();
+  }, []); 
+
+  React.useEffect(() => {
+    async function getEstabelecimentos() {
+      if (!selectedEmpresa) {
+        setEstabelecimentos([]);
+        return;
+      }
+      try {
+        const response = await axios.get(URL_ESTABELECIMENTOS, {
+          params: {
+            emp_id: selectedEmpresa.id
+          }
+        });
+        console.log("Dados brutos dos estabelecimentos: ", response.data);
+
+        const estabelecimentosFormatados = response.data.map((estabelecimento: { COP_EST_ID: number; COP_EST_DESCRICAO: string, GER_EMP_ID: number }) => ({
+          id: estabelecimento.COP_EST_ID,
+          nome: estabelecimento.COP_EST_DESCRICAO,
+          empresaId: estabelecimento.GER_EMP_ID
+        }));
+
+        setEstabelecimentos(estabelecimentosFormatados);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error("Erro ao buscar os estabelecimentos:", error.message);
+        } else {
+          console.error("Erro ao buscar os estabelecimentos:", error);
+        }
+      }
+    }
+    getEstabelecimentos();
+}, [selectedEmpresa]);
+
+  React.useEffect(() => {
+    async function getLocalizacoes() {
+      try {
+        const response = await axios.get(URL_LOCALIZACOES);
+        console.log("Dados brutos das localizações: ", response.data);
+
+        const localizacoesFormatadas = response.data.map((localizacao: { COP_LOC_ID: number; COP_LOC_DESCRICAO: string }) => ({
+          id: localizacao.COP_LOC_ID,
+          nome: localizacao.COP_LOC_DESCRICAO
+        }));
+
+        setLocalizacoes(localizacoesFormatadas);
+      } catch (error) {
+        if (error instanceof Error) {
+          console.error("Erro ao buscar as localizações:", error.message);
+        } else {
+          console.error("Erro ao buscar as localizações:", error);
+        }
+        throw error;
+      }
+    }
+    getLocalizacoes();
+  }, [selectedEmpresa]); 
 
   return (
     <div className="flex flex-row h-screen">
@@ -228,8 +338,17 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                           <FormControl>
                             <SelectScrollable
                               placeholder="Selecione a empresa"
-                              items={[{ value: "Rei Informática", label: "Rei Informática" }, { value: "Empresa 2", label: "Empresa 2" }]}
-                              onValueChange={field.onChange}
+                              items={empresas.map((empresa) => ({
+                                value: empresa.nome,
+                                label: empresa.nome,
+                                id: empresa.id
+                              }))}
+                              onValueChange={(value: string) => {
+                                field.onChange(value);
+                                const empresaObj = empresas.find((empresa) => empresa.nome === value) || null;
+                                setSelectedEmpresa(empresaObj);
+                                form.setValue("estabelecimento", "");
+                              }}
                               defaultValue={field.value}
                             />
                           </FormControl>
@@ -248,15 +367,23 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                       control={form.control}
                       name="estabelecimento"
                       render={({ field }) => (
-                        <FormItem>
-                          
+                        <FormItem>                          
                           <FormControl>
                             <SelectScrollable
                               placeholder="Selecione o estabelecimento"
-                              items={[{ value: "Filial", label: "Filial" }, { value: "Filial 2", label: "Filial 2" }]}
-                              onValueChange={field.onChange}
+                              items={estabelecimentos.map(est => ({
+                                  id: est.id,
+                                  value: est.nome,
+                                  label: est.nome
+                              }))}
+                              onValueChange={(value: string) => {
+                                field.onChange(value);
+                                const estabelecimentoObj = estabelecimentos.find((estabelecimento) => estabelecimento.nome === value) || null;
+                                setSelectedEstabelecimento(estabelecimentoObj);
+                                form.setValue("estabelecimento", "");
+                              }}
                               defaultValue={field.value}
-                            />
+                          />
                           </FormControl>
                           <FormMessage />
                         </FormItem>
@@ -270,13 +397,21 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                       control={form.control}
                       name="localizacao"
                       render={({ field }) => (
-                        <FormItem>
-                          
+                        <FormItem>                          
                           <FormControl>
                             <SelectScrollable
                               placeholder="Selecione a localização"
-                              items={[{ value: "Carteira", label: "Carteira" }, { value: "Caixa", label: "Caixa" }]}
-                              onValueChange={field.onChange}
+                              items={localizacoes.map(localizacao => ({
+                                id: localizacao.id,
+                                value: localizacao.nome,
+                                label: localizacao.nome
+                              }))}                              
+                              onValueChange={(value: string) => {
+                                field.onChange(value);
+                                const localizacaoObj = localizacoes.find((localizacao) => localizacao.nome === value) || null;
+                                setSelectedLocalizacao(localizacaoObj);
+                                form.setValue("localizacao", "");
+                              }}
                               defaultValue={field.value}
                             />
                           </FormControl>

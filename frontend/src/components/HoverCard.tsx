@@ -14,7 +14,6 @@ interface CardData {
 }
 
 const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno }: CardData) => {
-    // Remova o .filter() para manter os itens vazios
     const separatedFilters = filters
         .split(",")
         .map(item => item.trim());

@@ -10,6 +10,7 @@ import {
     interface SelectItemData {
         value: string;
         label: string;
+        id?: number;
         disabled?: boolean;
     }
     interface SelectComponentProps {
@@ -28,7 +29,9 @@ export function SelectScrollable({placeholder, items, onValueChange, defaultValu
       <SelectContent>
         <SelectGroup>
             {items.map((item) => (
-                <SelectItem key={item.value} value={item.value} disabled={item.disabled}>{item.label}</SelectItem>
+                <SelectItem key={item.id ?? item.value} value={item.value} disabled={item.disabled}>
+                  {item.label}
+                </SelectItem>
             ))}
         </SelectGroup>
       </SelectContent>
