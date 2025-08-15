@@ -1,5 +1,5 @@
 import React from "react";
-import logo from "../assets/logo.png"
+import logo from "../assets/reisoflogo.jpg"
 import HoverCardComponent from "./HoverCard"
 import SelectComponent from "./Select"
 import axios from "axios"
@@ -47,7 +47,9 @@ const History = ({ isOpen }: HistoryProps) => {
 
   return (
         <div className={`w-full flex-col items-center h-full flex transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-            <img src={logo} className="w-26 sm:w-40 self-center max-h-30" alt="" />
+            <div className="flex w-full justify-center h-40">
+                <img src={logo} className="max-w-26 sm:max-w-48 self-center max-h-30" alt="" />
+            </div>
             {isOpen && 
             <div className="self-baseline p-4 flex-shrink-0">
                 <SelectComponent placeholder="Interações" items={[{value:"todas", label:"Todas"}, {value:"minhas", label:"Minhas"}]} />

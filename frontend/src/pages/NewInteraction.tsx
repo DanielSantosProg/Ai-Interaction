@@ -15,7 +15,7 @@ import React from "react"
 import { z } from "zod"
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { MoveRight, Loader2Icon, GalleryVerticalEnd, Sparkles, Pen, Funnel, Text } from "lucide-react"
+import { MoveRight, Loader2Icon, GalleryVerticalEnd, Sparkles, Pen, Funnel, Text, ClipboardMinus } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
@@ -31,6 +31,9 @@ const formSchema = z.object({
     message: "É necessário inserir algo no título.",
   }).max(100, {
     message: "Título tem que ter no máximo 100 caracteres."
+  }),
+  modelo: z.string().min(1, {
+    message: "É necessário selecionar um modelo.",
   }),
   dataInicio: z.string().optional(),
   dataFim: z.string().optional(),
@@ -60,6 +63,11 @@ type Localizacao = {
   nome: string;
 }
 
+type Modelo = {
+  id: number;
+  nome: string;
+}
+
 const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null);
@@ -71,6 +79,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
   const [selectedEstabelecimento, setSelectedEstabelecimento] = useState<Estabelecimento | null>(null);
   const [localizacoes, setLocalizacoes] = useState<Localizacao[]>([]);
   const [selectedLocalizacao, setSelectedLocalizacao] = useState<Localizacao | null>(null);
+  const [selectedModelo, setSelectedModelo] = useState<Modelo | null>(null);
 
 
   const userId = 11
@@ -160,6 +169,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
     async function getEstabelecimentos() {
       if (!selectedEmpresa) {
         setEstabelecimentos([]);
+        form.setValue("estabelecimento", "");
         return;
       }
       try {
@@ -177,6 +187,12 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
         }));
 
         setEstabelecimentos(estabelecimentosFormatados);
+
+        if (estabelecimentosFormatados.length > 0) {
+        form.setValue("estabelecimento", estabelecimentosFormatados[0].nome);
+        } else {
+          form.setValue("estabelecimento", "");
+        }
       } catch (error) {
         if (error instanceof Error) {
           console.error("Erro ao buscar os estabelecimentos:", error.message);
@@ -200,6 +216,12 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
         }));
 
         setLocalizacoes(localizacoesFormatadas);
+
+        if (localizacoesFormatadas.length > 0) {
+        form.setValue("localizacao", localizacoesFormatadas[0].nome);
+        } else {
+          form.setValue("localizacao", "");
+        }
       } catch (error) {
         if (error instanceof Error) {
           console.error("Erro ao buscar as localizações:", error.message);
@@ -267,6 +289,34 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                     <FormItem className="flex flex-col md:flex-row items-center w-full">                    
                       <FormControl>
                         <Input placeholder="Digite o título da interação" className="w-2xs md:w-full" {...field} />
+                      </FormControl>
+                      <FormMessage />
+                    </FormItem>
+                  )}
+                />
+              </div>
+
+              <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 mt-8 justify-center items-center">
+                <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
+                  <ClipboardMinus className="text-[#1F3D58]" size={18}/>
+                  <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">Modelo de Relatório</FormLabel>
+                </div>
+                <FormField
+                  control={form.control}
+                  name="modelo"
+                  render={({ field }) => (
+                    <FormItem className="w-full">                      
+                      <FormControl>
+                        <SelectScrollable
+                              placeholder="Selecione o Modelo"
+                              items={[{ value: 'modelo1', label: 'Modelo 1' }]}
+                              onValueChange={(value: string) => {
+                                field.onChange(value);
+                                setSelectedModelo({ id: 1, nome: value });
+                                form.setValue("modelo", value);
+                              }}
+                              defaultValue={field.value}
+                            />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -379,8 +429,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                               onValueChange={(value: string) => {
                                 field.onChange(value);
                                 const estabelecimentoObj = estabelecimentos.find((estabelecimento) => estabelecimento.nome === value) || null;
-                                setSelectedEstabelecimento(estabelecimentoObj);
-                                form.setValue("estabelecimento", "");
+                                setSelectedEstabelecimento(estabelecimentoObj);                                
                               }}
                               defaultValue={field.value}
                           />
@@ -409,8 +458,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                               onValueChange={(value: string) => {
                                 field.onChange(value);
                                 const localizacaoObj = localizacoes.find((localizacao) => localizacao.nome === value) || null;
-                                setSelectedLocalizacao(localizacaoObj);
-                                form.setValue("localizacao", "");
+                                setSelectedLocalizacao(localizacaoObj);                                
                               }}
                               defaultValue={field.value}
                             />

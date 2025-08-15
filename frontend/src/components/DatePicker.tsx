@@ -85,7 +85,7 @@ export function DatePicker({valor, onSelect, placeholder}:DatePickerProps) {
               mode="single"
               selected={date}
               captionLayout="dropdown"
-              month={date || new Date()}
+              month={month}
               onMonthChange={setMonth}
               onSelect={(date) => {
                 setDate(date)

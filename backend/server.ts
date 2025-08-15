@@ -4,6 +4,7 @@ import cors from 'cors';
 import mssql from 'mssql'
 
 import { analyseDocument } from './requests/documentAnalysis';
+import gerarDocumento from './services/gerarDocumento';
 
 dotenv.config();
 
@@ -74,9 +75,23 @@ app.post('/analyze', async (req, res) => {
         }
         const { values, userId } = req.body;
 
-        const docPath = "D:\\Users\\Documents\\Code\\AiInteraction\\Relatório de Vendas PayGo.pdf"
+        const dir = "D:\\Users\\Documents";
 
-        const result = await analyseDocument(docPath, values, userId, sqlPool);
+        console.log(dir, values.titulo, values.modelo, sqlPool, values.dataInicio, values.dataFim, values.empresa, values.estabelecimento, values.localizacao)
+
+        const documento = await gerarDocumento(dir, values.titulo, values.modelo, sqlPool, values.dataInicio, values.dataFim, values.empresa, values.estabelecimento, values.localizacao);
+
+        let path: string | undefined;
+        if (documento?.success === true) {
+            path = documento.path;
+        }
+
+        if (!path) {
+            res.status(400).send({ response: null, error: "Caminho do documento não gerado." });
+            throw new Error("Caminho do documento não gerado.");
+        }
+
+        const result = await analyseDocument(path, values, userId, sqlPool);
         const response: Response =
             result
                 ? {
@@ -86,7 +101,7 @@ app.post('/analyze', async (req, res) => {
                 : { response: null, error: "Não houve resposta" };
         res.send(response);
     } catch (error) {
-        console.error("Erro ao processar a requisição:", error);
+        console.error("Erro: ", error);
         res.status(500).send({ response: null, error: "Erro interno do servidor" });
     }  
 });
@@ -176,6 +191,55 @@ app.get('/localizacoes', async (req, res) => {
         console.error("Erro ao buscar as localizações:", error);
         res.status(500).send({ error: "Erro ao buscar as localizações" });
     } 
+});
+
+app.get('/document_data', async (req, res) => {
+    try {
+        const { dataInicial, dataFinal, empId, estabelecimentoId, localizacaoId } = req.query;
+
+        let stringFilters = "";
+
+        if (dataInicial) {
+            stringFilters += ` AND COR_DUP_DATA_VENCIMENTO >= @dataInicial`;
+        }
+        if (dataFinal) {
+            stringFilters += ` AND COR_DUP_DATA_VENCIMENTO <= @dataFinal`;
+        }
+        if (empId) {
+            stringFilters += ` AND GER_EMP_ID = @empId`;
+        }
+        if (estabelecimentoId) {
+            stringFilters += ` AND COR_DUP_ESTABELECIMENTO = @estabelecimentoId`;
+        }
+        if (localizacaoId) {
+            stringFilters += ` AND COR_DUP_LOCALIZACAO = @localizacaoId`;
+        }
+
+        let result;
+
+        result = await sqlPool.request()
+            .input('stringFilters', mssql.VarChar(250), stringFilters)
+            .query(`SELECT [COR_DUP_DATA_EMISSAO] 
+                    ,[COR_DUP_VALOR_DUPLICATA] 
+                    ,[COR_DUP_TIPO_FATURA] 
+                    ,[COR_DUP_DATA_VENCIMENTO] 
+                    ,[COR_DUP_DATA_PRORROGACAO]
+                    ,[COR_DUP_DATA_CADASTRO]
+                    ,[COR_DUP_LOCALIZACAO]
+                    ,[COR_DUP_ESTABELECIMENTO]
+                    ,[COR_DUP_DATA_BAIXA]
+                    ,[COR_DUP_VALOR_BAIXA]
+                    ,e.GER_EMP_NOME_FANTASIA
+            FROM COR_CADASTRO_DE_DUPLICATAS with(nolock) INNER JOIN GER_EMPRESA e with (nolock)
+            ON e.GER_EMP_ID = COR_CADASTRO_DE_DUPLICATAS.COR_DUP_IDEMPRESA WHERE 1=1 ${stringFilters}`);
+        console.log("Data: ", result.recordset);
+
+        const data = result.recordset;
+        res.send(data);
+    } catch (error) {
+        console.error("Erro ao buscar os Dados:", error);
+        res.status(500).send({ error: "Erro ao buscar os Dados" });
+    }  
 });
 
 process.on('SIGINT', async () => {
