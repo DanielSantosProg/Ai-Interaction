@@ -8,11 +8,11 @@ const ai = new GoogleGenAI({});
 
 interface InteractionFields {
     titulo: string,
-    dataInicio: string,
-    dataFim: string,
-    empresa: string,
-    estabelecimento: string,
-    localizacao: string,
+    dataInicioDB: string,
+    dataFimDB: string,
+    empresaDB: string,
+    estabelecimentoDB: string,
+    localizacaoDB: string,
     prompt: string;
 }
 
@@ -55,7 +55,7 @@ async function analyseDocument(docPath: string, values: InteractionFields, userI
         response.usageMetadata && console.log("Tokens usados: ", response.usageMetadata.totalTokenCount);
 
         // Formatação dos filtros
-        const filters = `${values.dataInicio}, ${values.dataFim}, ${values.empresa}, ${values.estabelecimento}, ${values.localizacao}`;
+        const filters = `${values.dataInicioDB}, ${values.dataFimDB}, ${values.empresaDB}, ${values.estabelecimentoDB}, ${values.localizacaoDB}`;
 
         if (response.text) {
             // Operações de inserção no banco

@@ -19,6 +19,7 @@ import { MoveRight, Loader2Icon, GalleryVerticalEnd, Sparkles, Pen, Funnel, Text
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
+import { es } from "date-fns/locale"
 
 
 interface NewInteractionProps {
@@ -105,9 +106,34 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
     },
   })
 
+  const formatDate = (dateString: string) => {
+    const [day, month, year] = dateString.split('/');
+    return `${year}-${month}-${day}`;
+  };
+
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
-    console.log("Submetendo formulário...", values);
+
+    const formattedDataInicio = values.dataInicio ? formatDate(values.dataInicio) : undefined;
+    const formattedDataFim = values.dataFim ? formatDate(values.dataFim) : undefined;
+
+    const payload = {
+      titulo: values.titulo,
+      modelo: selectedModelo?.nome,
+      dataInicio: formattedDataInicio,
+      dataFim: formattedDataFim,
+      empresa: selectedEmpresa?.id,
+      estabelecimento: selectedEstabelecimento?.id,
+      localizacao: selectedLocalizacao?.id,
+      prompt: values.prompt,
+      dataInicioDB: values.dataInicio,
+      dataFimDB: values.dataFim,
+      empresaDB: values.empresa,
+      estabelecimentoDB: values.estabelecimento,
+      localizacaoDB: values.localizacao,
+    };
+
+    console.log("Submetendo formulário...", payload);
 
     try {  
       const response = await fetch("http://localhost:3000/analyze", {
@@ -115,7 +141,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({values, userId}),
+        body: JSON.stringify({values: payload, userId}),
       });
 
       if (!response.ok) {
@@ -334,7 +360,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                   {/* Período */}
                   <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
                     <FormLabel className="mb-3 lg:ml-4">Período</FormLabel>
-                    <div className="flex flex-row w-full justify-center lg:justify-baseline items-center gap-2">
+                    <div className="flex flex-row w-full justify-center sm:justify-baseline items-center gap-2">
                       <FormField
                         control={form.control}
                         name="dataInicio"
