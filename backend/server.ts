@@ -18,6 +18,7 @@ const port = process.env.PORT || 3000;
 interface Response {
     response: string | null;
     error: string | null;
+    id: number | null;
 }
 
 let sqlPool: mssql.ConnectionPool;
@@ -76,9 +77,7 @@ app.post('/analyze', async (req, res) => {
         const { values, userId } = req.body;
 
         const dir = "D:\\Users\\Documents";
-
-        console.log(dir, values.titulo, values.modelo, sqlPool, values.dataInicio, values.dataFim, values.empresa, values.estabelecimento, values.localizacao)
-
+        
         const documento = await gerarDocumento(dir, values.titulo, values.modelo, sqlPool, values.dataInicio, values.dataFim, values.empresa, values.estabelecimento, values.localizacao);
 
         let path: string | undefined;
@@ -96,9 +95,10 @@ app.post('/analyze', async (req, res) => {
             result
                 ? {
                     response: result.response,
-                    error: result.error !== null && result.error !== undefined ? String(result.error) : null
+                    error: result.error !== null && result.error !== undefined ? String(result.error) : null,
+                    id: result.id
                 }
-                : { response: null, error: "Não houve resposta" };
+                : { response: null, error: "Não houve resposta", id: null };
         res.send(response);
     } catch (error) {
         console.error("Erro: ", error);
@@ -139,6 +139,34 @@ app.get('/interactions', async (req, res) => {
         console.error("Erro ao buscar o histórico:", error);
         res.status(500).send({ error: "Erro ao buscar o histórico" });
     }  
+});
+
+app.get('/interactions/:id', async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        if (!sqlPool) {
+            throw new Error('Pool de conexões não inicializado.');
+        }
+
+        const result = await sqlPool.request()
+            .input('id', mssql.Int, id)
+            .query(`SELECT 
+                    H.ID, H.COD_USUARIO, H.PROMPT, H.TITULO, H.DT_CRIACAO, H.FILTROS, H.RETORNO, F.USR_NOME 
+                    FROM HISTORICO H WITH (NOLOCK)
+                    INNER JOIN FR_USUARIO F WITH (NOLOCK) ON H.COD_USUARIO = F.USR_CODIGO
+                    WHERE H.ID = @id`);
+
+        if (result.recordset.length > 0) {
+            const data = result.recordset[0];            
+            res.send(data);
+        } else {
+            res.status(404).send({ error: "Interação não encontrada." });
+        }
+    } catch (error) {
+        console.error("Erro ao buscar a interação:", error);
+        res.status(500).send({ error: "Erro interno do servidor ao buscar a interação." });
+    }
 });
 
 app.get('/empresas', async (req, res) => {

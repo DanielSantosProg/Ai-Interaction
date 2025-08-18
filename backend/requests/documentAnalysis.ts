@@ -60,16 +60,27 @@ async function analyseDocument(docPath: string, values: InteractionFields, userI
         if (response.text) {
             // Operações de inserção no banco
             const request = new mssql.Request(pool);
-            await request
-            .input('userId', mssql.Int, userId)
-            .input('prompt', mssql.VarChar(1000), values.prompt)
-            .input('titulo', mssql.VarChar(100), values.titulo)
-            .input('filtros', mssql.VarChar(500), filters)
-            .input('retorno', mssql.VarChar(8000), response.text).query(`
-                INSERT INTO HISTORICO (COD_USUARIO, PROMPT, TITULO, DT_CRIACAO, FILTROS, RETORNO) VALUES (@userId, @prompt, @titulo, GETDATE(), @filtros, @retorno)
-            `);
+            
+            // Adiciona os inputs
+            request
+                .input('userId', mssql.Int, userId)
+                .input('prompt', mssql.VarChar(1000), values.prompt)
+                .input('titulo', mssql.VarChar(100), values.titulo)
+                .input('filtros', mssql.VarChar(500), filters)
+                .input('retorno', mssql.VarChar(8000), response.text);
 
-            return {response: response.text, error: null}
+            // Executa a query de INSERT e CAPTURA o ID da linha inserida
+            const insertResult = await request.query(`
+                INSERT INTO HISTORICO (COD_USUARIO, PROMPT, TITULO, DT_CRIACAO, FILTROS, RETORNO)
+                OUTPUT INSERTED.ID
+                VALUES (@userId, @prompt, @titulo, GETDATE(), @filtros, @retorno)
+            `);
+            
+            // Extrai o ID do resultado
+            const newId = insertResult.recordset[0].ID;
+
+            // Retorna o ID junto com a resposta da IA
+            return { response: response.text, id: newId, error: null };
         }
     } catch (error) {
         if (error instanceof Error) {            

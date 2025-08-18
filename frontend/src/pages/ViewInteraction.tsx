@@ -6,9 +6,10 @@ import { Button } from "@/components/ui/button"
 
 // Libraries/Hooks
 import jsPDF from 'jspdf';
-import { useState } from "react"
-import { useParams, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react"
+import { useParams, useNavigate } from "react-router-dom";
 import { Building, Building2, Calendar, CalendarPlus, FileDown, GalleryVerticalEnd, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, Wallet } from "lucide-react"
+import axios from "axios";
 
 interface ViewInteractionProps {
     isSidebarOpen: boolean;     
@@ -27,29 +28,51 @@ interface ViewInteractionState {
     retorno: string;
 }
 
+interface InteractionData {
+    TITULO: string;
+    DT_CRIACAO: string; // Use o nome da coluna do banco
+    USR_NOME: string; // Use o nome da coluna do banco
+    PROMPT: string;
+    FILTROS: string;
+    RETORNO: string;
+}
+
 const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
     const [isHistoryOpen, setIsHistoryOpen] = useState(true);
-    const [loading, setLoading] = useState(false);
+    const [loading, setLoading] = useState(true);
+    const [error, setError] = useState<string | null>(null);
+    const [interaction, setInteraction] = useState<InteractionData | null>(null);
 
     const { id } = useParams();
-    const location = useLocation();
-
-    const state = location.state as ViewInteractionState | null;
-
-    if (!state) {
-        return (
-            <div className="flex flex-col flex-grow items-center justify-center h-screen">
-                <p>Dados da interação não encontrados. Por favor, volte para a página inicial.</p>
-                <Button onClick={() => window.location.href = '/'}>Voltar</Button>
-            </div>
-        );
-    }
+    const navigate = useNavigate();
     
-    const {titulo, dataCriacao, solicitante, prompt, dataInicio, dataFim,
-        empresa, estabelecimento, localizacao, retorno
-    } = location.state;
+    useEffect(() => {
+        const fetchInteraction = async () => {
+            if (!id) {
+                setLoading(false);
+                setError("ID da interação não fornecido.");
+                return;
+            }
 
-    const dataCriacaoFormat = new Date(dataCriacao).toLocaleDateString('pt-BR', {
+            try {
+                const response = await axios.get(`http://localhost:3000/interactions/${id}`);
+                setInteraction(response.data);
+                setLoading(false);
+            } catch (err) {
+                console.error("Erro ao buscar interação:", err);
+                setLoading(false);
+                setError("Não foi possível carregar os dados da interação.");
+            }
+        };
+
+        fetchInteraction();
+    }, [id]);
+
+    const separatedFilters = interaction?.FILTROS
+        ? interaction.FILTROS.split(",").map(item => item.trim())
+        : [];
+
+    const dataCriacaoFormat = new Date(interaction?.DT_CRIACAO ?? '').toLocaleDateString('pt-BR', {
         year: 'numeric',
         month: '2-digit',
         day: '2-digit'
@@ -92,7 +115,7 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
             doc.setFontSize(14);
             doc.setTextColor("#1F3D58"); 
             doc.setFont('helvetica', 'bold');
-            yPosition = addText(`${titulo}`, margin, yPosition);
+            yPosition = addText(`${interaction?.TITULO ?? ''}`, margin, yPosition);
             
             doc.setTextColor("#000000");
             doc.setFont('helvetica', 'normal');
@@ -114,11 +137,11 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
             doc.setFontSize(10); 
             yPosition += lineHeight;
 
-            const dataInicioFormat = dataInicio ? dataInicio : " ";
-            const dataFimFormat = dataFim ? dataFim : " ";
-            const empresaFormat = empresa ? empresa : "-";
-            const estabelecimentoFormat = estabelecimento ? estabelecimento : "-";
-            const localizacaoFormat = localizacao ? localizacao : "-";
+            const dataInicioFormat = separatedFilters[0] ? separatedFilters[0] : " ";
+            const dataFimFormat = separatedFilters[1] ? separatedFilters[1] : " ";
+            const empresaFormat = separatedFilters[2] ? separatedFilters[2] : "-";
+            const estabelecimentoFormat = separatedFilters[3] ? separatedFilters[3] : "-";
+            const localizacaoFormat = separatedFilters[4] ? separatedFilters[4] : "-";
 
             const filters = [
                 `Data: ${dataInicioFormat} - ${dataFimFormat}`,
@@ -143,7 +166,7 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
             doc.setFontSize(10);
             yPosition += lineHeight;
             
-            yPosition = addText(prompt, margin, yPosition);
+            yPosition = addText(interaction?.PROMPT ?? '', margin, yPosition);
             yPosition += lineHeight;
 
             // Título da seção de Resposta
@@ -158,9 +181,9 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
             doc.setFontSize(10);
             yPosition += lineHeight;
 
-            addText(retorno, margin, yPosition);
+            addText(interaction?.RETORNO ?? '', margin, yPosition);
 
-            doc.save(`relatorio_${titulo.replace(/\s/g, '_')}.pdf`);
+            doc.save(`relatorio_${interaction?.TITULO.replace(/\s/g, '_')}.pdf`);
             setLoading(false);
             console.log("Download finalizado.");
         } catch (error) {
@@ -192,7 +215,7 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
 
         <div className={`flex flex-col flex-grow bg-[#323232]/3 items-center py-12 overflow-y-auto scrollbar-thin`}>            
             <div className="flex flex-col items-center">
-                <h2 className="text-[26px] font-bold sm:text-[32px] text-center bg-gradient-to-r from-[#1F3D58] to-teal-500 text-transparent bg-clip-text">{titulo}</h2>
+                <h2 className="text-[26px] font-bold sm:text-[32px] text-center bg-gradient-to-r from-[#1F3D58] to-teal-500 text-transparent bg-clip-text">{interaction?.TITULO}</h2>
                 <div className="flex flex-row justify-center gap-8 mt-2">
                     <div className="flex flex-row items-center">
                         <CalendarPlus className="text-[#323232]" size={18}/>
@@ -210,7 +233,7 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
                     <p className="font-semibold lg:self-start text-[#1F3D58]">Prompt</p>
                 </div>
                 <div className="flex flex-col max-w-xs lg:max-w-full text-justify mb-6 lg:self-start lg:ml-7">           
-                    <p className="text-[#323232] self-center">{prompt}</p>                                       
+                    <p className="text-[#323232] self-center">{interaction?.PROMPT}</p>                                       
                 </div>
 
                 
@@ -222,20 +245,20 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
                     <div className="flex flex-row items-center gap-2 lg:ml-7 lg:self-start">
                         <Calendar className="text-[#323232]" size={16}/>
                         <p className="text-[#323232] text-[12px]">
-                            {(dataInicio || dataFim) ? `${dataInicio || 'Não informado'} - ${dataFim || 'Não informado'}` : '-'}
+                            {(separatedFilters[0] || separatedFilters[1]) ? `${separatedFilters[0] || 'Não informado'} - ${separatedFilters[1] || 'Não informado'}` : '-'}
                         </p>
                     </div>
                     <div className="flex flex-row items-center gap-2 lg:ml-7 lg:self-start">
                         <Building2 className="text-[#323232]" size={16}/>
-                        <p className="text-[#323232] text-[12px]">{empresa || '-'}</p>
+                        <p className="text-[#323232] text-[12px]">{separatedFilters[2] || '-'}</p>
                     </div>
                     <div className="flex flex-row items-center gap-2 lg:ml-7 lg:self-start">
                         <Building className="text-[#323232]" size={16}/>
-                        <p className="text-[#323232] text-[12px]">{estabelecimento || '-'}</p>
+                        <p className="text-[#323232] text-[12px]">{separatedFilters[3] || '-'}</p>
                     </div>
                     <div className="flex flex-row items-center gap-2 lg:ml-7 lg:self-start">
                         <Wallet className="text-[#323232]" size={16}/>
-                        <p className="text-[#323232] text-[12px]">{localizacao || '-'}</p>
+                        <p className="text-[#323232] text-[12px]">{separatedFilters[4] || '-'}</p>
                     </div>
                 </div>
 
@@ -244,7 +267,7 @@ const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
                     <p className="font-semibold lg:self-start text-[#1F3D58]">Resposta da IA</p>
                 </div>
                 <div className="flex flex-col max-w-xs lg:max-w-full text-justify mb-6 lg:self-start lg:ml-7">           
-                    <p className="text-[#323232] self-center whitespace-pre-wrap">{retorno}</p>                                       
+                    <p className="text-[#323232] self-center whitespace-pre-wrap">{interaction?.RETORNO}</p>                                       
                 </div>  
 
                 <Button type="button" onClick={onDownload} disabled={loading} className="bg-white hover:bg-white  border-1 border-[#323232] hover:border-[#4CAF50] text-[#323232] hover:text-[#4CAF50] w-40 hover:w-42 rounded-md shadow-lg hover:shadow-2xl lg:self-start lg:ml-7">

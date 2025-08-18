@@ -156,7 +156,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
         setIsAlertOpen(true);
       } else {
         console.log("Resposta do servidor:", data);
-        navigate(`/interaction/${data.id}`, { state: data });
+        navigate(`/interaction/${data.id}`);
       }
     } catch (error) {
       console.error(error);
@@ -213,12 +213,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
         }));
 
         setEstabelecimentos(estabelecimentosFormatados);
-
-        if (estabelecimentosFormatados.length > 0) {
-        form.setValue("estabelecimento", estabelecimentosFormatados[0].nome);
-        } else {
-          form.setValue("estabelecimento", "");
-        }
+        
       } catch (error) {
         if (error instanceof Error) {
           console.error("Erro ao buscar os estabelecimentos:", error.message);
@@ -242,12 +237,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
         }));
 
         setLocalizacoes(localizacoesFormatadas);
-
-        if (localizacoesFormatadas.length > 0) {
-        form.setValue("localizacao", localizacoesFormatadas[0].nome);
-        } else {
-          form.setValue("localizacao", "");
-        }
+        
       } catch (error) {
         if (error instanceof Error) {
           console.error("Erro ao buscar as localizações:", error.message);
@@ -258,7 +248,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
       }
     }
     getLocalizacoes();
-  }, [selectedEmpresa]); 
+  }, []); 
 
   return (
     <div className="flex flex-row h-screen">
