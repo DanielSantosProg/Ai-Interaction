@@ -13,6 +13,7 @@ import ViewInteraction from './pages/ViewInteraction';
 import Sidebar from './components/Sidebar';
 import { ThemeProvider } from "@/components/theme-provider"
 import { Loader2Icon } from 'lucide-react';
+import Config from './pages/Config';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
@@ -44,6 +45,7 @@ function App() {
                     React.cloneElement(<ViewInteraction isSidebarOpen={isSidebarOpen}/>)
                   }
                 />
+                <Route path="/config" element={<Config isSidebarOpen={isSidebarOpen} />} />
               </Routes>
             </Suspense>
           </div>

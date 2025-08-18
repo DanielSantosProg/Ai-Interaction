@@ -19,8 +19,6 @@ import { MoveRight, Loader2Icon, GalleryVerticalEnd, Sparkles, Pen, Funnel, Text
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
-import { es } from "date-fns/locale"
-
 
 interface NewInteractionProps {
   isSidebarOpen: boolean;

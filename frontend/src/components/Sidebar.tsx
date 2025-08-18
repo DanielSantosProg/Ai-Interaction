@@ -81,7 +81,7 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen }: SidebarProps) => {
           <ul className="space-y-1 justify-center font-medium lg:space-y-2">
             <li className='hover:border-l-4 hover:border-l-[#D9D9D9]'>
               <a 
-                href="/" 
+                href="/config" 
                 className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
               >
                 <Wrench className="text-[#4CAF50]" size={22} />
