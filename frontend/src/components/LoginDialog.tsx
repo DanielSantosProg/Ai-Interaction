@@ -32,7 +32,7 @@ const formSchema = z.object({
 export function LoginModal() {
   const[loading, setLoading] = useState(false);
   const[error, setError] = useState<string | null>(null);
-  const[isAlertOpen, setIsAlertOpen] = useState(false);
+  const[isModalOpen, setIsModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -47,44 +47,38 @@ export function LoginModal() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    console.log("teste")
-    setLoading(true);
+    setLoading(true);    
 
-    const payload = {
-      empresa: values.empresa,
-      username: values.username,
-      password: values.password,
-    };
+    console.log("Submetendo formulário...", values);
 
-    console.log("Submetendo formulário...", payload);
+    const bodyData = JSON.stringify({ empresa: values.empresa, nome: values.username, senha: values.password });
+    console.log("Body Data: ", bodyData)
 
-    try { 
-      const response = await fetch("http://localhost:3001/login", {
+    try {
+      const response = await fetch("http://localhost:3001/auth/login", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
-        body: JSON.stringify({values: payload}),
+        body: bodyData,
       });
+
+      const data = await response.json();
 
       if (!response.ok) {
         throw new Error("Erro ao enviar dados para o servidor.");
       }
-
-      const data = await response.json();
       
-      if (data.error) {
-        console.error(data.error);
-        setError(data.error);
-        setIsAlertOpen(true);
-      } else {
-        console.log("Resposta do servidor:", data);
-        navigate(`/`);
-      }
+      localStorage.setItem('authToken', data.token);
+
+      console.log("Login bem-sucedido! Token salvo:", data.token);
+      console.log("Dados do usuário:", data.user);      
+      
+      setIsModalOpen(false);
+      navigate(`/`);      
     } catch (error) {
       console.error(error);
       setError(error instanceof Error ? error.message : String(error));
-      setIsAlertOpen(true);
     } finally {
       setLoading(false);
     }

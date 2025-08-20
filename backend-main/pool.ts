@@ -3,7 +3,7 @@ const { Pool } = pkg;
 import dotenv from 'dotenv';
 
 dotenv.config();
-let pool: pkg.Pool;
+let pool: pkg.Pool | null = null;
 
 // Configurações do banco de dados
 export default async function getPool(){
@@ -16,4 +16,12 @@ export default async function getPool(){
     port: Number(process.env.DB_PORT),
     });
     return pool
+}
+
+export async function closePool(): Promise<void>{
+    if (pool) {
+        console.log("Fechando pool de conexões com o banco de dados.");
+        await pool.end();
+        pool = null;
+    }
 }

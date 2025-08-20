@@ -1,5 +1,13 @@
 import express from 'express';
 import type { Request, Response } from 'express';
+import cors from 'cors';
+
+import { Empresa, User, Config } from './models/Relacionamentos';
+
+import { sequelize, connectToDatabase } from './config/db';
+
+// Importa as rotas
+import authRoutes from './routes/authRoutes';
 import empresasRoutes from './routes/empresaRoutes';
 import usuariosRoutes from './routes/usuarioRoutes';
 import configsRoutes from './routes/configRoutes';
@@ -7,18 +15,59 @@ import configsRoutes from './routes/configRoutes';
 const app = express();
 const port = 3001;
 
+app.use(cors());
 app.use(express.json());
 
-// Rota para checar o status da API
+// Rota de checagem do status da API
 app.get('/', (req: Request, res: Response) => {
-  res.send('Servidor rodando...');
+    res.send('Servidor rodando...');
 });
 
+app.get('/data', async (req: Request, res: Response) => {
+    try {
+        const result = await Empresa.findAll({
+            include: [
+                {
+                    model: User,
+                    as: 'usuarios',
+                    attributes: { exclude: ['senha'] }
+                },
+                {
+                    model: Config,
+                    as: 'configuracao',
+                }
+            ]
+        });
+        res.json({ response: result, error: null });
+    } catch (error) {
+        console.error("Erro na rota /data:", error);
+        res.status(500).json({ response: null, error: 'Erro ao buscar dados.' });
+    }
+});
+
+// Usa as rotas existentes
+app.use("/auth", authRoutes);
 app.use("/empresas", empresasRoutes);
 app.use("/usuarios", usuariosRoutes);
 app.use("/configs", configsRoutes);
 
-// Inicia o servidor na porta definida
-app.listen(port, () => {
-  console.log(`A API está rodando em http://localhost:${port}`);
-});
+async function startServer() {
+    try {
+        // Testa a conexão com o banco de dados antes de iniciar o servidor
+        await connectToDatabase();
+        
+        // Sincroniza os modelos com o banco de dados
+        await sequelize.sync({ alter: true });
+        
+        // Inicia o servidor apenas se a conexão for bem-sucedida
+        app.listen(port, () => {
+            console.log(`A API está rodando em http://localhost:${port}`);
+        });
+
+    } catch (error) {
+        console.error('Falha ao iniciar o servidor:', error);
+    }
+}
+
+// Inicia o servidor
+startServer();

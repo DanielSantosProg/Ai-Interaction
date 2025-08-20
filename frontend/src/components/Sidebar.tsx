@@ -1,4 +1,4 @@
-import { Plus, Bot, Ellipsis, Wrench, Menu, GalleryVerticalEnd } from 'lucide-react';
+import { Plus, Bot, Ellipsis, Wrench, Menu, GalleryVerticalEnd, Home } from 'lucide-react';
 import UserIcon from '../assets/UserIcon.png'
 
 interface SidebarProps {
@@ -51,6 +51,15 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen }: SidebarProps) => {
             <ul className="space-y-1 lg:space-y-2 justify-center font-medium">
               <li className='hover:border-l-4 hover:border-l-[#D9D9D9]'>
                 <a 
+                  href="/" 
+                  className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
+                >
+                  <Home className="text-[#4CAF50]" size={22} />
+                </a>
+              </li>
+
+              <li className='hover:border-l-4 hover:border-l-[#D9D9D9]'>
+                <a 
                   href="/new-interaction" 
                   className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
                 >
@@ -65,20 +74,11 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen }: SidebarProps) => {
                 >
                   <GalleryVerticalEnd className="text-[#4CAF50]" size={22} /> 
                 </a>
-              </li>
-              
-              <li className='hover:border-l-4 hover:border-l-[#D9D9D9]'>
-                <a 
-                  href="/" 
-                  className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
-                >
-                  <Ellipsis className="text-[#4CAF50]" size={22} />
-                </a>
-              </li>
+              </li>              
             </ul>
           </nav>         
         </div>
-        <nav className='py-4 mt-auto lg:py-8'>
+        <nav className='pb-4 mt-auto lg:py-8'>
           <ul className="space-y-1 justify-center font-medium lg:space-y-2">
             <li className='hover:border-l-4 hover:border-l-[#D9D9D9]'>
               <a 
