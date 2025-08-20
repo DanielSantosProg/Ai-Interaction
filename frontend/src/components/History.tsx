@@ -47,13 +47,15 @@ const History = ({ isOpen }: HistoryProps) => {
 
   return (
         <div className={`w-full flex-col items-center h-full flex transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-            <div className="flex w-full justify-center h-40">
-                <img src={logo} className="max-w-26 sm:max-w-48 self-center max-h-30" alt="" />
-            </div>
             {isOpen && 
-            <div className="self-baseline p-4 flex-shrink-0">
-                <SelectComponent placeholder="Interações" items={[{value:"todas", label:"Todas"}, {value:"minhas", label:"Minhas"}]} />
-            </div>}            
+            <>
+                <div className="flex w-full justify-center h-40">
+                    <img src={logo} className="max-w-26 sm:max-w-48 self-center max-h-30" alt="" />
+                </div>
+                <div className="self-baseline p-4 flex-shrink-0">
+                    <SelectComponent placeholder="Interações" items={[{ value: "todas", label: "Todas" }, { value: "minhas", label: "Minhas" }]} />
+                </div>
+            </>}            
             <div className="flex flex-col items-center w-full scrollbar-thin overflow-y-auto flex-grow">
                 {cards.map((card) => (
                     <HoverCardComponent key={card.ID} id={card.ID} title={card.TITULO} date={card.DT_CRIACAO} owner={card.USR_NOME} prompt={card.PROMPT} filters={card.FILTROS} retorno={card.RETORNO}/>

@@ -4,6 +4,7 @@ import cors from 'cors';
 import mssql from 'mssql'
 
 import { analyseDocument } from './requests/documentAnalysis';
+import { updateConnectionData } from './services/gerenciarConexao';
 import gerarDocumento from './services/gerarDocumento';
 
 dotenv.config();
@@ -123,14 +124,12 @@ app.get('/interactions', async (req, res) => {
                             FROM HISTORICO H WITH (NOLOCK)
                             INNER JOIN FR_USUARIO F WITH (NOLOCK) ON H.COD_USUARIO = F.USR_CODIGO
                             WHERE COD_USUARIO = @userId`);
-            console.log("Dados do histórico:", result.recordset);
         } else {
             result = await sqlPool.request()
                 .query(`SELECT 
                             H.ID, H.COD_USUARIO, H.PROMPT, H.TITULO, H.DT_CRIACAO, H.FILTROS, H.RETORNO, F.USR_NOME 
                             FROM HISTORICO H WITH (NOLOCK)
                             INNER JOIN FR_USUARIO F WITH (NOLOCK) ON H.COD_USUARIO = F.USR_CODIGO`);
-            console.log("Dados do histórico (todos):", result.recordset);
         }
 
         const data = result.recordset;
@@ -175,7 +174,6 @@ app.get('/empresas', async (req, res) => {
         
         result = await sqlPool.request()
             .query(`SELECT GER_EMP_ID, GER_EMP_NOME_FANTASIA FROM GER_EMPRESA`);
-        console.log("Empresas:", result.recordset);
 
         const data = result.recordset;
         res.send(data);
@@ -194,7 +192,6 @@ app.get('/estabelecimentos', async (req, res) => {
         result = await sqlPool.request()
             .input('empresaId', mssql.Int, emp_id)
             .query(`SELECT COP_EST_ID, COP_EST_DESCRICAO, GER_EMP_ID FROM COP_ESTABELECIMENTO WHERE GER_EMP_ID = @empresaId`);
-        console.log("Estabelecimentos:", result.recordset);
 
         const data = result.recordset;
         res.send(data);
@@ -211,7 +208,6 @@ app.get('/localizacoes', async (req, res) => {
         
         result = await sqlPool.request()
             .query(`SELECT COP_LOC_ID,COP_LOC_DESCRICAO FROM COP_LOCALIZACAO_CORE_E_COPA`);
-        console.log("Localizações:", result.recordset);
 
         const data = result.recordset;
         res.send(data);
@@ -260,13 +256,30 @@ app.get('/document_data', async (req, res) => {
                     ,e.GER_EMP_NOME_FANTASIA
             FROM COR_CADASTRO_DE_DUPLICATAS with(nolock) INNER JOIN GER_EMPRESA e with (nolock)
             ON e.GER_EMP_ID = COR_CADASTRO_DE_DUPLICATAS.COR_DUP_IDEMPRESA WHERE 1=1 ${stringFilters}`);
-        console.log("Data: ", result.recordset);
 
         const data = result.recordset;
         res.send(data);
     } catch (error) {
         console.error("Erro ao buscar os Dados:", error);
         res.status(500).send({ error: "Erro ao buscar os Dados" });
+    }  
+});
+
+app.post('/connection_data', async (req, res) => {
+    try {
+        if (!sqlPool) {
+            throw new Error('Pool de conexões não inicializado.');
+        }
+        const { values } = req.body;
+
+        const result = await updateConnectionData(values);
+
+        console.log("Dados de conexão:", result);
+
+        res.send({ response: result, error: null });
+    } catch (error) {
+        console.error("Erro: ", error);
+        res.status(500).send({ response: null, error: "Erro interno do servidor" });
     }  
 });
 

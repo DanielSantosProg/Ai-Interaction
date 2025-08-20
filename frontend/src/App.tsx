@@ -7,6 +7,7 @@ import React, { Suspense } from 'react';
 
 // pages
 const NewInteraction = React.lazy(() => import('./pages/NewInteraction'));
+import Home from './pages/Home';
 import ViewInteraction from './pages/ViewInteraction';
 
 // components
@@ -35,6 +36,10 @@ function App() {
               <Routes>
                 <Route 
                   path="/" 
+                  element={<Home isSidebarOpen={isSidebarOpen}/>}
+                />
+                <Route 
+                  path="/new-interaction" 
                   element={
                     React.cloneElement(<NewInteraction isSidebarOpen={isSidebarOpen}/>)
                   }

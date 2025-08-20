@@ -1,9 +1,10 @@
-import { Plus, Bot, Ellipsis, Wrench, Menu } from 'lucide-react';
+import { Plus, Bot, Ellipsis, Wrench, Menu, GalleryVerticalEnd } from 'lucide-react';
 import UserIcon from '../assets/UserIcon.png'
 
 interface SidebarProps {
   handleSidebarOpen: () => void;
-  isSidebarOpen: boolean; // Adicione esta tipagem também
+  isSidebarOpen: boolean;
+  
 }
 
 const Sidebar = ({ handleSidebarOpen, isSidebarOpen }: SidebarProps) => {
@@ -50,7 +51,7 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen }: SidebarProps) => {
             <ul className="space-y-1 lg:space-y-2 justify-center font-medium">
               <li className='hover:border-l-4 hover:border-l-[#D9D9D9]'>
                 <a 
-                  href="/" 
+                  href="/new-interaction" 
                   className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
                 >
                   <Plus className="text-[#4CAF50]" size={22} />
@@ -59,10 +60,10 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen }: SidebarProps) => {
               
               <li className='hover:border-l-4 hover:border-l-[#D9D9D9]'>
                 <a 
-                  href="/" 
+                  href="/interactions" 
                   className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
                 >
-                  <Bot className="text-[#4CAF50]" size={22} /> 
+                  <GalleryVerticalEnd className="text-[#4CAF50]" size={22} /> 
                 </a>
               </li>
               

@@ -4,7 +4,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { CloudCog, Cog, Database, DatabaseZap, GalleryVerticalEnd, KeyRound, Loader2Icon, SaveAll, Server, Sparkles, UserCog } from "lucide-react";
+import { Cog, Database, DatabaseZap, GalleryVerticalEnd, KeyRound, Loader2Icon, SaveAll, Server, Sparkles, UserCog } from "lucide-react";
 
 // Libraries/hooks
 import z from "zod";
@@ -25,7 +25,6 @@ const formSchema = z.object({
     DB_USER: z.string().min(1, {message: "Insira o nome do usuário."}),
     DB_PASSWORD: z.string().min(1, {message: "Insira a senha do usuário."}),
     DB_PORT: z.number().min(1, {message: "Insira a porta do banco de dados."}),
-    PORT: z.number().optional(),
 })
 
 const Config = ({ isSidebarOpen }: ConfigProps) => {
@@ -48,7 +47,6 @@ const Config = ({ isSidebarOpen }: ConfigProps) => {
           DB_USER: "",
           DB_PASSWORD: "",
           DB_PORT: 1433,
-          PORT: 3000,
         },
       })
 
@@ -61,13 +59,12 @@ const Config = ({ isSidebarOpen }: ConfigProps) => {
           DB_USER: values.DB_USER,
           DB_PASSWORD: values.DB_PASSWORD,
           DB_PORT: values.DB_PORT,
-          PORT: values.PORT,
         };
     
         console.log("Submetendo formulário...", payload);
     
         try {  
-          const response = await fetch("http://localhost:3000/db_data", {
+          const response = await fetch("http://localhost:3000/connection_data", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
@@ -133,14 +130,13 @@ const Config = ({ isSidebarOpen }: ConfigProps) => {
             </div>
             <h2 className="text-[26px] font-bold sm:text-[32px] text-center bg-gradient-to-r from-[#1F3D58] to-teal-500 text-transparent bg-clip-text">Configurações</h2>
           </div>
-          <p className="text-[#323232]/85 font-regular text-center">Preencha com as configurações da empresa</p>
         </div>
         
         <Tabs defaultValue="general" className="mt-4 w-full items-center">
-        <TabsList>
-            <TabsTrigger value="general">Configurações gerais</TabsTrigger>
-            <TabsTrigger value="connection">Conexão</TabsTrigger>
-        </TabsList>
+            <TabsList>
+                <TabsTrigger value="general">Gerais</TabsTrigger>
+                <TabsTrigger value="connection">Conexão</TabsTrigger>
+            </TabsList>
         <TabsContent value="general">
             <p>Configurações gerais</p>
         </TabsContent>
@@ -239,25 +235,7 @@ const Config = ({ isSidebarOpen }: ConfigProps) => {
                                     </FormItem>
                                 )}
                                 />
-                            </div>
-                            <div className="w-full mt-6">
-                                <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
-                                    <CloudCog className="text-[#1F3D58]" size={18}/>
-                                    <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">PORT</FormLabel>
-                                </div>
-                                <FormField
-                                control={form.control}
-                                name="PORT"
-                                render={({ field }) => (
-                                    <FormItem className="flex flex-col md:flex-row items-center w-full">                    
-                                    <FormControl>
-                                        <Input placeholder="Digite a porta do servidor" className="w-2xs md:w-full" {...field} />
-                                    </FormControl>
-                                    <FormMessage />
-                                    </FormItem>
-                                )}
-                                />
-                            </div>                               
+                            </div>                                                           
                         </div>                            
 
                         <div className="flex justify-center pt-4">
