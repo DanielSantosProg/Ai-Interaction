@@ -527,7 +527,7 @@ const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
                   {loading ? (
                     <>
                       <Loader2Icon className="animate-spin mr-2" size={20} />
-                      Processando...
+                      Enviando...
                     </>
                   ) : (
                     <>
