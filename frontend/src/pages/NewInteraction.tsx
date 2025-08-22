@@ -22,6 +22,7 @@ import axios from "axios"
 
 interface NewInteractionProps {
   isSidebarOpen: boolean;
+  user: any;
 }
 
 // Schema de validação Zod
@@ -67,7 +68,7 @@ type Modelo = {
   nome: string;
 }
 
-const NewInteraction = ({ isSidebarOpen }: NewInteractionProps) => {
+const NewInteraction = ({ isSidebarOpen, user }: NewInteractionProps) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null);
   const [isAlertOpen, setIsAlertOpen] = useState(false);

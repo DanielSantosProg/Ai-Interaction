@@ -2,8 +2,9 @@ import './App.css'
 
 // Libraries/Hooks
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { useState } from 'react';
+import { useState, useContext } from 'react';
 import React, { Suspense } from 'react';
+import { AuthContext } from "./context/AuthContext";
 
 // pages
 const NewInteraction = React.lazy(() => import('./pages/NewInteraction'));
@@ -19,6 +20,8 @@ import Config from './pages/Config';
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
+    const { user, login, logout } = useContext(AuthContext);
+
   const handleSidebarOpen = () => {
     setIsSidebarOpen(!isSidebarOpen)
   }
@@ -27,7 +30,7 @@ function App() {
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <div className="flex min-h-screen flex-row overflow-hidden">
         <BrowserRouter>
-          <Sidebar handleSidebarOpen={handleSidebarOpen} isSidebarOpen={isSidebarOpen}/>
+          <Sidebar handleSidebarOpen={handleSidebarOpen} isSidebarOpen={isSidebarOpen} user={user} login={login} logout={logout} />
           <div className='flex-grow sm:ml-22 overflow-hidden'>
             <Suspense fallback={<div className='flex h-screen justify-center items-center'>                    
                       <Loader2Icon className="animate-spin mr-2" size={20} />
@@ -36,21 +39,21 @@ function App() {
               <Routes>
                 <Route 
                   path="/" 
-                  element={<Home isSidebarOpen={isSidebarOpen}/>}
+                  element={<Home isSidebarOpen={isSidebarOpen} user={user} login={login} logout={logout} />}
                 />
                 <Route 
                   path="/new-interaction" 
                   element={
-                    React.cloneElement(<NewInteraction isSidebarOpen={isSidebarOpen}/>)
+                    React.cloneElement(<NewInteraction isSidebarOpen={isSidebarOpen} user={user} />)
                   }
                 />
                 <Route 
                   path="/interaction/:id" 
                   element={
-                    React.cloneElement(<ViewInteraction isSidebarOpen={isSidebarOpen}/>)
+                    React.cloneElement(<ViewInteraction isSidebarOpen={isSidebarOpen} user={user} />)
                   }
                 />
-                <Route path="/config" element={<Config isSidebarOpen={isSidebarOpen} />} />
+                <Route path="/config" element={<Config isSidebarOpen={isSidebarOpen} user={user} />} />
               </Routes>
             </Suspense>
           </div>

@@ -1,14 +1,18 @@
-import { Plus, Bot, Ellipsis, Wrench, Menu, GalleryVerticalEnd, Home } from 'lucide-react';
+import { Plus, Wrench, Menu, GalleryVerticalEnd, Home, LogIn, LogOut } from 'lucide-react';
 import UserIcon from '../assets/UserIcon.png'
+import { LoginModal } from './LoginDialog';
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
 interface SidebarProps {
   handleSidebarOpen: () => void;
   isSidebarOpen: boolean;
-  
+  user: any;
+  login: (userData: any) => void;
+  logout: () => void;
 }
 
-const Sidebar = ({ handleSidebarOpen, isSidebarOpen }: SidebarProps) => {
-  
+const Sidebar = ({ handleSidebarOpen, isSidebarOpen, user, login, logout }: SidebarProps) => {
+
   return (
     <>
       {/* Botão para mobile */}
@@ -80,6 +84,34 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen }: SidebarProps) => {
         </div>
         <nav className='pb-4 mt-auto lg:py-8'>
           <ul className="space-y-1 justify-center font-medium lg:space-y-2">
+            <li className='group hover:border-l-4 hover:border-l-[#D9D9D9]'>
+              {!user ? (
+                <Dialog>
+                  <DialogTrigger asChild>
+                    <a
+                      href="#"
+                      className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
+                    >
+
+                      <LogIn className="group-hover:text-teal-500 text-[#4CAF50]" size={22} />
+                    </a>
+                  </DialogTrigger>
+                  <LoginModal login={login} />
+                </Dialog>
+              ) : (
+                <a
+                  href="#"
+                  className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
+                  onClick={(e) => {
+                    e.preventDefault();
+                    logout();
+                  }}
+                >
+                  <LogOut className="group-hover:text-red-500 text-[#4CAF50]" size={22} />
+                </a>
+              )}
+              
+            </li>
             <li className='hover:border-l-4 hover:border-l-[#D9D9D9]'>
               <a 
                 href="/config" 

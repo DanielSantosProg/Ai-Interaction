@@ -12,7 +12,8 @@ import { Building, Building2, Calendar, CalendarPlus, FileDown, GalleryVerticalE
 import axios from "axios";
 
 interface ViewInteractionProps {
-    isSidebarOpen: boolean;     
+    isSidebarOpen: boolean;    
+    user: any;
 }
 
 interface ViewInteractionState {
@@ -37,7 +38,7 @@ interface InteractionData {
     RETORNO: string;
 }
 
-const ViewInteraction = ({ isSidebarOpen }: ViewInteractionProps) => {
+const ViewInteraction = ({ isSidebarOpen, user }: ViewInteractionProps) => {
     const [isHistoryOpen, setIsHistoryOpen] = useState(true);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);

@@ -16,6 +16,7 @@ import { AlertDialogError } from "@/components/AlertDialog";
 
 interface ConfigProps {
   isSidebarOpen: boolean;
+  user: any;
 }
 
 // Schema de validação Zod
@@ -27,7 +28,7 @@ const formSchema = z.object({
     DB_PORT: z.number().min(1, {message: "Insira a porta do banco de dados."}),
 })
 
-const Config = ({ isSidebarOpen }: ConfigProps) => {
+const Config = ({ isSidebarOpen, user }: ConfigProps) => {
     const [isHistoryOpen, setIsHistoryOpen] = useState(true);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);

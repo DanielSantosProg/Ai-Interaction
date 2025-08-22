@@ -3,20 +3,23 @@ import History from "../components/History"
 
 // Componentes extras
 import { Button } from "@/components/ui/button"
+import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
 // Libraries/Hooks
 import { useState } from "react"
 import { useNavigate } from "react-router-dom";
-import { GalleryVerticalEnd, Sparkles } from "lucide-react"
+import { GalleryVerticalEnd, LogIn, LogOut, Sparkles } from "lucide-react"
 import { LoginModal } from "@/components/LoginDialog";
 
 interface HomeProps {
-    isSidebarOpen: boolean;     
+    isSidebarOpen: boolean;
+    login: (userData: any) => void;
+    logout: () => void;
+    user: any;
 }
 
-const Home = ({ isSidebarOpen }: HomeProps) => {
+const Home = ({ isSidebarOpen, login, logout, user }: HomeProps) => {
     const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-    const [user, setUser] = useState(null);
 
     const navigate = useNavigate();    
 
@@ -55,10 +58,34 @@ const Home = ({ isSidebarOpen }: HomeProps) => {
                 </div>
                 <p className="text-[#323232]/85 font-regular text-center">Um sistema de interação com IA para análise de dados.</p>
             </div>
-            {!user && (
-                <div className="flex flex-col items-center h-60 w-md bg-white border-2 rounded-md my-8 justify-center gap-4">
-                    <p className="text-[#323232]/85 font-regular text-center">Você não está autenticado, faça login clicando no botão abaixo para ter acesso as interações.</p>
-                    <LoginModal />
+            {!user ? (
+                <div className="flex flex-col items-center h-60 w-md bg-white border-2 rounded-md my-8 justify-center gap-6">
+                    <div>
+                        <p className="text-[#323232]/85 font-regular text-center">Você não está autenticado.</p>
+                        <p className="text-[#323232]/85 font-regular text-center">Para entrar clique no botão de login.</p>
+                    </div>
+                    <Dialog>
+                        <DialogTrigger asChild>
+                            <Button>
+                                <LogIn className="mr-2" size={18} /> Login
+                            </Button>
+                        </DialogTrigger>
+                        <LoginModal login={login} /> {/* Aqui está o ajuste */}
+                    </Dialog>
+                </div>
+            ): (    
+                <div className="flex flex-col items-center h-60 w-md bg-white border-2 rounded-md my-8 justify-center gap-6">
+                    <div>
+                        <p className="text-[#323232]/85 font-regular text-center">Olá {user.nome}.</p>
+                        <p className="text-[#323232]/85 font-regular text-center">Seja bem-vindo!</p>
+                    </div>
+                    <Button 
+                        className="bg-red-500 hover:bg-red-600" 
+                        onClick={() => logout()}
+                    >
+                        <LogOut />
+                        Sair
+                    </Button>
                 </div>
             )}
         </div>

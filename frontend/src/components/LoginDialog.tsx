@@ -1,17 +1,15 @@
-// Components
+// components/LoginDialog.tsx
 import { Button } from "@/components/ui/button"
 import {
-   Dialog,
-   DialogContent,
-   DialogDescription,
-   DialogFooter,
-   DialogClose,
-   DialogHeader,
-   DialogTitle,
-   DialogTrigger,
+    DialogContent,
+    DialogDescription,
+    DialogFooter,
+    DialogClose,
+    DialogHeader,
+    DialogTitle,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
-import { CircleX, LogIn } from "lucide-react"
+import { CircleX } from "lucide-react"
 
 // Libraries/hooks
 import z from "zod"
@@ -29,10 +27,13 @@ const formSchema = z.object({
   password: z.string().min(6, {message: "Senha deve ter pelo menos 6 caracteres."}).max(15, {message: "Senha deve ter no máximo 15 caracteres."}),
 });
 
-export function LoginModal() {
+interface LoginModalProps {
+  login: (userData: any) => void;
+}
+
+export function LoginModal({ login }: LoginModalProps) {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -43,7 +44,7 @@ export function LoginModal() {
       username: '',
       password: '',
     },
-  })
+  });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setLoading(true);
@@ -63,15 +64,13 @@ export function LoginModal() {
         throw new Error("Erro ao enviar dados para o servidor.");
       }
       
-      localStorage.setItem('authToken', data.token);
+      login(data);
       localStorage.setItem('id_empresa', data.user.id_empresa);
 
       console.log("Login bem-sucedido! Token salvo:", data.token);
       console.log("Dados do usuário:", data.user);      
       
-      setOpen(false); // 👈 Feche o modal aqui
       navigate(`/`);      
-      
     } catch (error) {
       console.error(error);
       setError(error instanceof Error ? error.message : String(error));
@@ -81,78 +80,73 @@ export function LoginModal() {
   }
 
   return (
-    <Dialog open={open} onOpenChange={setOpen}>
-      <DialogTrigger asChild>
-        <Button variant="default"><LogIn /></Button>
-      </DialogTrigger>
-      <DialogContent className="sm:max-w-[425px]">
-        <DialogHeader className="mb-4">
-          <DialogTitle>Login</DialogTitle>
-          <DialogDescription>
-            Acesse a sua conta.
-          </DialogDescription>
-        </DialogHeader>
-        
-        <Form {...form}>
-          <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
-            <FormField
-              control={form.control}
-              name="empresa"
-              render={({ field }) => (
-                <FormItem className="grid gap-3">
-                  <FormLabel>Nome da Empresa</FormLabel>
-                  <FormControl>
-                    <Input id="empresa" placeholder="Digite o nome da Empresa" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="username"
-              render={({ field }) => (
-                <FormItem className="grid gap-3">
-                  <FormLabel>Nome de Usuário</FormLabel>
-                  <FormControl>
-                    <Input id="username" placeholder="Digite o nome de Usuário" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-            <FormField
-              control={form.control}
-              name="password"
-              render={({ field }) => (
-                <FormItem className="grid gap-3">
-                  <FormLabel>Senha</FormLabel>
-                  <FormControl>
-                    <Input id="password" type="password" placeholder="Digite sua senha" {...field} />
-                  </FormControl>
-                  <FormMessage />
-                </FormItem>
-              )}
-            />
-
-            {error && (
-              <div className="flex items-center gap-2 p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
-                <CircleX size={20} />
-                <span>{error}</span>
-              </div>
+    <DialogContent className="sm:max-w-[425px]">
+      <DialogHeader className="mb-4">
+        <DialogTitle>Login</DialogTitle>
+        <DialogDescription>
+          Acesse a sua conta.
+        </DialogDescription>
+      </DialogHeader>
+      
+      <Form {...form}>
+        <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-4">
+          <FormField
+            control={form.control}
+            name="empresa"
+            render={({ field }) => (
+              <FormItem className="grid gap-3">
+                <FormLabel>Nome da Empresa</FormLabel>
+                <FormControl>
+                  <Input id="empresa" placeholder="Digite o nome da Empresa" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
             )}
+          />
+          <FormField
+            control={form.control}
+            name="username"
+            render={({ field }) => (
+              <FormItem className="grid gap-3">
+                <FormLabel>Nome de Usuário</FormLabel>
+                <FormControl>
+                  <Input id="username" placeholder="Digite o nome de Usuário" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+          <FormField
+            control={form.control}
+            name="password"
+            render={({ field }) => (
+              <FormItem className="grid gap-3">
+                <FormLabel>Senha</FormLabel>
+                <FormControl>
+                  <Input id="password" type="password" placeholder="Digite sua senha" {...field} />
+                </FormControl>
+                <FormMessage />
+              </FormItem>
+            )}
+          />
 
-            <DialogFooter className="mt-4">
-              <DialogClose asChild>
-                <Button variant="outline">Cancelar</Button>
-              </DialogClose>
-              <Button type="submit" disabled={loading}>
-                {loading ? "Carregando..." : "Fazer Login"}
-              </Button>
-            </DialogFooter>
-          </form>
-        </Form>
-      </DialogContent>
-    </Dialog>
-  )
+          {error && (
+            <div className="flex items-center gap-2 p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
+              <CircleX size={20} />
+              <span>{error}</span>
+            </div>
+          )}
+
+          <DialogFooter className="mt-4">
+            <DialogClose asChild>
+              <Button variant="outline">Cancelar</Button>
+            </DialogClose>
+            <Button type="submit" disabled={loading}>
+              {loading ? "Carregando..." : "Fazer Login"}
+            </Button>
+          </DialogFooter>
+        </form>
+      </Form>
+    </DialogContent>
+  );
 }
