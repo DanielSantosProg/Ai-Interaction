@@ -11,6 +11,8 @@ import authRoutes from './routes/authRoutes';
 import empresasRoutes from './routes/empresaRoutes';
 import usuariosRoutes from './routes/usuarioRoutes';
 import configsRoutes from './routes/configRoutes';
+import { sendConnectionDataToEndpoint, updateConnectionData } from './requests/gerenciarConexao';
+import { config } from 'dotenv';
 
 const app = express();
 const port = 3001;
@@ -43,6 +45,31 @@ app.get('/data', async (req: Request, res: Response) => {
         console.error("Erro na rota /data:", error);
         res.status(500).json({ response: null, error: 'Erro ao buscar dados.' });
     }
+});
+
+app.post('/change_config', async (req: Request, res: Response) => {
+    try {        
+        const { values, id_empresa } = req.body;
+
+        const configs = await Config.findAll({ where: { id_empresa: id_empresa } });
+
+        let result;
+
+        if (configs.length === 0) {
+            result = await Config.create({ id_empresa: id_empresa, db_database: values.DB_DATABASE, db_user: values.DB_USER, db_password: values.DB_PASSWORD, db_port: values.DB_PORT, db_server: values.DB_SERVER });
+        } else{
+            result = await updateConnectionData(values, id_empresa);
+        }
+
+        const response = await sendConnectionDataToEndpoint(values);
+
+        console.log("Dados de conexão:", result);
+
+        res.send({ response: result, localDBResponse: response, error: null });
+    } catch (error) {
+        console.error("Erro: ", error);
+        res.status(500).send({ response: null, localDBResponse: null, error: "Erro interno do servidor" });
+    }  
 });
 
 // Usa as rotas existentes

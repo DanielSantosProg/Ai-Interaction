@@ -4,7 +4,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Cog, Database, DatabaseZap, GalleryVerticalEnd, KeyRound, Loader2Icon, SaveAll, Server, Sparkles, UserCog } from "lucide-react";
+import { Cog, Database, DatabaseZap, GalleryVerticalEnd, KeyRound, Loader2Icon, SaveAll, Server, UserCog } from "lucide-react";
 
 // Libraries/hooks
 import z from "zod";
@@ -60,16 +60,18 @@ const Config = ({ isSidebarOpen }: ConfigProps) => {
           DB_PASSWORD: values.DB_PASSWORD,
           DB_PORT: values.DB_PORT,
         };
+
+        const id_empresa = localStorage.getItem('id_empresa');
     
         console.log("Submetendo formulário...", payload);
     
         try {  
-          const response = await fetch("http://localhost:3000/connection_data", {
+          const response = await fetch("http://localhost:3001/change_config", {
             method: "POST",
             headers: {
               "Content-Type": "application/json",
             },
-            body: JSON.stringify({values: payload}),
+            body: JSON.stringify({ values: payload, id_empresa: id_empresa }),
           });
     
           if (!response.ok) {

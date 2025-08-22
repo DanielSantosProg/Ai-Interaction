@@ -1,14 +1,14 @@
 // Components
 import { Button } from "@/components/ui/button"
 import {
-  Dialog,
-  DialogClose,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-  DialogTrigger,
+   Dialog,
+   DialogContent,
+   DialogDescription,
+   DialogFooter,
+   DialogClose,
+   DialogHeader,
+   DialogTitle,
+   DialogTrigger,
 } from "@/components/ui/dialog"
 import { Input } from "@/components/ui/input"
 import { CircleX, LogIn } from "lucide-react"
@@ -30,13 +30,12 @@ const formSchema = z.object({
 });
 
 export function LoginModal() {
-  const[loading, setLoading] = useState(false);
-  const[error, setError] = useState<string | null>(null);
-  const[isModalOpen, setIsModalOpen] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [open, setOpen] = useState(false);
 
   const navigate = useNavigate();
 
-  // Inicializa o formulário com useForm e zodResolver
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
@@ -47,12 +46,7 @@ export function LoginModal() {
   })
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setLoading(true);    
-
-    console.log("Submetendo formulário...", values);
-
-    const bodyData = JSON.stringify({ empresa: values.empresa, nome: values.username, senha: values.password });
-    console.log("Body Data: ", bodyData)
+    setLoading(true);
 
     try {
       const response = await fetch("http://localhost:3001/auth/login", {
@@ -60,7 +54,7 @@ export function LoginModal() {
         headers: {
           "Content-Type": "application/json",
         },
-        body: bodyData,
+        body: JSON.stringify({ empresa: values.empresa, nome: values.username, senha: values.password }),
       });
 
       const data = await response.json();
@@ -70,12 +64,14 @@ export function LoginModal() {
       }
       
       localStorage.setItem('authToken', data.token);
+      localStorage.setItem('id_empresa', data.user.id_empresa);
 
       console.log("Login bem-sucedido! Token salvo:", data.token);
       console.log("Dados do usuário:", data.user);      
       
-      setIsModalOpen(false);
+      setOpen(false); // 👈 Feche o modal aqui
       navigate(`/`);      
+      
     } catch (error) {
       console.error(error);
       setError(error instanceof Error ? error.message : String(error));
@@ -85,7 +81,7 @@ export function LoginModal() {
   }
 
   return (
-    <Dialog>
+    <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
         <Button variant="default"><LogIn /></Button>
       </DialogTrigger>
@@ -93,7 +89,7 @@ export function LoginModal() {
         <DialogHeader className="mb-4">
           <DialogTitle>Login</DialogTitle>
           <DialogDescription>
-            Faça login na sua conta.
+            Acesse a sua conta.
           </DialogDescription>
         </DialogHeader>
         
@@ -138,7 +134,7 @@ export function LoginModal() {
                 </FormItem>
               )}
             />
-            
+
             {error && (
               <div className="flex items-center gap-2 p-3 text-sm text-red-600 bg-red-50 rounded-lg border border-red-200">
                 <CircleX size={20} />
