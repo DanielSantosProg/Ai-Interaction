@@ -51,8 +51,12 @@ async function analyseDocument(docPath: string, values: InteractionFields, userI
             model: "gemini-2.5-flash",
             contents: contents,
         });
+        console.log(response);
         console.log("Gemini: ", response.text);
         response.usageMetadata && console.log("Tokens usados: ", response.usageMetadata.totalTokenCount);
+        const inputTokens = response.usageMetadata ? response.usageMetadata.promptTokenCount : 0;
+        const outputTokens = response.usageMetadata ? response.usageMetadata.candidatesTokenCount : 0;
+        const thoughtTokens = response.usageMetadata ? response.usageMetadata.thoughtsTokenCount : 0;
 
         // Formatação dos filtros
         const filters = `${values.dataInicioDB}, ${values.dataFimDB}, ${values.empresaDB}, ${values.estabelecimentoDB}, ${values.localizacaoDB}`;
@@ -67,13 +71,16 @@ async function analyseDocument(docPath: string, values: InteractionFields, userI
                 .input('prompt', mssql.VarChar(1000), values.prompt)
                 .input('titulo', mssql.VarChar(100), values.titulo)
                 .input('filtros', mssql.VarChar(500), filters)
-                .input('retorno', mssql.VarChar(8000), response.text);
-
+                .input('retorno', mssql.VarChar(8000), response.text)
+                .input('inputTokens', mssql.Int, inputTokens)
+                .input('outputTokens', mssql.Int, outputTokens)
+                .input('thoughtTokens', mssql.Int, thoughtTokens);
             // Executa a query de INSERT e CAPTURA o ID da linha inserida
             const insertResult = await request.query(`
-                INSERT INTO HISTORICO (COD_USUARIO, PROMPT, TITULO, DT_CRIACAO, FILTROS, RETORNO)
+                INSERT INTO HISTORICO (COD_USUARIO, PROMPT, TITULO, DT_CRIACAO, FILTROS, RETORNO,
+                TOKENS_REQUISICAO, TOKENS_RETORNO, TOKENS_PENSAMENTO)
                 OUTPUT INSERTED.ID
-                VALUES (@userId, @prompt, @titulo, GETDATE(), @filtros, @retorno)
+                VALUES (@userId, @prompt, @titulo, GETDATE(), @filtros, @retorno, @inputTokens, @outputTokens, @thoughtTokens)
             `);
             
             // Extrai o ID do resultado
