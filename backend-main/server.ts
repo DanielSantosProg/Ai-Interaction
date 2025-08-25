@@ -11,8 +11,7 @@ import authRoutes from './routes/authRoutes';
 import empresasRoutes from './routes/empresaRoutes';
 import usuariosRoutes from './routes/usuarioRoutes';
 import configsRoutes from './routes/configRoutes';
-import { sendConnectionDataToEndpoint, updateConnectionData } from './requests/gerenciarConexao';
-import { config } from 'dotenv';
+import { sendConnectionDataToEndpoint, updateConnectionData } from './services/gerenciarConexao';
 
 const app = express();
 const port = 3001;

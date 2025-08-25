@@ -1,5 +1,5 @@
-import { sequelize } from './config/db';
-import { User } from './models/Relacionamentos';
+import { sequelize } from '../config/db';
+import { User } from '../models/Relacionamentos';
 import bcrypt from 'bcryptjs';
 
 async function updatePasswords() {

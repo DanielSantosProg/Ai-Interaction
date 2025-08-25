@@ -45,10 +45,11 @@ interface SelectItemData {
 interface SelectComponentProps {
     placeholder: string;
     items: SelectItemData[];
+    onValueChange: (value: string) => void;
 }
 
-const SelectComponent = ({placeholder, items}: SelectComponentProps) => (
-  <Select.Root>
+const SelectComponent = ({placeholder, items, onValueChange}: SelectComponentProps) => (
+  <Select.Root onValueChange={onValueChange}>
     <Select.Trigger
       className="inline-flex h-[20px] sm:h-[25px] items-center justify-center gap-[5px] rounded border-[#3a39393d] border-[.5px] bg-white px-[8px] sm:px-[15px] text-[10px] sm:text-[13px] leading-none text-violet11 shadow-[0_2px_10px] shadow-black/10 outline-none hover:bg-[#3a39393d]/10 data-[placeholder]:text-[#3A3939]/75"
       aria-label="Food"

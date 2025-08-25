@@ -15,7 +15,7 @@ import React from "react"
 import { z } from "zod"
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { MoveRight, Loader2Icon, GalleryVerticalEnd, Sparkles, Pen, Funnel, Text, ClipboardMinus } from "lucide-react"
+import { MoveRight, Loader2Icon, GalleryVerticalEnd, Sparkles, Pen, Funnel, Text, ClipboardMinus, TriangleAlert } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
@@ -82,7 +82,7 @@ const NewInteraction = ({ isSidebarOpen, user }: NewInteractionProps) => {
   const [selectedModelo, setSelectedModelo] = useState<Modelo | null>(null);
 
 
-  const userId = 11
+  const userId = user? user.id : 11;
   const URL_EMPRESAS = "http://localhost:3000/empresas"
   const URL_ESTABELECIMENTOS = "http://localhost:3000/estabelecimentos"
   const URL_LOCALIZACOES = "http://localhost:3000/localizacoes"
@@ -247,7 +247,35 @@ const NewInteraction = ({ isSidebarOpen, user }: NewInteractionProps) => {
       }
     }
     getLocalizacoes();
-  }, []); 
+  }, []);
+
+  React.useEffect(() => {
+    if (error) {
+      setError(null);
+      setIsAlertOpen(false);
+    }
+  }, [location.pathname]);
+
+  if (error){
+    return (
+      <div className="flex flex-row h-screen">
+          <button
+              className={`group fixed top-16 left-4 z-50 p-2 rounded-lg bg-white hover:bg-black border-black hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
+              ${isSidebarOpen ? "transform translate-x-[72px]" : ""}
+              sm:hidden`}          
+              onClick={toggleHistory}
+          >
+              <span className="sr-only">Toggle History</span>
+              <GalleryVerticalEnd className='text-[#323232] group-hover:text-white' size={18}/>
+          </button>
+              
+          <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
+              {user && <History isOpen={isHistoryOpen} user={user} />}
+          </div>
+          <div className="flex flex-row w-full h-full items-center justify-center text-lg gap-2"><TriangleAlert className="text-red-500 " /><span className="text-red-500">Erro:</span> {error}</div>
+      </div>
+      )
+    }
 
   return (
     <div className="flex flex-row h-screen">
@@ -266,7 +294,7 @@ const NewInteraction = ({ isSidebarOpen, user }: NewInteractionProps) => {
             
       {/* Passa o estado e a função para o componente History */}
       <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-          <History isOpen={isHistoryOpen} />
+          {user && <History isOpen={isHistoryOpen} user={user} />}
       </div>
 
       <div className="flex justify-center absolute top-1/2 left-1/2 z-50">

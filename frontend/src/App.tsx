@@ -1,30 +1,30 @@
-import './App.css'
+import './App.css';
 
 // Libraries/Hooks
 import { BrowserRouter, Route, Routes } from 'react-router-dom';
-import { useState, useContext } from 'react';
-import React, { Suspense } from 'react';
+import { useState, useContext, Suspense } from 'react';
+import React from 'react';
 import { AuthContext } from "./context/AuthContext";
 
-// pages
+// Components
+import Sidebar from './components/Sidebar';
+import { ThemeProvider } from "@/components/theme-provider";
+import { Loader2Icon } from 'lucide-react';
+import ProtectedRoute from './components/ProtectedRoute';
+
+// Pages
 const NewInteraction = React.lazy(() => import('./pages/NewInteraction'));
 import Home from './pages/Home';
 import ViewInteraction from './pages/ViewInteraction';
-
-// components
-import Sidebar from './components/Sidebar';
-import { ThemeProvider } from "@/components/theme-provider"
-import { Loader2Icon } from 'lucide-react';
 import Config from './pages/Config';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
-
-    const { user, login, logout } = useContext(AuthContext);
+  const { user, login, logout, loading: authLoading } = useContext(AuthContext); // Pega o estado de loading do contexto
 
   const handleSidebarOpen = () => {
-    setIsSidebarOpen(!isSidebarOpen)
-  }
+    setIsSidebarOpen(!isSidebarOpen);
+  };
 
   return (
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
@@ -32,35 +32,46 @@ function App() {
         <BrowserRouter>
           <Sidebar handleSidebarOpen={handleSidebarOpen} isSidebarOpen={isSidebarOpen} user={user} login={login} logout={logout} />
           <div className='flex-grow sm:ml-22 overflow-hidden'>
-            <Suspense fallback={<div className='flex h-screen justify-center items-center'>                    
-                      <Loader2Icon className="animate-spin mr-2" size={20} />
-                      Carregando...
-                    </div>}>
-              <Routes>
-                <Route 
-                  path="/" 
-                  element={<Home isSidebarOpen={isSidebarOpen} user={user} login={login} logout={logout} />}
-                />
-                <Route 
-                  path="/new-interaction" 
-                  element={
-                    React.cloneElement(<NewInteraction isSidebarOpen={isSidebarOpen} user={user} />)
-                  }
-                />
-                <Route 
-                  path="/interaction/:id" 
-                  element={
-                    React.cloneElement(<ViewInteraction isSidebarOpen={isSidebarOpen} user={user} />)
-                  }
-                />
-                <Route path="/config" element={<Config isSidebarOpen={isSidebarOpen} user={user} />} />
-              </Routes>
-            </Suspense>
+            {authLoading ? (
+              <div className='flex h-screen justify-center items-center'>
+                <Loader2Icon className="animate-spin mr-2" size={20} />
+                Carregando...
+              </div>
+            ) : (
+              <Suspense fallback={<div className='flex h-screen justify-center items-center'>
+                <Loader2Icon className="animate-spin mr-2" size={20} />
+                Carregando...
+              </div>}>
+                <Routes>
+                  {/* Rota pública */}
+                  <Route
+                    path="/"
+                    element={<Home isSidebarOpen={isSidebarOpen} user={user} login={login} logout={logout} />}
+                  />
+
+                  {/* Rotas protegidas */}
+                  <Route element={<ProtectedRoute />}>
+                    <Route
+                      path="/new-interaction"
+                      element={React.cloneElement(<NewInteraction isSidebarOpen={isSidebarOpen} user={user} />)}
+                    />
+                    <Route
+                      path="/interaction/:id"
+                      element={React.cloneElement(<ViewInteraction isSidebarOpen={isSidebarOpen} user={user} />)}
+                    />
+                    <Route
+                      path="/config"
+                      element={<Config isSidebarOpen={isSidebarOpen} user={user} />}
+                    />
+                  </Route>
+                </Routes>
+              </Suspense>
+            )}
           </div>
         </BrowserRouter>
       </div>
     </ThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;

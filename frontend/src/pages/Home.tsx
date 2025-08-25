@@ -43,7 +43,7 @@ const Home = ({ isSidebarOpen, login, logout, user }: HomeProps) => {
         </button>
             
         <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-            <History isOpen={isHistoryOpen} />
+            {user && <History isOpen={isHistoryOpen} user={user} />}
         </div>
 
         {/* Conteúdo da página */}

@@ -7,6 +7,7 @@ import axios from "axios"
 // Interfaces
 interface HistoryProps {
     isOpen: boolean;
+    user: any;
 }
 
 interface CardData {
@@ -19,15 +20,20 @@ interface CardData {
     RETORNO: string;
 }
 
-const History = ({ isOpen }: HistoryProps) => {
-    const userId = 11;
+const History = ({ isOpen, user }: HistoryProps) => {
+    const userId = user ? user.id : null;
     const API_URL = "http://localhost:3000/interactions"
     const [cards, setCards] = React.useState<CardData[]>([]);
-    
+    const [showAll, setShowAll] = React.useState<boolean>(true);
+
+    const handleSelectChange = (value: string) => {
+        setShowAll(value === "todas");
+    };
+
     React.useEffect(() => {
         async function getHistory() {
             try {
-                const response = await axios.get(`${API_URL}?userId=${userId}`);
+                const response = showAll ?  await axios.get(`${API_URL}`) : await axios.get(`${API_URL}?userId=${userId}`);
 
                 console.log("Dados do histórico: ", response.data);
                 
@@ -43,7 +49,7 @@ const History = ({ isOpen }: HistoryProps) => {
             }
         }
         getHistory();
-    }, []);  
+    }, [showAll]);  
 
   return (
         <div className={`w-full flex-col items-center h-full flex transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -53,7 +59,7 @@ const History = ({ isOpen }: HistoryProps) => {
                     <img src={logo} className="max-w-26 sm:max-w-48 self-center max-h-30" alt="" />
                 </div>
                 <div className="self-baseline p-4 flex-shrink-0">
-                    <SelectComponent placeholder="Interações" items={[{ value: "todas", label: "Todas" }, { value: "minhas", label: "Minhas" }]} />
+                    <SelectComponent placeholder="Interações" onValueChange={handleSelectChange} items={[{ value: "todas", label: "Todas" }, { value: "minhas", label: "Minhas" }]} />
                 </div>
             </>}            
             <div className="flex flex-col items-center w-full scrollbar-thin overflow-y-auto flex-grow">

@@ -8,8 +8,9 @@ import { Button } from "@/components/ui/button"
 import jsPDF from 'jspdf';
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom";
-import { Building, Building2, Calendar, CalendarPlus, FileDown, GalleryVerticalEnd, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, Wallet } from "lucide-react"
+import { Building, Building2, Calendar, CalendarPlus, FileDown, GalleryVerticalEnd, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, TriangleAlert, Wallet } from "lucide-react"
 import axios from "axios";
+import React from "react";
 
 interface ViewInteractionProps {
     isSidebarOpen: boolean;    
@@ -193,6 +194,33 @@ const ViewInteraction = ({ isSidebarOpen, user }: ViewInteractionProps) => {
         }
     }  
 
+    React.useEffect(() => {
+        if (error) {
+        setError(null);
+        }
+    }, [location.pathname]);
+
+    if (error){
+        return (
+        <div className="flex flex-row h-screen">
+            <button
+                className={`group fixed top-16 left-4 z-50 p-2 rounded-lg bg-white hover:bg-black border-black hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
+                ${isSidebarOpen ? "transform translate-x-[72px]" : ""}
+                sm:hidden`}          
+                onClick={toggleHistory}
+            >
+                <span className="sr-only">Toggle History</span>
+                <GalleryVerticalEnd className='text-[#323232] group-hover:text-white' size={18}/>
+            </button>
+                
+            <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
+                {user && <History isOpen={isHistoryOpen} user={user} />}
+            </div>
+            <div className="flex flex-row w-full h-full items-center justify-center text-lg gap-2"><TriangleAlert className="text-red-500 " /><span className="text-red-500">Erro:</span> {error}</div>
+        </div>
+        )
+    }
+
     return (
     <div className="flex flex-row h-screen">
 
@@ -209,7 +237,7 @@ const ViewInteraction = ({ isSidebarOpen, user }: ViewInteractionProps) => {
         </button>
             
         <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-            <History isOpen={isHistoryOpen} />
+            {user && <History isOpen={isHistoryOpen} user={user} />}
         </div>
 
         {/* Conteúdo da página */}

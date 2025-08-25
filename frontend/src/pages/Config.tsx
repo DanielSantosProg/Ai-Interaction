@@ -114,7 +114,7 @@ const Config = ({ isSidebarOpen, user }: ConfigProps) => {
                   
             {/* Passa o estado e a função para o componente History */}
             <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-                <History isOpen={isHistoryOpen} />
+                {user && <History isOpen={isHistoryOpen} user={user} />}
             </div>
 
             <div className="flex justify-center absolute top-1/2 left-1/2 z-50">

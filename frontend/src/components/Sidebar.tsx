@@ -45,11 +45,13 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen, user, login, logout }: Side
         aria-label="Sidebar"
       >
         <div className="h-full py-8">
+          {user && 
             <div className="flex justify-center">
                 <a href="/" className="flex justify-center mb-8 w-12 h-12 bg-white rounded-full">
                     <img src={UserIcon} className="mt-2 w-8 h-8" alt="" />            
                 </a>
-            </div>          
+            </div> 
+          }                     
           
           <nav className='py-4 lg:py-8'>
             <ul className="space-y-1 lg:space-y-2 justify-center font-medium">
@@ -64,7 +66,7 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen, user, login, logout }: Side
 
               <li className='hover:border-l-4 hover:border-l-[#D9D9D9]'>
                 <a 
-                  href="/new-interaction" 
+                  href={user ? '/new-interaction' : '#'}
                   className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
                 >
                   <Plus className="text-[#4CAF50]" size={22} />
@@ -73,7 +75,7 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen, user, login, logout }: Side
               
               <li className='hover:border-l-4 hover:border-l-[#D9D9D9]'>
                 <a 
-                  href="/interactions" 
+                  href={user ? '/interaction/1' : '#'} 
                   className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
                 >
                   <GalleryVerticalEnd className="text-[#4CAF50]" size={22} /> 
@@ -114,7 +116,7 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen, user, login, logout }: Side
             </li>
             <li className='hover:border-l-4 hover:border-l-[#D9D9D9]'>
               <a 
-                href="/config" 
+                href={user ? '/config' : '#'}
                 className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
               >
                 <Wrench className="text-[#4CAF50]" size={22} />
