@@ -9,14 +9,23 @@ import { Cog, Database, DatabaseZap, GalleryVerticalEnd, KeyRound, Loader2Icon, 
 // Libraries/hooks
 import z from "zod";
 import { zodResolver } from "@hookform/resolvers/zod"
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { AlertDialogError } from "@/components/AlertDialog";
+import axios from "axios";
 
 interface ConfigProps {
   isSidebarOpen: boolean;
   user: any;
+}
+
+interface ConfigData {
+  DB_SERVER: string;
+  DB_DATABASE: string;
+  DB_USER: string;
+  DB_PASSWORD: string;
+  DB_PORT: number;
 }
 
 // Schema de validação Zod
@@ -33,8 +42,10 @@ const Config = ({ isSidebarOpen, user }: ConfigProps) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
+    const [config, setConfig] = useState<ConfigData | null>(null);
 
     const navigate = useNavigate();    
+    const id_empresa = localStorage.getItem('id_empresa');
 
     const toggleHistory = () => {
         setIsHistoryOpen(!isHistoryOpen);
@@ -61,8 +72,6 @@ const Config = ({ isSidebarOpen, user }: ConfigProps) => {
           DB_PASSWORD: values.DB_PASSWORD,
           DB_PORT: values.DB_PORT,
         };
-
-        const id_empresa = localStorage.getItem('id_empresa');
     
         console.log("Submetendo formulário...", payload);
     
@@ -97,6 +106,39 @@ const Config = ({ isSidebarOpen, user }: ConfigProps) => {
           setLoading(false);
         }
       }
+
+      useEffect(() => {
+        const fetchConfig = async () => {
+            if (!id_empresa) {
+                setLoading(false);
+                setError("ID da empresa não fornecido.");
+                return;
+            }
+
+            try {
+                const response = await axios.get(`http://localhost:3001/configs?id_empresa=${id_empresa}`);
+                setConfig(response.data); 
+                console.log("DATA: ", response.data);
+                setLoading(false);
+            } catch (err) {
+                console.error("Erro ao buscar Configuração:", err);
+                setLoading(false);
+                setError("Não foi possível carregar os dados da configuração.");
+            }
+        };
+
+        fetchConfig();
+    }, [id_empresa]);
+    
+    useEffect(() => {
+      if (config) {
+        form.setValue('DB_SERVER', config.DB_SERVER);
+        form.setValue('DB_DATABASE', config.DB_DATABASE);
+        form.setValue('DB_USER', config.DB_USER);
+        form.setValue('DB_PASSWORD', config.DB_PASSWORD);
+        form.setValue('DB_PORT', config.DB_PORT);        
+      }
+    }, [config, form]);
 
   return (
     <div className={`flex flex-row h-screen ${isSidebarOpen ? 'ml-64' : 'ml-0'} transition-all`}>

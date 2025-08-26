@@ -77,7 +77,7 @@ app.post('/analyze', async (req, res) => {
         }
         const { values, userId } = req.body;
 
-        const dir = "D:\\Users\\Documents";
+        const dir = "C:\\Users\\Usuário\\Documents";
         
         const documento = await gerarDocumento(dir, values.titulo, values.modelo, sqlPool, values.dataInicio, values.dataFim, values.empresa, values.estabelecimento, values.localizacao);
 

@@ -96,6 +96,7 @@ const NewInteraction = ({ isSidebarOpen, user }: NewInteractionProps) => {
     resolver: zodResolver(formSchema),
     defaultValues: {
       titulo: "",
+      modelo: "",
       dataInicio: "",
       dataFim: "",
       empresa: "",
