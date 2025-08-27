@@ -18,6 +18,7 @@ import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
 import HistoryToggle from "@/components/HistoryToggle"
+import History from "@/components/History"
 
 interface NewInteractionProps {
   isSidebarOpen: boolean;
@@ -256,8 +257,9 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
   if (error){
     return (
       <div className="flex flex-row h-screen">
-          <HistoryToggle isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user}/>
-
+          <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
+              {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+          </div> 
           <div className="flex flex-row w-full h-full items-center justify-center text-lg gap-2"><TriangleAlert className="text-red-500 " /><span className="text-red-500">Erro:</span> {error}</div>
       </div>
       )
@@ -265,9 +267,9 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
 
   return (
     <div className="flex flex-row h-screen">
-
-      <HistoryToggle isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user}/>
-
+      <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
+          {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+      </div> 
       <div className="flex justify-center absolute top-1/2 left-1/2 z-50">
         {isAlertOpen && error && (
           <AlertDialogError isOpen={isAlertOpen} message={error} onClose={() => setIsAlertOpen(false)} />

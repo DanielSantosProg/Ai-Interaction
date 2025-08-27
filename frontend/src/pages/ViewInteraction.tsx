@@ -209,8 +209,9 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
 
     return (
     <div className="flex flex-row h-screen">
-
-        <HistoryToggle isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user}/>
+        <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
+            {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+        </div> 
 
         {/* Conteúdo da página */}
         <div className={`flex flex-col flex-grow bg-[#323232]/3 items-center py-12 overflow-y-auto scrollbar-thin`}>            

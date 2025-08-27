@@ -6,11 +6,9 @@ import { Button } from "@/components/ui/button"
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 
 // Libraries/Hooks
-import { useState } from "react"
 import { useNavigate } from "react-router-dom";
-import { GalleryVerticalEnd, LogIn, LogOut, Sparkles } from "lucide-react"
+import { LogIn, LogOut, Sparkles } from "lucide-react"
 import { LoginModal } from "@/components/LoginDialog";
-import HistoryToggle from "@/components/HistoryToggle";
 
 interface HomeProps {
     isSidebarOpen: boolean;
@@ -26,10 +24,9 @@ const Home = ({ isSidebarOpen, isHistoryOpen, toggleHistory, login, logout, user
     
     return (
     <div className="flex flex-row h-screen">
-        {user && 
-            <HistoryToggle isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user}/>
-        }
-        
+        <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
+          {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+        </div>        
 
         {/* Conteúdo da página */}
 
@@ -55,7 +52,7 @@ const Home = ({ isSidebarOpen, isHistoryOpen, toggleHistory, login, logout, user
                                 <LogIn className="mr-2" size={18} /> Login
                             </Button>
                         </DialogTrigger>
-                        <LoginModal login={login} /> {/* Aqui está o ajuste */}
+                        <LoginModal login={login} />
                     </Dialog>
                 </div>
             ): (    
@@ -66,7 +63,10 @@ const Home = ({ isSidebarOpen, isHistoryOpen, toggleHistory, login, logout, user
                     </div>
                     <Button 
                         className="bg-red-500 hover:bg-red-600" 
-                        onClick={() => logout()}
+                        onClick={() => {
+                            isHistoryOpen && toggleHistory();
+                            logout()
+                        }}
                     >
                         <LogOut />
                         Sair

@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { AlertDialogError } from "@/components/AlertDialog";
 import axios from "axios";
 import HistoryToggle from "@/components/HistoryToggle";
+import History from "@/components/History";
 
 interface ConfigProps {
   isSidebarOpen: boolean;
@@ -138,8 +139,9 @@ const Config = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ConfigPro
 
   return (
     <div className={`flex flex-row h-screen transition-all`}>
-        <HistoryToggle isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user}/>
-
+        <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
+          {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+        </div> 
         <div className="flex justify-center absolute top-1/2 left-1/2 z-50">
             {isAlertOpen && error && (
                 <AlertDialogError isOpen={isAlertOpen} message={error} onClose={() => setIsAlertOpen(false)} />
