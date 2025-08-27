@@ -6,7 +6,6 @@ const router = Router();
 router.get('/', async (req, res) => {
   const id_empresa = req.query.id_empresa as string;
   let config;
-  console.log("Rota de Configuração")
   if (!id_empresa) {
     config = await Config.findAll();
     console.log("Config: ", config);

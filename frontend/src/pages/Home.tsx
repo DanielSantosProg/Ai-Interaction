@@ -10,41 +10,26 @@ import { useState } from "react"
 import { useNavigate } from "react-router-dom";
 import { GalleryVerticalEnd, LogIn, LogOut, Sparkles } from "lucide-react"
 import { LoginModal } from "@/components/LoginDialog";
+import HistoryToggle from "@/components/HistoryToggle";
 
 interface HomeProps {
     isSidebarOpen: boolean;
+    isHistoryOpen: boolean;
+    toggleHistory: () => void;
     login: (userData: any) => void;
     logout: () => void;
     user: any;
 }
 
-const Home = ({ isSidebarOpen, login, logout, user }: HomeProps) => {
-    const [isHistoryOpen, setIsHistoryOpen] = useState(false);
-
+const Home = ({ isSidebarOpen, isHistoryOpen, toggleHistory, login, logout, user }: HomeProps) => {
     const navigate = useNavigate();    
-
-    const toggleHistory = () => {
-        setIsHistoryOpen(!isHistoryOpen);
-    };
     
     return (
     <div className="flex flex-row h-screen">
-
-        {/* Uso do Componente History */}
-
-        <button
-            className={`group fixed top-16 left-4 z-50 p-2 rounded-lg bg-white hover:bg-black border-black hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
-            ${isSidebarOpen ? "transform translate-x-[72px]" : ""}
-            sm:hidden`}          
-            onClick={toggleHistory}
-        >
-            <span className="sr-only">Toggle History</span>
-            <GalleryVerticalEnd className='text-[#323232] group-hover:text-white' size={18}/>
-        </button>
-            
-        <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-            {user && <History isOpen={isHistoryOpen} user={user} />}
-        </div>
+        {user && 
+            <HistoryToggle isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user}/>
+        }
+        
 
         {/* Conteúdo da página */}
 

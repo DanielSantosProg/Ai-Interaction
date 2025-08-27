@@ -19,11 +19,16 @@ import ViewInteraction from './pages/ViewInteraction';
 import Config from './pages/Config';
 
 function App() {
-  const [isSidebarOpen, setIsSidebarOpen] = useState(false);
+  const [isSidebarOpen, setIsSidebarOpen] = useState(true);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(true);
   const { user, login, logout, loading: authLoading } = useContext(AuthContext); // Pega o estado de loading do contexto
 
   const handleSidebarOpen = () => {
     setIsSidebarOpen(!isSidebarOpen);
+  };
+
+  const toggleHistory = () => {
+    setIsHistoryOpen(!isHistoryOpen);
   };
 
   return (
@@ -46,22 +51,22 @@ function App() {
                   {/* Rota pública */}
                   <Route
                     path="/"
-                    element={<Home isSidebarOpen={isSidebarOpen} user={user} login={login} logout={logout} />}
+                    element={<Home isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} login={login} logout={logout} />}
                   />
 
                   {/* Rotas protegidas */}
                   <Route element={<ProtectedRoute />}>
                     <Route
                       path="/new-interaction"
-                      element={React.cloneElement(<NewInteraction isSidebarOpen={isSidebarOpen} user={user} />)}
+                      element={React.cloneElement(<NewInteraction isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />)}
                     />
                     <Route
                       path="/interaction/:id"
-                      element={React.cloneElement(<ViewInteraction isSidebarOpen={isSidebarOpen} user={user} />)}
+                      element={React.cloneElement(<ViewInteraction isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />)}
                     />
                     <Route
                       path="/config"
-                      element={<Config isSidebarOpen={isSidebarOpen} user={user} />}
+                      element={<Config isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
                     />
                   </Route>
                 </Routes>

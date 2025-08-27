@@ -1,5 +1,3 @@
-// Componentes principais
-import History from "../components/History"
 
 // Componentes extras
 import { DatePicker } from "@/components/DatePicker"
@@ -15,13 +13,16 @@ import React from "react"
 import { z } from "zod"
 import { useState } from "react"
 import { zodResolver } from "@hookform/resolvers/zod"
-import { MoveRight, Loader2Icon, GalleryVerticalEnd, Sparkles, Pen, Funnel, Text, ClipboardMinus, TriangleAlert } from "lucide-react"
+import { MoveRight, Loader2Icon, Sparkles, Pen, Funnel, Text, ClipboardMinus, TriangleAlert } from "lucide-react"
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
+import HistoryToggle from "@/components/HistoryToggle"
 
 interface NewInteractionProps {
   isSidebarOpen: boolean;
+  isHistoryOpen: boolean;
+  toggleHistory: () => void;
   user: any;
 }
 
@@ -68,11 +69,10 @@ type Modelo = {
   nome: string;
 }
 
-const NewInteraction = ({ isSidebarOpen, user }: NewInteractionProps) => {
+const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: NewInteractionProps) => {
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<string | null>(null);
   const [isAlertOpen, setIsAlertOpen] = useState(false);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(true);
   const [empresas, setEmpresas] = useState<Empresa[]>([]);
   const [selectedEmpresa, setSelectedEmpresa] = useState<Empresa | null>(null);
   const [estabelecimentos, setEstabelecimentos] = useState<Estabelecimento[]>([]);
@@ -87,10 +87,6 @@ const NewInteraction = ({ isSidebarOpen, user }: NewInteractionProps) => {
   const URL_ESTABELECIMENTOS = "http://localhost:3000/estabelecimentos"
   const URL_LOCALIZACOES = "http://localhost:3000/localizacoes"
   const navigate = useNavigate();
-
-  const toggleHistory = () => {
-    setIsHistoryOpen(!isHistoryOpen);
-  };
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -260,19 +256,8 @@ const NewInteraction = ({ isSidebarOpen, user }: NewInteractionProps) => {
   if (error){
     return (
       <div className="flex flex-row h-screen">
-          <button
-              className={`group fixed top-16 left-4 z-50 p-2 rounded-lg bg-white hover:bg-black border-black hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
-              ${isSidebarOpen ? "transform translate-x-[72px]" : ""}
-              sm:hidden`}          
-              onClick={toggleHistory}
-          >
-              <span className="sr-only">Toggle History</span>
-              <GalleryVerticalEnd className='text-[#323232] group-hover:text-white' size={18}/>
-          </button>
-              
-          <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-              {user && <History isOpen={isHistoryOpen} user={user} />}
-          </div>
+          <HistoryToggle isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user}/>
+
           <div className="flex flex-row w-full h-full items-center justify-center text-lg gap-2"><TriangleAlert className="text-red-500 " /><span className="text-red-500">Erro:</span> {error}</div>
       </div>
       )
@@ -281,22 +266,7 @@ const NewInteraction = ({ isSidebarOpen, user }: NewInteractionProps) => {
   return (
     <div className="flex flex-row h-screen">
 
-      {/* Uso do Componente History */}
-
-      <button
-          className={`group fixed top-16 left-4 z-50 p-2 rounded-lg hover:bg-black border-black hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
-          ${isSidebarOpen ? "transform translate-x-[72px]" : ""}
-          sm:hidden`}          
-          onClick={toggleHistory}
-      >
-          <span className="sr-only">Toggle History</span>
-          <GalleryVerticalEnd className='text-[#323232] group-hover:text-white' size={18}/>
-      </button>
-            
-      {/* Passa o estado e a função para o componente History */}
-      <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-          {user && <History isOpen={isHistoryOpen} user={user} />}
-      </div>
+      <HistoryToggle isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user}/>
 
       <div className="flex justify-center absolute top-1/2 left-1/2 z-50">
         {isAlertOpen && error && (

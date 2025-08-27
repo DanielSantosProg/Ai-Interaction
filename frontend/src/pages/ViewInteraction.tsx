@@ -11,9 +11,12 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Building, Building2, Calendar, CalendarPlus, FileDown, GalleryVerticalEnd, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, TriangleAlert, Wallet } from "lucide-react"
 import axios from "axios";
 import React from "react";
+import HistoryToggle from "@/components/HistoryToggle";
 
 interface ViewInteractionProps {
-    isSidebarOpen: boolean;    
+    isSidebarOpen: boolean;
+    isHistoryOpen: boolean;
+    toggleHistory: () => void;
     user: any;
 }
 
@@ -39,8 +42,7 @@ interface InteractionData {
     RETORNO: string;
 }
 
-const ViewInteraction = ({ isSidebarOpen, user }: ViewInteractionProps) => {
-    const [isHistoryOpen, setIsHistoryOpen] = useState(true);
+const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ViewInteractionProps) => {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [interaction, setInteraction] = useState<InteractionData | null>(null);
@@ -79,10 +81,6 @@ const ViewInteraction = ({ isSidebarOpen, user }: ViewInteractionProps) => {
         month: '2-digit',
         day: '2-digit'
     });
-
-    const toggleHistory = () => {
-        setIsHistoryOpen(!isHistoryOpen);
-    };
 
     async function onDownload() {
         setLoading(true);
@@ -203,19 +201,7 @@ const ViewInteraction = ({ isSidebarOpen, user }: ViewInteractionProps) => {
     if (error){
         return (
         <div className="flex flex-row h-screen">
-            <button
-                className={`group fixed top-16 left-4 z-50 p-2 rounded-lg bg-white hover:bg-black border-black hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
-                ${isSidebarOpen ? "transform translate-x-[72px]" : ""}
-                sm:hidden`}          
-                onClick={toggleHistory}
-            >
-                <span className="sr-only">Toggle History</span>
-                <GalleryVerticalEnd className='text-[#323232] group-hover:text-white' size={18}/>
-            </button>
-                
-            <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-                {user && <History isOpen={isHistoryOpen} user={user} />}
-            </div>
+            <HistoryToggle isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user}/>        
             <div className="flex flex-row w-full h-full items-center justify-center text-lg gap-2"><TriangleAlert className="text-red-500 " /><span className="text-red-500">Erro:</span> {error}</div>
         </div>
         )
@@ -224,24 +210,9 @@ const ViewInteraction = ({ isSidebarOpen, user }: ViewInteractionProps) => {
     return (
     <div className="flex flex-row h-screen">
 
-        {/* Uso do Componente History */}
-
-        <button
-            className={`group fixed top-16 left-4 z-50 p-2 rounded-lg bg-white hover:bg-black border-black hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
-            ${isSidebarOpen ? "transform translate-x-[72px]" : ""}
-            sm:hidden`}          
-            onClick={toggleHistory}
-        >
-            <span className="sr-only">Toggle History</span>
-            <GalleryVerticalEnd className='text-[#323232] group-hover:text-white' size={18}/>
-        </button>
-            
-        <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-            {user && <History isOpen={isHistoryOpen} user={user} />}
-        </div>
+        <HistoryToggle isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user}/>
 
         {/* Conteúdo da página */}
-
         <div className={`flex flex-col flex-grow bg-[#323232]/3 items-center py-12 overflow-y-auto scrollbar-thin`}>            
             <div className="flex flex-col items-center">
                 <h2 className="text-[26px] font-bold sm:text-[32px] text-center bg-gradient-to-r from-[#1F3D58] to-teal-500 text-transparent bg-clip-text">{interaction?.TITULO}</h2>

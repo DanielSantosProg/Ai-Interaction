@@ -1,10 +1,9 @@
 // Componentes
-import History from "@/components/History";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
 import { Button } from "@/components/ui/button"
-import { Cog, Database, DatabaseZap, GalleryVerticalEnd, KeyRound, Loader2Icon, SaveAll, Server, UserCog } from "lucide-react";
+import { Cog, Database, DatabaseZap, KeyRound, Loader2Icon, SaveAll, Server, UserCog } from "lucide-react";
 
 // Libraries/hooks
 import z from "zod";
@@ -14,9 +13,12 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { AlertDialogError } from "@/components/AlertDialog";
 import axios from "axios";
+import HistoryToggle from "@/components/HistoryToggle";
 
 interface ConfigProps {
   isSidebarOpen: boolean;
+  isHistoryOpen: boolean;
+  toggleHistory: () => void;
   user: any;
 }
 
@@ -37,8 +39,7 @@ const formSchema = z.object({
     DB_PORT: z.number().min(1, {message: "Insira a porta do banco de dados."}),
 })
 
-const Config = ({ isSidebarOpen, user }: ConfigProps) => {
-    const [isHistoryOpen, setIsHistoryOpen] = useState(true);
+const Config = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ConfigProps) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -46,10 +47,6 @@ const Config = ({ isSidebarOpen, user }: ConfigProps) => {
 
     const navigate = useNavigate();    
     const id_empresa = localStorage.getItem('id_empresa');
-
-    const toggleHistory = () => {
-        setIsHistoryOpen(!isHistoryOpen);
-    };
 
     const form = useForm<z.infer<typeof formSchema>>({
         resolver: zodResolver(formSchema),
@@ -118,7 +115,6 @@ const Config = ({ isSidebarOpen, user }: ConfigProps) => {
             try {
                 const response = await axios.get(`http://localhost:3001/configs?id_empresa=${id_empresa}`);
                 setConfig(response.data); 
-                console.log("DATA: ", response.data);
                 setLoading(false);
             } catch (err) {
                 console.error("Erro ao buscar Configuração:", err);
@@ -141,31 +137,16 @@ const Config = ({ isSidebarOpen, user }: ConfigProps) => {
     }, [config, form]);
 
   return (
-    <div className={`flex flex-row h-screen ${isSidebarOpen ? 'ml-64' : 'ml-0'} transition-all`}>
-      {/* Uso do Componente History */}
-      
-            <button
-                className={`group fixed top-16 left-4 z-50 p-2 rounded-lg hover:bg-black border-black hover:border-2 focus:outline-none transition-all duration-100 ease-in-out
-                ${isSidebarOpen ? "transform translate-x-[72px]" : ""}
-                sm:hidden`}          
-                onClick={toggleHistory}
-            >
-                <span className="sr-only">Toggle History</span>
-                <GalleryVerticalEnd className='text-[#323232] group-hover:text-white' size={18}/>
-            </button>
-                  
-            {/* Passa o estado e a função para o componente History */}
-            <div className={`sm:flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-                {user && <History isOpen={isHistoryOpen} user={user} />}
-            </div>
+    <div className={`flex flex-row h-screen transition-all`}>
+        <HistoryToggle isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user}/>
 
-            <div className="flex justify-center absolute top-1/2 left-1/2 z-50">
-                {isAlertOpen && error && (
-                    <AlertDialogError isOpen={isAlertOpen} message={error} onClose={() => setIsAlertOpen(false)} />
-                )}
-            </div>
+        <div className="flex justify-center absolute top-1/2 left-1/2 z-50">
+            {isAlertOpen && error && (
+                <AlertDialogError isOpen={isAlertOpen} message={error} onClose={() => setIsAlertOpen(false)} />
+            )}
+        </div>
 
-            {/* Conteúdo da página */}
+        {/* Conteúdo da página */}
 
       <div className={`flex flex-col bg-[#323232]/3 flex-grow items-center py-12 overflow-y-auto scrollbar-thin`}>
         <div className="flex flex-col items-center">
