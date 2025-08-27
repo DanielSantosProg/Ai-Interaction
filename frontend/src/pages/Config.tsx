@@ -1,4 +1,5 @@
 // Componentes
+import History from "@/components/History";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Input } from "@/components/ui/input"
@@ -13,8 +14,6 @@ import { useNavigate } from 'react-router-dom';
 import { useForm } from "react-hook-form";
 import { AlertDialogError } from "@/components/AlertDialog";
 import axios from "axios";
-import HistoryToggle from "@/components/HistoryToggle";
-import History from "@/components/History";
 
 interface ConfigProps {
   isSidebarOpen: boolean;

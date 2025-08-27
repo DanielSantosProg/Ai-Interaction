@@ -8,10 +8,9 @@ import { Button } from "@/components/ui/button"
 import jsPDF from 'jspdf';
 import { useState, useEffect } from "react"
 import { useParams, useNavigate } from "react-router-dom";
-import { Building, Building2, Calendar, CalendarPlus, FileDown, GalleryVerticalEnd, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, TriangleAlert, Wallet } from "lucide-react"
+import { Building, Building2, Calendar, CalendarPlus, FileDown, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, TriangleAlert, Wallet } from "lucide-react"
 import axios from "axios";
 import React from "react";
-import HistoryToggle from "@/components/HistoryToggle";
 
 interface ViewInteractionProps {
     isSidebarOpen: boolean;
@@ -20,23 +19,10 @@ interface ViewInteractionProps {
     user: any;
 }
 
-interface ViewInteractionState {
-    titulo: string;
-    dataCriacao: string;
-    solicitante: string;
-    prompt: string;
-    dataInicio: string;
-    dataFim: string;
-    empresa: string;
-    estabelecimento: string;
-    localizacao: string;
-    retorno: string;
-}
-
 interface InteractionData {
     TITULO: string;
-    DT_CRIACAO: string; // Use o nome da coluna do banco
-    USR_NOME: string; // Use o nome da coluna do banco
+    DT_CRIACAO: string;
+    USR_NOME: string;
     PROMPT: string;
     FILTROS: string;
     RETORNO: string;
@@ -201,7 +187,9 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
     if (error){
         return (
         <div className="flex flex-row h-screen">
-            <HistoryToggle isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user}/>        
+            <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
+                {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+            </div>         
             <div className="flex flex-row w-full h-full items-center justify-center text-lg gap-2"><TriangleAlert className="text-red-500 " /><span className="text-red-500">Erro:</span> {error}</div>
         </div>
         )

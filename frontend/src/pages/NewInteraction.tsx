@@ -1,3 +1,5 @@
+// Componentes principais
+import History from "@/components/History"
 
 // Componentes extras
 import { DatePicker } from "@/components/DatePicker"
@@ -17,8 +19,7 @@ import { MoveRight, Loader2Icon, Sparkles, Pen, Funnel, Text, ClipboardMinus, Tr
 import { useForm } from "react-hook-form"
 import { useNavigate } from 'react-router-dom';
 import axios from "axios"
-import HistoryToggle from "@/components/HistoryToggle"
-import History from "@/components/History"
+
 
 interface NewInteractionProps {
   isSidebarOpen: boolean;
