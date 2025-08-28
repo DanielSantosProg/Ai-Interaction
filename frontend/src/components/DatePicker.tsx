@@ -21,10 +21,12 @@ function formatDate(date: Date | undefined) {
 }
 
 function isValidDate(date: Date | undefined) {
-  if (!date) {
-    return false
-  }
-  return !isNaN(date.getTime())
+    if (!date) {
+        return false;
+    }
+    return !isNaN(date.getTime()) && 
+           date.getDate() === parseInt(date.toLocaleDateString("pt-BR").substring(0, 2), 10) &&
+           date.getMonth() + 1 === parseInt(date.toLocaleDateString("pt-BR").substring(3, 5), 10);
 }
 
 interface DatePickerProps {
@@ -50,13 +52,59 @@ export function DatePicker({valor, onSelect, placeholder}:DatePickerProps) {
           placeholder={placeholder}
           className="bg-background w-36"
           onChange={(e) => {
-            const date = new Date(e.target.value)
-            setValue(e.target.value)
-            if (isValidDate(date)) {
-              setDate(date)
-              setMonth(date)
+            const inputValue = e.target.value;            
+            // Remove todos os caracteres que não são dígitos
+            const cleanValue = inputValue.replace(/\D/g, '');
+
+            let formattedValue = '';
+            
+            if (cleanValue.length > 0) {
+                let day = cleanValue.substring(0, 2);
+                if (day.length === 2 && parseInt(day, 10) > 31) {
+                    day = '31';
+                }
+                formattedValue += day;
             }
-          }}
+            
+            if (cleanValue.length >= 3) {
+                let month = cleanValue.substring(2, 4);
+                if (month.length === 2 && parseInt(month, 10) > 12) {
+                    month = '12';
+                }
+                formattedValue += '/' + month;
+            }
+            
+            if (cleanValue.length >= 5) {
+                const year = cleanValue.substring(4, 8);
+                formattedValue += '/' + year;
+            }
+
+            // Atualiza o estado com o valor formatado
+            setValue(formattedValue);
+            
+            // Processa a data, se for válida
+            if (formattedValue.length === 10) {
+                const parts = formattedValue.split('/');
+                const day = parseInt(parts[0], 10);
+                const month = parseInt(parts[1], 10);
+                const year = parseInt(parts[2], 10);
+                
+                const newDate = new Date(year, month - 1, day);
+                
+                if (newDate.getDate() === day && (newDate.getMonth() + 1) === month) {
+                  setDate(newDate);
+                  setMonth(newDate);
+                  onSelect(newDate);
+                } else {
+                  setDate(undefined);
+                  onSelect(undefined);
+                }
+
+              } else {
+                setDate(undefined);
+                onSelect(undefined);
+              }
+            }}
           onKeyDown={(e) => {
             if (e.key === "ArrowDown") {
               e.preventDefault()

@@ -3,7 +3,7 @@ import logo from "../assets/reisoflogo.jpg"
 import HoverCardComponent from "./HoverCard"
 import SelectComponent from "./Select"
 import axios from "axios"
-import { ChevronFirst, ChevronLast, ChevronsLeft, ChevronsRight, GalleryVerticalEnd } from "lucide-react";
+import { ChevronFirst, ChevronLast } from "lucide-react";
 
 // Interfaces
 interface HistoryProps {
@@ -23,7 +23,7 @@ interface CardData {
     RETORNO: string;
 }
 
-const History = ({ isSidebarOpen, isOpen, toggleHistory, user }: HistoryProps) => {
+const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
     const userId = user ? user.id : null;
     const API_URL = "http://localhost:3000/interactions"
     const [cards, setCards] = React.useState<CardData[]>([]);
@@ -75,16 +75,15 @@ const History = ({ isSidebarOpen, isOpen, toggleHistory, user }: HistoryProps) =
                     <div className="flex w-full justify-center h-40">
                         <img src={logo} className="max-w-26 sm:max-w-48 self-center max-h-30" alt="" />
                     </div>
-                    <div className="flex flex-row gap-2 w-full items-center p-4 flex-shrink-0">
+                    <div className="flex flex-row w-full items-center justify-between p-4 flex-shrink-0">
                         <SelectComponent placeholder="Interações" onValueChange={handleSelectChange} items={[{ value: "todas", label: "Todas" }, { value: "minhas", label: "Minhas" }]} />
                         <button
-                        className={`group relative z-50 p-2 rounded-lg bg-gray-100 hover:bg-gray-300 w-[40px] right-[30px] sm:left-[20px] xl:left-[130px] focus:outline-none
-                        transform translate-x-[72px]`}          
+                        className={`group relative z-50 p-2 rounded-lg bg-gray-100 hover:bg-gray-300 w-[40px] focus:outline-none
+                        transform`}          
                         onClick={toggleHistory}
                         >
-                        <span className="sr-only">Toggle History</span>                       
-                        <ChevronFirst className="text-[#323232] group-hover:text-black group-hover:translate-x-[-5px] transition-transform duration-300 group-hover:animate-pulse" size={16}/>
-                        
+                            <span className="sr-only">Toggle History</span>                       
+                            <ChevronFirst className="text-[#323232] group-hover:text-black group-hover:translate-x-[-5px] transition-transform duration-300 group-hover:animate-pulse" size={16}/>                        
                         </button>
                     </div>
                 </>

@@ -13,7 +13,7 @@ import { Loader2Icon } from 'lucide-react';
 import ProtectedRoute from './components/ProtectedRoute';
 
 // Pages
-const NewInteraction = React.lazy(() => import('./pages/NewInteraction'));
+const NewInteraction = React.lazy(() => import('./pages/NewInteractionTest'));
 import Home from './pages/Home';
 import ViewInteraction from './pages/ViewInteraction';
 import Config from './pages/Config';

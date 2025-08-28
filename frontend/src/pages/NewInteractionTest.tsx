@@ -1,9 +1,11 @@
-import History from "@/components/History";
+// Funções
 import { modelo1Schema, modelo2Schema, type FormValues } from "@/formModels/models";
 import { getPayload } from "@/formModels/payloads/getPayload";
 import { Modelo1Fields } from "@/formModels/fields/modelo1";
 import { Modelo2Fields } from "@/formModels/fields/modelo2";
 
+// Componentes
+import History from "@/components/History";
 import { SelectScrollable } from "@/components/Select2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,6 +13,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { AlertDialogError } from "@/components/AlertDialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
+// Libraries/hooks
 import { z } from "zod";
 import { useState, useMemo, useEffect, useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
@@ -127,11 +130,11 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
     }, [selectedEmpresa, getEstabelecimentos]);
 
     const handleModeloChange = (value: string) => {
-        const newModel = { id: 1, nome: value }; // Exemplo simples de id
+        const newModel = { id: 1, nome: value };
         setSelectedModelo(newModel);
         form.setValue("modelo", value);
         
-        // Resetar o formulário com os valores padrão do novo schema
+        // Reseta o formulário com os valores padrão do novo schema
         if (newModel.nome === 'modelo1') {
             form.reset({
                 ...form.getValues(),
