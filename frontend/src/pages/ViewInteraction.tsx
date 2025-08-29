@@ -7,7 +7,7 @@ import { Button } from "@/components/ui/button"
 // Libraries/Hooks
 import jsPDF from 'jspdf';
 import { useState, useEffect } from "react"
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import { Building, Building2, Calendar, CalendarPlus, FileDown, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, TriangleAlert, Wallet } from "lucide-react"
 import axios from "axios";
 import React from "react";
@@ -34,7 +34,6 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
     const [interaction, setInteraction] = useState<InteractionData | null>(null);
 
     const { id } = useParams();
-    const navigate = useNavigate();
     
     useEffect(() => {
         const fetchInteraction = async () => {

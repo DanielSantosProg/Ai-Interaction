@@ -1,9 +1,11 @@
-// Componentes principais
-import History from "@/components/History";
-import { modelo1Schema, modelo2Schema } from "@/formModels/models";
+// Funções
+import { modelo1Schema, modelo2Schema, type FormValues } from "@/formModels/models";
+import { getPayload } from "@/formModels/payloads/getPayload";
+import { Modelo1Fields } from "@/formModels/fields/modelo1";
+import { Modelo2Fields } from "@/formModels/fields/modelo2";
 
-// Componentes extras
-import { DatePicker } from "@/components/DatePicker";
+// Componentes
+import History from "@/components/History";
 import { SelectScrollable } from "@/components/Select2";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -11,13 +13,13 @@ import { Textarea } from "@/components/ui/textarea";
 import { AlertDialogError } from "@/components/AlertDialog";
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from "@/components/ui/form";
 
-// Libraries/Hooks
+// Libraries/hooks
 import { z } from "zod";
-import { useState, useMemo, useEffect, useCallback } from "react"; // Adicionando `useCallback`
+import { useState, useMemo, useEffect, useCallback } from "react";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { MoveRight, Loader2Icon, Sparkles, Pen, Funnel, Text, ClipboardMinus, TriangleAlert } from "lucide-react";
+import { Loader2Icon, Sparkles, Pen, ClipboardMinus, TriangleAlert, Text } from "lucide-react";
 import { useForm } from "react-hook-form";
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import axios from "axios";
 
 // Definições de tipos
@@ -28,26 +30,10 @@ interface NewInteractionProps {
     user: any;
 }
 
-type Empresa = {
-    id: number;
-    nome: string;
-};
-
-type Estabelecimento = {
-    id: number;
-    nome: string;
-    empresaId: number;
-}
-
-type Localizacao = {
-    id: number;
-    nome: string;
-}
-
-type Modelo = {
-    id: number;
-    nome: string;
-}
+type Empresa = { id: number; nome: string; };
+type Estabelecimento = { id: number; nome: string; empresaId: number; };
+type Localizacao = { id: number; nome: string; };
+type Modelo = { id: number; nome: string; };
 
 const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: NewInteractionProps) => {
     const [loading, setLoading] = useState(false);
@@ -62,15 +48,15 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
     const [selectedEstabelecimento, setSelectedEstabelecimento] = useState<Estabelecimento | null>(null);
     const [selectedLocalizacao, setSelectedLocalizacao] = useState<Localizacao | null>(null);
 
-    // URLs da API
+    const navigate = useNavigate();
+    const location = useLocation();
+    const locationValues = location.state;
     const userId = user?.id ?? 11;
     const URL_EMPRESAS = "http://localhost:3000/empresas";
     const URL_ESTABELECIMENTOS = "http://localhost:3000/estabelecimentos";
     const URL_LOCALIZACOES = "http://localhost:3000/localizacoes";
     
-    const navigate = useNavigate();
 
-    // Lógica para determinar o esquema de validação
     const currentSchema = useMemo(() => {
         if (selectedModelo?.nome === 'modelo2') {
             return modelo2Schema;
@@ -83,16 +69,33 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
         defaultValues: {
             titulo: "",
             modelo: "",
-            dataInicio: "",
-            dataFim: "",
-            empresa: "",
-            estabelecimento: "",
-            localizacao: "",
             prompt: "",
+            ...(selectedModelo?.nome === 'modelo1' ? { dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", localizacao: "" } : {}),
+            ...(selectedModelo?.nome === 'modelo2' ? { dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", localizacao: "" } : {})
         },
     });
 
-    // Funções de busca com `useCallback` para memorização
+    useEffect(() => {
+        if (locationValues) {
+            const filters = locationValues.filters.split(",").map((item: string) => item.trim());
+            handleModeloChange(locationValues.modelo);
+            form.setValue("titulo", locationValues.title);
+            form.setValue("prompt", locationValues.prompt);
+            
+
+            setSelectedModelo({ id: 1, nome: locationValues.modelo });            
+          
+            if (locationValues.modelo === 'modelo1' || locationValues.modelo === 'modelo2') {
+                const [dataInicio, dataFim, empresa, estabelecimento, localizacao] = filters;
+                form.setValue("dataInicio", dataInicio || "");
+                form.setValue("dataFim", dataFim || "");
+                form.setValue("empresa", empresa || "");
+                form.setValue("estabelecimento", estabelecimento || "");
+                form.setValue("localizacao", localizacao || "");
+            }
+        }
+    }, [locationValues, form]);
+
     const getEmpresas = useCallback(async () => {
         try {
             const response = await axios.get(URL_EMPRESAS);
@@ -103,8 +106,6 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
             setEmpresas(empresasFormatadas);
         } catch (error) {
             console.error("Erro ao buscar as empresas:", error);
-            setError(error instanceof Error ? error.message : String(error));
-            setIsAlertOpen(true);
         }
     }, []);
 
@@ -118,108 +119,74 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
             setLocalizacoes(localizacoesFormatadas);
         } catch (error) {
             console.error("Erro ao buscar as localizações:", error);
-            setError(error instanceof Error ? error.message : String(error));
-            setIsAlertOpen(true);
         }
     }, []);
 
     const getEstabelecimentos = useCallback(async (empresaId: number | null) => {
         if (!empresaId) {
             setEstabelecimentos([]);
-            form.setValue("estabelecimento", "");
             return;
         }
         try {
-            const response = await axios.get(URL_ESTABELECIMENTOS, {
-                params: { emp_id: empresaId }
-            });
-            const estabelecimentosFormatados = response.data.map((estabelecimento: { COP_EST_ID: number; COP_EST_DESCRICAO: string, GER_EMP_ID: number }) => ({
-                id: estabelecimento.COP_EST_ID,
-                nome: estabelecimento.COP_EST_DESCRICAO,
-                empresaId: estabelecimento.GER_EMP_ID
+            const response = await axios.get(URL_ESTABELECIMENTOS, { params: { emp_id: empresaId } });
+            const estabelecimentosFormatados = response.data.map((est: { COP_EST_ID: number; COP_EST_DESCRICAO: string, GER_EMP_ID: number }) => ({
+                id: est.COP_EST_ID,
+                nome: est.COP_EST_DESCRICAO,
+                empresaId: est.GER_EMP_ID
             }));
             setEstabelecimentos(estabelecimentosFormatados);
         } catch (error) {
             console.error("Erro ao buscar os estabelecimentos:", error);
-            setError(error instanceof Error ? error.message : String(error));
-            setIsAlertOpen(true);
         }
-    }, [form]);
-
-    // Efeitos
-    useEffect(() => {
-        getEmpresas();
-        getLocalizacoes();
-    }, [getEmpresas, getLocalizacoes]);
+    }, []);
 
     useEffect(() => {
-        if (selectedEmpresa) {
+        if (selectedModelo?.nome === "modelo1" || selectedModelo?.nome == "modelo2"){
+            getEmpresas();
+            getLocalizacoes();
+        }        
+    }, [getEmpresas, getLocalizacoes, selectedModelo]);
+
+    useEffect(() => {
+        if ((selectedModelo?.nome == "modelo1" || selectedModelo?.nome == "modelo2") && selectedEmpresa) {
             getEstabelecimentos(selectedEmpresa.id);
         } else {
             setEstabelecimentos([]);
-            form.setValue("estabelecimento", "");
         }
-    }, [selectedEmpresa, getEstabelecimentos, form]);
+    }, [selectedEmpresa, getEstabelecimentos, selectedModelo]);
 
-    useEffect(() => {
-        if (error) {
-            setError(null);
-            setIsAlertOpen(false);
+    const handleModeloChange = (value: string) => {
+        const newModel = { id: 1, nome: value };
+        setSelectedModelo(newModel);
+        form.setValue("modelo", value);
+        
+        // Reseta o formulário com os valores padrão do novo schema
+        if (newModel.nome === 'modelo1') {
+            form.reset({
+                ...form.getValues(),
+                dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", localizacao: ""
+            });
+            setSelectedEmpresa(null);
+            setSelectedEstabelecimento(null);
+            setSelectedLocalizacao(null);
+            setEstabelecimentos([]);
+        } else if (newModel.nome === 'modelo2') {
+            form.reset({
+                ...form.getValues(),
+                dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", localizacao: ""
+            });
+            setSelectedEmpresa(null);
+            setSelectedEstabelecimento(null);
+            setSelectedLocalizacao(null);
+            setEstabelecimentos([]);
         }
-    }, [location.pathname, error]);
-
-    // Função de redefinição para ser chamada ao mudar o modelo
-    const resetFilters = useCallback(() => {
-        form.reset({
-            titulo: "",
-            modelo: selectedModelo?.nome || "",
-            dataInicio: "",
-            dataFim: "",
-            empresa: "",
-            estabelecimento: "",
-            localizacao: "",
-            prompt: "",
-        });
-        setSelectedEmpresa(null);
-        setSelectedEstabelecimento(null);
-        setSelectedLocalizacao(null);
-        setEstabelecimentos([]);
-    }, [form, selectedModelo]);
-
-    // Efeito para redefinir o formulário ao mudar o modelo
-    useEffect(() => {
-        if (selectedModelo) {
-            resetFilters();
-        }
-    }, [selectedModelo, resetFilters]);
-
-    const formatDate = (dateString: string) => {
-        const [day, month, year] = dateString.split('/');
-        return `${year}-${month}-${day}`;
     };
-
-    async function onSubmit(values: z.infer<typeof currentSchema>) {
+    
+    async function onSubmit(values: FormValues) {
         setLoading(true);
-        const formattedDataInicio = values.dataInicio ? formatDate(values.dataInicio) : undefined;
-        const formattedDataFim = values.dataFim ? formatDate(values.dataFim) : undefined;
-        const payload = {
-            titulo: values.titulo,
-            modelo: selectedModelo?.nome,
-            dataInicio: formattedDataInicio,
-            dataFim: formattedDataFim,
-            empresa: selectedEmpresa?.id,
-            estabelecimento: selectedEstabelecimento?.id,
-            localizacao: selectedLocalizacao?.id,
-            prompt: values.prompt,
-            dataInicioDB: values.dataInicio,
-            dataFimDB: values.dataFim,
-            empresaDB: values.empresa,
-            estabelecimentoDB: values.estabelecimento,
-            localizacaoDB: values.localizacao,
-        };
-        console.log("Submetendo formulário...", payload);
-
         try {
+            const payload = getPayload(values, selectedModelo, selectedEmpresa, selectedEstabelecimento, selectedLocalizacao);
+            console.log("Payload: ", payload);
             const response = await fetch("http://localhost:3000/analyze", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
@@ -231,15 +198,12 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
             }
             const data = await response.json();
             if (data.error) {
-                console.error(data.error);
                 setError(data.error);
                 setIsAlertOpen(true);
             } else {
-                console.log("Resposta do servidor:", data);
                 navigate(`/interaction/${data.id}`);
             }
         } catch (error) {
-            console.error(error);
             setError(error instanceof Error ? error.message : String(error));
             setIsAlertOpen(true);
         } finally {
@@ -247,15 +211,15 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
         }
     }
 
-    if (error){
-    return (
-      <div className="flex flex-row h-screen">
-          <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-              {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
-          </div> 
-          <div className="flex flex-row w-full h-full items-center justify-center text-lg gap-2"><TriangleAlert className="text-red-500 " /><span className="text-red-500">Erro:</span> {error}</div>
-      </div>
-      )
+    if (error) {
+        return (
+            <div className="flex flex-row h-screen">
+                <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
+                    {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+                </div>
+                <div className="flex flex-row w-full h-full items-center justify-center text-lg gap-2"><TriangleAlert className="text-red-500" /><span className="text-red-500">Erro:</span> {error}</div>
+            </div>
+        );
     }
 
     return (
@@ -281,8 +245,33 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="px-8 xl:px-0 space-y-8">
                         <div className="flex flex-col w-[300px] md:w-md lg:w-3xl items-center my-12">
-                            {/* Título */}
-                            <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 items-center">
+                            {/* Modelo (Campo comum) */}
+                            <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 justify-center items-center">
+                                <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
+                                    <ClipboardMinus className="text-[#1F3D58]" size={18} />
+                                    <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">Modelo de Relatório</FormLabel>
+                                </div>
+                                <FormField
+                                    control={form.control}
+                                    name="modelo"
+                                    render={({ field }) => (
+                                        <FormItem className="w-full">
+                                            <FormControl>
+                                                <SelectScrollable
+                                                    placeholder="Selecione o Modelo"
+                                                    items={[{ value: 'modelo1', label: 'Modelo 1' }, { value: 'modelo2', label: 'Modelo 2' }]}
+                                                    onValueChange={handleModeloChange}
+                                                    defaultValue={field.value}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+
+                            {/* Título (Campo comum) */}
+                            <div className="flex flex-col bg-white border-2 rounded-md w-full mt-8 p-4 items-center">
                                 <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
                                     <Pen className="text-[#1F3D58]" size={18} />
                                     <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">Título</FormLabel>
@@ -300,173 +289,37 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                                     )}
                                 />
                             </div>
-                            <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 mt-8 justify-center items-center">
-                                <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
-                                    <ClipboardMinus className="text-[#1F3D58]" size={18} />
-                                    <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">Modelo de Relatório</FormLabel>
-                                </div>
-                                <FormField
-                                    control={form.control}
-                                    name="modelo"
-                                    render={({ field }) => (
-                                        <FormItem className="w-full">
-                                            <FormControl>
-                                                <SelectScrollable
-                                                    placeholder="Selecione o Modelo"
-                                                    items={[{ value: 'modelo1', label: 'Modelo 1' }, { value: 'modelo2', label: 'Modelo 2' }]} // Adicionado o segundo modelo
-                                                    onValueChange={(value: string) => {
-                                                        field.onChange(value);
-                                                        setSelectedModelo({ id: 1, nome: value });
-                                                    }}
-                                                    defaultValue={field.value}
-                                                />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
+                            
+                            {/* Renderização condicional dos filtros */}
+                            {selectedModelo?.nome === 'modelo1' && (
+                                <Modelo1Fields
+                                    form={form}
+                                    empresas={empresas}
+                                    estabelecimentos={estabelecimentos}
+                                    localizacoes={localizacoes}
+                                    selectedEmpresa={selectedEmpresa}
+                                    selectedEstabelecimento={selectedEstabelecimento}
+                                    selectedLocalizacao={selectedLocalizacao}
+                                    setSelectedEmpresa={setSelectedEmpresa}
+                                    setSelectedEstabelecimento={setSelectedEstabelecimento}
+                                    setSelectedLocalizacao={setSelectedLocalizacao}
                                 />
-                            </div>
-                            {/* Filtros */}
-                            <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 items-center mt-8">
-                                <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
-                                    <Funnel className="text-[#1F3D58]" size={18} />
-                                    <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">Selecione os filtros:</FormLabel>
-                                </div>
-                                <div className="flex flex-col lg:flex-row justify-center w-full lg:items-center mt-2">
-                                    {/* Período */}
-                                    <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
-                                        <FormLabel className="mb-3 lg:ml-4">Período</FormLabel>
-                                        <div className="flex flex-row w-full justify-center sm:justify-baseline items-center gap-2">
-                                            <FormField
-                                                control={form.control}
-                                                name="dataInicio"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormControl>
-                                                            <DatePicker
-                                                                valor={field.value}
-                                                                placeholder="Data Inicial"
-                                                                onSelect={(date: Date | undefined) => {
-                                                                    field.onChange(date ? date.toLocaleDateString("pt-BR") : "");
-                                                                }}
-                                                            />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                            <MoveRight size={18} />
-                                            <FormField
-                                                control={form.control}
-                                                name="dataFim"
-                                                render={({ field }) => (
-                                                    <FormItem>
-                                                        <FormControl>
-                                                            <DatePicker
-                                                                valor={field.value}
-                                                                placeholder="Data Final"
-                                                                onSelect={(date: Date | undefined) => {
-                                                                    field.onChange(date ? date.toLocaleDateString("pt-BR") : "");
-                                                                }}
-                                                            />
-                                                        </FormControl>
-                                                        <FormMessage />
-                                                    </FormItem>
-                                                )}
-                                            />
-                                        </div>
-                                    </div>
-                                    {/* Empresa */}
-                                    <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
-                                        <FormLabel className="m-3 lg:mb-3 lg:mt-0 self-center lg:self-baseline lg:ml-4">Empresa</FormLabel>
-                                        <FormField
-                                            control={form.control}
-                                            name="empresa"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormControl>
-                                                        <SelectScrollable
-                                                            placeholder="Selecione a empresa"
-                                                            items={empresas.map((empresa) => ({
-                                                                value: empresa.nome,
-                                                                label: empresa.nome,
-                                                                id: empresa.id
-                                                            }))}
-                                                            onValueChange={(value: string) => {
-                                                                field.onChange(value);
-                                                                const empresaObj = empresas.find((empresa) => empresa.nome === value) || null;
-                                                                setSelectedEmpresa(empresaObj);
-                                                            }}
-                                                            defaultValue={field.value}                                                            
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                </div>
-                                {/* Estabelecimento e Localização */}
-                                <div className="flex flex-col lg:flex-row w-full justify-evenly mt-4">
-                                    <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
-                                        <FormLabel className="mb-3 self-center lg:self-baseline lg:ml-4">Estabelecimento</FormLabel>
-                                        <FormField
-                                            control={form.control}
-                                            name="estabelecimento"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormControl>
-                                                        <SelectScrollable
-                                                            placeholder="Selecione o estabelecimento"
-                                                            items={estabelecimentos.map(est => ({
-                                                                id: est.id,
-                                                                value: est.nome,
-                                                                label: est.nome
-                                                            }))}
-                                                            onValueChange={(value: string) => {
-                                                                field.onChange(value);
-                                                                const estabelecimentoObj = estabelecimentos.find((estabelecimento) => estabelecimento.nome === value) || null;
-                                                                setSelectedEstabelecimento(estabelecimentoObj);
-                                                            }}
-                                                            defaultValue={field.value}                                                            
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                    <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
-                                        <FormLabel className="m-3 lg:mb-3 lg:mt-0 self-center lg:self-baseline lg:ml-4">Localização</FormLabel>
-                                        <FormField
-                                            control={form.control}
-                                            name="localizacao"
-                                            render={({ field }) => (
-                                                <FormItem>
-                                                    <FormControl>
-                                                        <SelectScrollable
-                                                            placeholder="Selecione a localização"
-                                                            items={localizacoes.map(localizacao => ({
-                                                                id: localizacao.id,
-                                                                value: localizacao.nome,
-                                                                label: localizacao.nome
-                                                            }))}
-                                                            onValueChange={(value: string) => {
-                                                                field.onChange(value);
-                                                                const localizacaoObj = localizacoes.find((localizacao) => localizacao.nome === value) || null;
-                                                                setSelectedLocalizacao(localizacaoObj);
-                                                            }}
-                                                            defaultValue={field.value}                                                            
-                                                        />
-                                                    </FormControl>
-                                                    <FormMessage />
-                                                </FormItem>
-                                            )}
-                                        />
-                                    </div>
-                                </div>
-                            </div>
-                            {/* Prompt */}
+                            )}
+                            {selectedModelo?.nome === 'modelo2' && (
+                                <Modelo2Fields
+                                    form={form}
+                                    empresas={empresas}
+                                    estabelecimentos={estabelecimentos}
+                                    localizacoes={localizacoes}
+                                    selectedEmpresa={selectedEmpresa}
+                                    selectedEstabelecimento={selectedEstabelecimento}
+                                    selectedLocalizacao={selectedLocalizacao}
+                                    setSelectedEmpresa={setSelectedEmpresa}
+                                    setSelectedEstabelecimento={setSelectedEstabelecimento}
+                                    setSelectedLocalizacao={setSelectedLocalizacao}
+                                />
+                            )}
+                            {/* Prompt (Campo comum) */}
                             <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 mt-8 justify-center items-center">
                                 <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
                                     <Text className="text-[#1F3D58]" size={18} />
@@ -514,6 +367,6 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
             </div>
         </div>
     );
-}
+};
 
 export default NewInteraction;

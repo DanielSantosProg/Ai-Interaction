@@ -6,17 +6,7 @@ import mssql from 'mssql'
 
 const ai = new GoogleGenAI({});
 
-interface InteractionFields {
-    titulo: string,
-    dataInicioDB: string,
-    dataFimDB: string,
-    empresaDB: string,
-    estabelecimentoDB: string,
-    localizacaoDB: string,
-    prompt: string;
-}
-
-async function analyseDocument(docPath: string, values: InteractionFields, userId: number, pool: any) {
+async function analyseDocument(docPath: string, values: any, userId: number, pool: any) {
     if (!fs.existsSync(docPath)) {
         let erro = ("Arquivo PDF não encontrado:" + docPath)
         console.error(erro);
@@ -59,7 +49,8 @@ async function analyseDocument(docPath: string, values: InteractionFields, userI
         const thoughtTokens = response.usageMetadata ? response.usageMetadata.thoughtsTokenCount : 0;
 
         // Formatação dos filtros
-        const filters = `${values.dataInicioDB}, ${values.dataFimDB}, ${values.empresaDB}, ${values.estabelecimentoDB}, ${values.localizacaoDB}`;
+        let filters = "";
+        if (values.modelo === "modelo1") filters = `${values.dataInicioDB}, ${values.dataFimDB}, ${values.empresaDB}, ${values.estabelecimentoDB}, ${values.localizacaoDB}`;
 
         if (response.text) {
             // Operações de inserção no banco
@@ -74,13 +65,14 @@ async function analyseDocument(docPath: string, values: InteractionFields, userI
                 .input('retorno', mssql.VarChar(8000), response.text)
                 .input('inputTokens', mssql.Int, inputTokens)
                 .input('outputTokens', mssql.Int, outputTokens)
-                .input('thoughtTokens', mssql.Int, thoughtTokens);
+                .input('thoughtTokens', mssql.Int, thoughtTokens)
+                .input('modelo', mssql.VarChar(100), values.modelo);
             // Executa a query de INSERT e CAPTURA o ID da linha inserida
             const insertResult = await request.query(`
                 INSERT INTO HISTORICO (COD_USUARIO, PROMPT, TITULO, DT_CRIACAO, FILTROS, RETORNO,
-                TOKENS_REQUISICAO, TOKENS_RETORNO, TOKENS_PENSAMENTO)
+                TOKENS_REQUISICAO, TOKENS_RETORNO, TOKENS_PENSAMENTO, MODELO)
                 OUTPUT INSERTED.ID
-                VALUES (@userId, @prompt, @titulo, GETDATE(), @filtros, @retorno, @inputTokens, @outputTokens, @thoughtTokens)
+                VALUES (@userId, @prompt, @titulo, GETDATE(), @filtros, @retorno, @inputTokens, @outputTokens, @thoughtTokens, @modelo)
             `);
             
             // Extrai o ID do resultado

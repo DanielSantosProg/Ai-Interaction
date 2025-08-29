@@ -78,8 +78,11 @@ app.post('/analyze', async (req, res) => {
         const { values, userId } = req.body;
 
         const dir = "C:\\Users\\Usuário\\Documents";
-        
-        const documento = await gerarDocumento(dir, values.titulo, values.modelo, sqlPool, values.dataInicio, values.dataFim, values.empresa, values.estabelecimento, values.localizacao);
+
+        let documento;        
+        if (values.modelo === "modelo1"){
+            documento = await gerarDocumento(dir, values, sqlPool);
+        }        
 
         let path: string | undefined;
         if (documento?.success === true) {
@@ -120,14 +123,14 @@ app.get('/interactions', async (req, res) => {
             result = await sqlPool.request()
                 .input('userId', mssql.Int, userId)
                 .query(`SELECT 
-                            H.ID, H.COD_USUARIO, H.PROMPT, H.TITULO, H.DT_CRIACAO, H.FILTROS, H.RETORNO, F.USR_NOME 
+                            H.ID, H.COD_USUARIO, H.PROMPT, H.TITULO, H.DT_CRIACAO, H.FILTROS, H.RETORNO, H.MODELO, F.USR_NOME 
                             FROM HISTORICO H WITH (NOLOCK)
                             INNER JOIN FR_USUARIO F WITH (NOLOCK) ON H.COD_USUARIO = F.USR_CODIGO
                             WHERE COD_USUARIO = @userId`);
         } else {
             result = await sqlPool.request()
                 .query(`SELECT 
-                            H.ID, H.COD_USUARIO, H.PROMPT, H.TITULO, H.DT_CRIACAO, H.FILTROS, H.RETORNO, F.USR_NOME 
+                            H.ID, H.COD_USUARIO, H.PROMPT, H.TITULO, H.DT_CRIACAO, H.FILTROS, H.RETORNO, H.MODELO, F.USR_NOME 
                             FROM HISTORICO H WITH (NOLOCK)
                             INNER JOIN FR_USUARIO F WITH (NOLOCK) ON H.COD_USUARIO = F.USR_CODIGO`);
         }

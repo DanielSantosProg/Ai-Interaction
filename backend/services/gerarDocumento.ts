@@ -9,34 +9,32 @@ interface DocumentResult {
     path: string;
 }
 
-async function gerarDados(titulo: string, modelo: string, sqlPool: any, dataInicial?: string, dataFinal?: string, empId?: number, estabelecimentoId?: number, localizacaoId?: number){
+async function gerarDados(values: any, sqlPool: any){
     try {
         let data;
-        if (modelo === "modelo1") {
+        if (values.modelo === "modelo1") {
             let request = sqlPool.request();
             let stringFilters = "";
 
-            if (dataInicial) {
-                // CORREÇÃO: Usar o tipo VarChar para a data com o formato universal 'YYYY-MM-DD'
+            if (values.dataInicio) {
                 stringFilters += ` AND COR_DUP_DATA_VENCIMENTO >= CONVERT(DATETIME, @dataInicial, 120)`;
-                request.input('dataInicial', mssql.VarChar(10), dataInicial);
+                request.input('dataInicial', mssql.VarChar(10), values.dataInicio);
             }
-            if (dataFinal) {
-                // CORREÇÃO: Usar o tipo VarChar para a data com o formato universal 'YYYY-MM-DD'
+            if (values.dataFim) {
                 stringFilters += ` AND COR_DUP_DATA_VENCIMENTO <= CONVERT(DATETIME, @dataFinal, 120)`;
-                request.input('dataFinal', mssql.VarChar(10), dataFinal);
+                request.input('dataFinal', mssql.VarChar(10), values.dataFim);
             }
-            if (empId) {
+            if (values.empresa) {
                 stringFilters += ` AND e.GER_EMP_ID = @empId`;
-                request.input('empId', mssql.Int, empId);
+                request.input('empId', mssql.Int, values.empresa);
             }
-            if (estabelecimentoId) {
+            if (values.estabelecimento) {
                 stringFilters += ` AND COR_DUP_ESTABELECIMENTO = @estabelecimentoId`;
-                request.input('estabelecimentoId', mssql.Int, estabelecimentoId);
+                request.input('estabelecimentoId', mssql.Int, values.estabelecimento);
             }
-            if (localizacaoId) {
+            if (values.localizacao) {
                 stringFilters += ` AND COR_DUP_LOCALIZACAO = @localizacaoId`;
-                request.input('localizacaoId', mssql.Int, localizacaoId);
+                request.input('localizacaoId', mssql.Int, values.localizacao);
             }
 
             console.log("String filters: ", stringFilters)
@@ -76,9 +74,9 @@ async function gerarDados(titulo: string, modelo: string, sqlPool: any, dataInic
     }
 }
 
-async function gerarDocumento(dir: string, titulo: string, modelo: string, sqlPool: any, dataInicial?: string, dataFinal?: string, empId?: number, estabelecimentoId?: number, localizacaoId?: number): Promise<DocumentResult> {
+async function gerarDocumento(dir: string, values: any, sqlPool: any): Promise<DocumentResult> {
     try {
-        const dados = await gerarDados(titulo, modelo, sqlPool, dataInicial, dataFinal, empId, estabelecimentoId, localizacaoId);
+        const dados = await gerarDados(values, sqlPool);
         
         // Cria o PDF
         const doc = new PDFDocument({
@@ -88,7 +86,7 @@ async function gerarDocumento(dir: string, titulo: string, modelo: string, sqlPo
         });
         
         // Nome do arquivo
-        const nomeArquivo = `${titulo}.pdf`;
+        const nomeArquivo = `${values.titulo}.pdf`;
         const filePath = path.join(dir, nomeArquivo);
 
         // Retorna uma Promise que resolve quando o arquivo estiver totalmente salvo
@@ -113,20 +111,40 @@ async function gerarDocumento(dir: string, titulo: string, modelo: string, sqlPo
             }));
 
             // Define a estrutura da tabela
-            const table = {
-                headers: [
-                    { label: "Empresa", property: 'nomeFantasia', width: 90 },
-                    { label: "Emissão", property: 'dataEmissao', width: 60, align: 'center' },
-                    { label: "Valor", property: 'valorDuplicata', width: 60, align: 'right' },
-                    { label: "Tipo", property: 'tipoFatura', width: 40, align: 'center' },
-                    { label: "Vencimento", property: 'dataVencimento', width: 60, align: 'center' },
-                    { label: "Localização", property: 'localizacao', width: 90 },
-                    { label: "Estabelecimento", property: 'estabelecimento', width: 90 },
-                    { label: "Dt. Baixa", property: 'dataBaixa', width: 60, align: 'center' },
-                    { label: "Vlr. Baixa", property: 'valorBaixa', width: 60, align: 'right' },
-                ],
-                datas: tableData,
-            };
+            let table;
+            if (values.modelo === "modelo1"){
+                table = {
+                    headers: [
+                        { label: "Empresa", property: 'nomeFantasia', width: 90 },
+                        { label: "Emissão", property: 'dataEmissao', width: 60, align: 'center' },
+                        { label: "Valor", property: 'valorDuplicata', width: 60, align: 'right' },
+                        { label: "Tipo", property: 'tipoFatura', width: 40, align: 'center' },
+                        { label: "Vencimento", property: 'dataVencimento', width: 60, align: 'center' },
+                        { label: "Localização", property: 'localizacao', width: 90 },
+                        { label: "Estabelecimento", property: 'estabelecimento', width: 90 },
+                        { label: "Dt. Baixa", property: 'dataBaixa', width: 60, align: 'center' },
+                        { label: "Vlr. Baixa", property: 'valorBaixa', width: 60, align: 'right' },
+                    ],
+                    datas: tableData,
+                };
+            } else {
+                // Alterar futuramente para ifs de outros modelos, com seus campos específicos.
+                table = {
+                    headers: [
+                        { label: "Empresa", property: 'nomeFantasia', width: 90 },
+                        { label: "Emissão", property: 'dataEmissao', width: 60, align: 'center' },
+                        { label: "Valor", property: 'valorDuplicata', width: 60, align: 'right' },
+                        { label: "Tipo", property: 'tipoFatura', width: 40, align: 'center' },
+                        { label: "Vencimento", property: 'dataVencimento', width: 60, align: 'center' },
+                        { label: "Localização", property: 'localizacao', width: 90 },
+                        { label: "Estabelecimento", property: 'estabelecimento', width: 90 },
+                        { label: "Dt. Baixa", property: 'dataBaixa', width: 60, align: 'center' },
+                        { label: "Vlr. Baixa", property: 'valorBaixa', width: 60, align: 'right' },
+                    ],
+                    datas: tableData,
+                };
+            }
+            
 
             // Gera a tabela
             doc.table(table, {

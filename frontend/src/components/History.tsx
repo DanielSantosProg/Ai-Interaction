@@ -3,7 +3,7 @@ import logo from "../assets/reisoflogo.jpg"
 import HoverCardComponent from "./HoverCard"
 import SelectComponent from "./Select"
 import axios from "axios"
-import { ChevronFirst, ChevronLast } from "lucide-react";
+import { ChevronFirst, ChevronLast, FileStack } from "lucide-react";
 
 // Interfaces
 interface HistoryProps {
@@ -21,6 +21,7 @@ interface CardData {
     DT_CRIACAO: string;
     FILTROS: string;
     RETORNO: string;
+    MODELO: string;
 }
 
 const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
@@ -58,18 +59,18 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
         <div className={`w-full flex-col items-center h-full flex transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
             {!isOpen ?
             (
-                <>
-                    <button
-                      className={`group relative right-10 top-16 z-50 py-2 rounded-sm bg-gradient-to-l from-gray-100 to-gray-300 hover:to-gray-400 w-[40px] focus:outline-none
-                      transform translate-x-[72px]`}          
+                <div className="group relative right-10 top-16 z-50 py-2 rounded-sm bg-gray-200 w-[40px] focus:outline-none
+                      transform translate-x-[72px]">
+                    <button                               
                       onClick={toggleHistory}
                     >
                       <span className="sr-only">Toggle History</span>
-                      <div className="flex flex-row items-center gap-1">                        
-                        <ChevronLast className="text-[#323232] group-hover:text-black group-hover:translate-x-[5px] transition-transform duration-300 group-hover:animate-pulse" size={16}/>                            
+                      <div className="flex flex-row items-center gap-1 pl-[12px] pt-1">   
+                        <FileStack className="text-[#323232]" size={18}/>                     
+                        <ChevronLast className="relative left-3 text-[#323232] group-hover:text-black group-hover:translate-x-[5px] transition-transform duration-300 group-hover:animate-pulse" size={16}/>                            
                       </div>
                     </button>
-                </>
+                </div>
             ) : (
                 <>
                     <div className="flex w-full justify-center h-40">
@@ -92,7 +93,7 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
                       
             <div className="flex flex-col items-center w-full scrollbar-thin overflow-y-auto flex-grow">
                 {cards.map((card) => (
-                    <HoverCardComponent key={card.ID} id={card.ID} title={card.TITULO} date={card.DT_CRIACAO} owner={card.USR_NOME} prompt={card.PROMPT} filters={card.FILTROS} retorno={card.RETORNO}/>
+                    <HoverCardComponent key={card.ID} id={card.ID} title={card.TITULO} date={card.DT_CRIACAO} owner={card.USR_NOME} prompt={card.PROMPT} filters={card.FILTROS} retorno={card.RETORNO} modelo={card.MODELO}/>
                 ))}
             </div>
         </div>

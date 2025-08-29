@@ -1,7 +1,8 @@
 import { HoverCard } from "radix-ui";
 import { Card } from "./Card";
-import { Building, Building2, Calendar, Pin } from "lucide-react";
-import { Link } from 'react-router-dom';
+import { Building, Building2, Calendar, CopyPlus, Pin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Link, useNavigate } from 'react-router-dom';
 
 interface CardData {
     id: number;
@@ -11,9 +12,11 @@ interface CardData {
     prompt: string;
     filters: string;
     retorno: string;
+    modelo: string;
 }
 
-const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno }: CardData) => {
+const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno, modelo }: CardData) => {
+    const navigate = useNavigate();
     const separatedFilters = filters
         .split(",")
         .map(item => item.trim());
@@ -24,32 +27,45 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno }
         day: '2-digit'
     });
 
+    const handleCopyClick = (e: React.MouseEvent) => {
+        e.preventDefault();
+        e.stopPropagation(); 
+
+        const stateData = {
+            id,
+            title,
+            date,
+            owner,
+            prompt,
+            filters,
+            retorno,
+            modelo,
+        };
+        navigate('/new-interaction', { state: stateData });
+    };
+
     return (
         <HoverCard.Root>
             <HoverCard.Trigger asChild>
                 <Link
-                    to={`/interaction/${id}`}
-                    state={{
-                        titulo: title,
-                        dataCriacao: date,
-                        solicitante: owner,
-                        prompt: prompt,
-                        dataInicio: separatedFilters[0] || '',
-                        dataFim: separatedFilters[1] || '',
-                        empresa: separatedFilters[2] || '',
-                        estabelecimento: separatedFilters[3] || '',
-                        localizacao: separatedFilters[4] || '',
-                        retorno: retorno
-                    }}
+                    to={`/interaction/${id}`}                    
                     className="group inline-block max-w-full cursor-pointer rounded-full shadow-[hsl(206_22%_7%_/_35%)_0px_10px_38px_-10px,hsl(206_22%_7%_/_20%)_0px_10px_20px_-15px] outline-none focus:shadow-[0_0_0_2px_white]"
                 >
                     <Card className="my-1 h-20 w-2 sm:h-26">
                         <h2 className="text-[10px] group-hover:text-white sm:text-sm font-bold sm:mb-2 text-[#3A3939] truncate overflow-hidden whitespace-nowrap">{title}</h2>
-                        <p className="text-[8px] group-hover:text-white sm:text-xs text-[#3A3939] py-1 sm:py-2"><span className="font-semibold">Data de Criação: </span>{dataCriacao}</p>
-                        <p className="text-[8px] group-hover:text-white sm:text-xs text-[#3A3939] py-1 sm:py-2">
-                            <span className="font-semibold">Solicitante: </span>
-                            {owner}
-                        </p>
+                        <p className="text-[8px] group-hover:text-white sm:text-xs text-[#3A3939] py-1"><span className="font-semibold">Data de Criação: </span>{dataCriacao}</p>
+                        <div className="flex flex-row items-center w-full">
+                            <p className="text-[8px] w-[175px] group-hover:text-white sm:text-xs text-[#3A3939]">                        
+                                <span className="font-semibold">Solicitante:</span> {owner}                                                       
+                            </p>                            
+                            <Button
+                                type="button"
+                                onClick={handleCopyClick}
+                                className="relative left-8 xl:left-38 bg-gray-100 hover:bg-gray-100 hover:animate-in w-10 h-6 xl:h-7 shadow-sm rounded-lg text-[12px] transition-all duration-300 shadow-gray-700 hover:shadow-white hover:border-1 hover:border-gray-500"                                    
+                            >                                                                    
+                                <CopyPlus className="text-gray-700" size={20} />                                                                      
+                            </Button>    
+                        </div>                                               
                     </Card>
                 </Link>
             </HoverCard.Trigger>
