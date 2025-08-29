@@ -6,12 +6,14 @@ import { Dialog, DialogTrigger } from "@/components/ui/dialog";
 interface SidebarProps {
   handleSidebarOpen: () => void;
   isSidebarOpen: boolean;
+  isHistoryOpen:boolean;
+  toggleHistory: () => void;
   user: any;
   login: (userData: any) => void;
   logout: () => void;
 }
 
-const Sidebar = ({ handleSidebarOpen, isSidebarOpen, user, login, logout }: SidebarProps) => {
+const Sidebar = ({ handleSidebarOpen, isSidebarOpen, isHistoryOpen, toggleHistory, user, login, logout }: SidebarProps) => {
 
   return (
     <>
@@ -106,6 +108,7 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen, user, login, logout }: Side
                   className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
                   onClick={(e) => {
                     e.preventDefault();
+                    {isHistoryOpen && toggleHistory();}
                     logout();
                   }}
                 >

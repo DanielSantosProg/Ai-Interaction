@@ -60,7 +60,7 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
             (
                 <>
                     <button
-                      className={`group relative right-10 top-16 z-50 p-2 rounded-lg bg-gray-100 hover:bg-gray-300 w-[40px] focus:outline-none
+                      className={`group relative right-10 top-16 z-50 py-2 rounded-sm bg-gradient-to-l from-gray-100 to-gray-300 hover:to-gray-400 w-[40px] focus:outline-none
                       transform translate-x-[72px]`}          
                       onClick={toggleHistory}
                     >
@@ -75,10 +75,10 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
                     <div className="flex w-full justify-center h-40">
                         <img src={logo} className="max-w-26 sm:max-w-48 self-center max-h-30" alt="" />
                     </div>
-                    <div className="flex flex-row w-full items-center justify-between p-4 flex-shrink-0">
+                    <div className="flex flex-row w-full items-center justify-between py-4 flex-shrink-0">
                         <SelectComponent placeholder="Interações" onValueChange={handleSelectChange} items={[{ value: "todas", label: "Todas" }, { value: "minhas", label: "Minhas" }]} />
                         <button
-                        className={`group relative z-50 p-2 rounded-lg bg-gray-100 hover:bg-gray-300 w-[40px] focus:outline-none
+                        className={`group relative z-50 p-2 bg-gradient-to-r from-white to-gray-200 hover:to-gray-300 w-[40px] focus:outline-none
                         transform`}          
                         onClick={toggleHistory}
                         >

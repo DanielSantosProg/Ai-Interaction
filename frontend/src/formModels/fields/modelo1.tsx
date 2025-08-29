@@ -32,16 +32,16 @@ export const Modelo1Fields: React.FC<Modelo1FieldsProps> = ({
     setSelectedEstabelecimento,
     setSelectedLocalizacao,
 }) => (
-    <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 items-center mt-8">
+    <div className="flex flex-col items-center lg:items-stretch bg-white border-2 rounded-md w-full p-4 mt-8">
         <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
             <Funnel className="text-[#1F3D58]" size={18} />
             <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">Selecione os filtros:</FormLabel>
         </div>
-        <div className="flex flex-col lg:flex-row justify-center w-full lg:items-center mt-2">
+        <div className='grid grid-cols-1 lg:grid-cols-2'>
             {/* Período */}
-            <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
-                <FormLabel className="mb-3 lg:ml-4">Período</FormLabel>
-                <div className="flex flex-row w-full justify-center sm:justify-baseline items-center gap-2">
+            <div className='mt-4'>
+                <FormLabel className="mb-3 lg:ml-4 self-center">Período</FormLabel>
+                <div className="flex flex-row w-full items-center gap-2">
                     <FormField
                         control={form.control}
                         name="dataInicio"
@@ -82,8 +82,8 @@ export const Modelo1Fields: React.FC<Modelo1FieldsProps> = ({
                 </div>
             </div>
             {/* Empresa */}
-            <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
-                <FormLabel className="m-3 lg:mb-3 lg:mt-0 self-center lg:self-baseline lg:ml-4">Empresa</FormLabel>
+            <div className='mt-4'>
+                <FormLabel className="mb-3 lg:ml-4">Empresa</FormLabel>
                 <FormField
                     control={form.control}
                     name="empresa"
@@ -106,11 +106,9 @@ export const Modelo1Fields: React.FC<Modelo1FieldsProps> = ({
                     )}
                 />
             </div>
-        </div>
-        {/* Estabelecimento e Localização */}
-        <div className="flex flex-col lg:flex-row w-full justify-evenly mt-4">
-            <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
-                <FormLabel className="mb-3 self-center lg:self-baseline lg:ml-4">Estabelecimento</FormLabel>
+            {/* Estabelecimento e Localização */}
+            <div className='mt-4'>
+                <FormLabel className="mb-3 lg:ml-4">Estabelecimento</FormLabel>
                 <FormField
                     control={form.control}
                     name="estabelecimento"
@@ -133,8 +131,8 @@ export const Modelo1Fields: React.FC<Modelo1FieldsProps> = ({
                     )}
                 />
             </div>
-            <div className="flex flex-col w-full items-center lg:items-baseline lg:mr-4 xl:mr-12">
-                <FormLabel className="m-3 lg:mb-3 lg:mt-0 self-center lg:self-baseline lg:ml-4">Localização</FormLabel>
+            <div className='mt-4'>
+                <FormLabel className="mb-3 lg:ml-4">Localização</FormLabel>
                 <FormField
                     control={form.control}
                     name="localizacao"
@@ -157,6 +155,6 @@ export const Modelo1Fields: React.FC<Modelo1FieldsProps> = ({
                     )}
                 />
             </div>
-        </div>
+        </div>            
     </div>
 );

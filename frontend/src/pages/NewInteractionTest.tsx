@@ -219,27 +219,8 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                 <Form {...form}>
                     <form onSubmit={form.handleSubmit(onSubmit)} className="px-8 xl:px-0 space-y-8">
                         <div className="flex flex-col w-[300px] md:w-md lg:w-3xl items-center my-12">
-                            {/* Título (Campo comum) */}
-                            <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 items-center">
-                                <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
-                                    <Pen className="text-[#1F3D58]" size={18} />
-                                    <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">Título</FormLabel>
-                                </div>
-                                <FormField
-                                    control={form.control}
-                                    name="titulo"
-                                    render={({ field }) => (
-                                        <FormItem className="flex flex-col md:flex-row items-center w-full">
-                                            <FormControl>
-                                                <Input placeholder="Digite o título da interação" className="w-2xs md:w-full" {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-                            </div>
                             {/* Modelo (Campo comum) */}
-                            <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 mt-8 justify-center items-center">
+                            <div className="flex flex-col bg-white border-2 rounded-md w-full p-4 justify-center items-center">
                                 <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
                                     <ClipboardMinus className="text-[#1F3D58]" size={18} />
                                     <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">Modelo de Relatório</FormLabel>
@@ -262,6 +243,27 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                                     )}
                                 />
                             </div>
+
+                            {/* Título (Campo comum) */}
+                            <div className="flex flex-col bg-white border-2 rounded-md w-full mt-8 p-4 items-center">
+                                <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
+                                    <Pen className="text-[#1F3D58]" size={18} />
+                                    <FormLabel className="font-semibold lg:mr-4 text-[14px] text-[#323232]">Título</FormLabel>
+                                </div>
+                                <FormField
+                                    control={form.control}
+                                    name="titulo"
+                                    render={({ field }) => (
+                                        <FormItem className="flex flex-col md:flex-row items-center w-full">
+                                            <FormControl>
+                                                <Input placeholder="Digite o título da interação" className="w-2xs md:w-full" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                            </div>
+                            
                             {/* Renderização condicional dos filtros */}
                             {selectedModelo?.nome === 'modelo1' && (
                                 <Modelo1Fields

@@ -20,7 +20,7 @@ import Config from './pages/Config';
 
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
-  const [isHistoryOpen, setIsHistoryOpen] = useState(true);
+  const [isHistoryOpen, setIsHistoryOpen] = useState(false);
   const { user, login, logout, loading: authLoading } = useContext(AuthContext); // Pega o estado de loading do contexto
 
   const handleSidebarOpen = () => {
@@ -35,7 +35,7 @@ function App() {
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <div className="flex min-h-screen flex-row overflow-hidden">
         <BrowserRouter>
-          <Sidebar handleSidebarOpen={handleSidebarOpen} isSidebarOpen={isSidebarOpen} user={user} login={login} logout={logout} />
+          <Sidebar handleSidebarOpen={handleSidebarOpen} isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} login={login} logout={logout} />
           <div className='flex-grow sm:ml-22 overflow-hidden'>
             {authLoading ? (
               <div className='flex h-screen justify-center items-center'>
