@@ -62,7 +62,7 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
         <div className={`w-full flex-col items-center h-full flex transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
             {!isOpen ?
             (
-                <div className="group relative right-10 top-16 z-50 py-2 rounded-sm bg-gray-200 w-[40px] focus:outline-none
+                <div className="group relative right-10 top-16 z-50 py-2 rounded-sm bg-gray-200 hover:bg-gray-300 w-[40px] focus:outline-none
                       transform translate-x-[72px]">
                     <button                               
                       onClick={toggleHistory}

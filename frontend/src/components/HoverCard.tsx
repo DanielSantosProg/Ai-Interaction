@@ -1,6 +1,6 @@
 import { HoverCard } from "radix-ui";
 import { Card } from "./Card";
-import { Building, Building2, Calendar, CopyPlus, Pin } from "lucide-react";
+import { Building, Building2, Calendar, CopyPlus, Pin, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -139,14 +139,14 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno, 
 
                                 {separatedFilters[4] && separatedFilters[4] !== '' ? (
                                     <div className="flex flex-row items-center gap-1 mt-2">
-                                        <Pin size={14} />
+                                        <Wallet size={14} />
                                         <span className="text-white rounded-full py-1 text-[12px]">
                                             {separatedFilters[4]}
                                         </span>
                                     </div>
                                 ) : (
                                     <div className="flex flex-row items-center gap-1 mt-2">
-                                        <Pin size={14} />
+                                        <Wallet size={14} />
                                         <span className="text-white rounded-full py-1 text-[12px]">-</span>
                                     </div>
                                 )}

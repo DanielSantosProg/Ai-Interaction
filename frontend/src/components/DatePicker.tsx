@@ -14,7 +14,14 @@ interface DatePickerProps {
 }
 
 export function DatePicker({ valor, onSelect, placeholder }: DatePickerProps) {
-  const [open, setOpen] = React.useState(false)
+  const [open, setOpen] = React.useState(false);
+  const [value, setValue] = React.useState(valor ?? "")
+  
+  React.useEffect(() => {
+      if (valor && valor !== value) {
+        setValue(valor);
+      }
+    }, [valor])
 
   const parsedDate = React.useMemo(() => {
     if (!valor) return undefined
@@ -29,7 +36,7 @@ export function DatePicker({ valor, onSelect, placeholder }: DatePickerProps) {
       <div className="relative flex gap-2">
         <Input
           id="date"
-          value={valor ?? ""}
+          value={value}
           placeholder={placeholder}
           className="bg-background w-36"
           onChange={(e) => {
@@ -51,6 +58,8 @@ export function DatePicker({ valor, onSelect, placeholder }: DatePickerProps) {
               const year = cleanValue.substring(4, 8)
               formattedValue += "/" + year
             }
+
+            setValue(formattedValue)
             
             onSelect(
               formattedValue.length === 10

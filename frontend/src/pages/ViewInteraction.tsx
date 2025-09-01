@@ -29,7 +29,7 @@ interface InteractionData {
 }
 
 const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ViewInteractionProps) => {
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [pageLoading, setPageLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [interaction, setInteraction] = useState<InteractionData | null>(null);
@@ -54,7 +54,6 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
                 setError("Não foi possível carregar os dados da interação.");
             }
         };
-
         fetchInteraction();
     }, [id]);
 
@@ -180,7 +179,7 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
 
     React.useEffect(() => {
         if (error) {
-        setError(null);
+            setError(null);
         }
     }, [location.pathname]);
 
@@ -192,6 +191,15 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
             </div>         
             <div className="flex flex-row w-full h-full items-center justify-center text-lg gap-2"><TriangleAlert className="text-red-500 " /><span className="text-red-500">Erro:</span> {error}</div>
         </div>
+        )
+    }
+
+    if (pageLoading){
+        return (
+            <div className='flex h-screen justify-center items-center'>
+                <Loader2Icon className="animate-spin mr-2" size={20} />
+                Carregando...
+            </div>
         )
     }
 
@@ -212,7 +220,7 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
                     </div>
                     <div className="flex flex-row items-center">
                         <Paperclip className="text-[#323232]" size={18}/>
-                        <p className="px-2 text-[#323232]/85 font-regular">Relatório gerado.pdf</p>
+                        <p className="px-2 text-[#323232]/85 font-regular">{interaction?.TITULO}.pdf</p>
                     </div>
                 </div>
             </div>

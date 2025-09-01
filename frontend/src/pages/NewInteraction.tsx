@@ -122,23 +122,35 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
     }, []);
 
     useEffect(() => {
-        if (locationValues) {
-            const filters = locationValues.filters.split(",").map((item: string) => item.trim());
-            handleModeloChange(locationValues.modelo, true);
-            form.setValue("titulo", locationValues.title);
-            form.setValue("prompt", locationValues.prompt);
-                      
-            if (locationValues.modelo === 'modelo1' || locationValues.modelo === 'modelo2') {
-                const [dataInicio, dataFim, empresa, estabelecimento, localizacao] = filters;
-                form.setValue("dataInicio", dataInicio || "");
-                form.setValue("dataFim", dataFim || "");
-                form.setValue("empresa", empresa || "");
-                const empresaObj = empresas.find((empresa) => empresa === empresa) || null
-                setSelectedEmpresa(empresaObj)
-                form.setValue("localizacao", localizacao || "");
-                form.setValue("estabelecimento", estabelecimento || "");
+        async function useValues() {
+            if (locationValues) {
+                try{
+                    const filters = locationValues.filters.split(",").map((item: string) => item.trim());
+                    await handleModeloChange(locationValues.modelo, true);
+                    form.setValue("titulo", locationValues.title);
+                    form.setValue("prompt", locationValues.prompt);
+                            
+                    if (locationValues.modelo === 'modelo1' || locationValues.modelo === 'modelo2') {
+                        const [dataInicio, dataFim, empresa, estabelecimento, localizacao] = filters;
+                        form.setValue("dataInicio", dataInicio || "");
+                        form.setValue("dataFim", dataFim || "");
+                        form.setValue("empresa", empresa || "");
+                        const empresaObj = empresas.find((empresa) => empresa === empresa) || null
+                        setSelectedEmpresa(empresaObj)
+                        form.setValue("localizacao", localizacao || "");
+                        form.setValue("estabelecimento", estabelecimento || "");
+                    }
+                }catch(error){
+                    if (error instanceof Error){
+                        console.error(error.message);
+                    } else {
+                        console.error("Erro ao buscar o histórico:", error);
+                    }                    
+                }                
             }
         }
+        useValues();
+        
     }, [locationValues, form]);    
 
     useEffect(() => {
@@ -156,12 +168,12 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
         }
     }, [selectedEmpresa, getEstabelecimentos, selectedModelo]);
 
-    const handleModeloChange = (value: string, isFromLocation = false) => {
+    async function handleModeloChange (value: string, isFromLocation = false) {
         const newModel = { id: 1, nome: value };
-        form.setValue("modelo", value);
         setSelectedModelo(newModel);
-        console.log("Modelo mudado: ", selectedModelo);        
+        form.setValue("modelo", value);
 
+        
         if (!isFromLocation) {
             form.reset({
             ...form.getValues(),
@@ -295,7 +307,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                             </div>
                             
                             {/* Renderização condicional dos filtros */}
-                            {selectedModelo?.nome === 'modelo1' && (
+                            {selectedModelo?.nome == 'modelo1' && (
                                 <Modelo1Fields
                                     form={form}
                                     empresas={empresas}
@@ -309,7 +321,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                                     setSelectedLocalizacao={setSelectedLocalizacao}
                                 />
                             )}
-                            {selectedModelo?.nome === 'modelo2' && (
+                            {selectedModelo?.nome == 'modelo2' && (
                                 <Modelo2Fields
                                     form={form}
                                     empresas={empresas}
