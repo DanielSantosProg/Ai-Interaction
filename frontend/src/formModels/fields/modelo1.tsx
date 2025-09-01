@@ -139,7 +139,7 @@ export const Modelo1Fields: React.FC<Modelo1FieldsProps> = ({
                 />
                 </>                
                 ) : (
-                <p className='text-sm self-center py-2'>Selecione uma empresa primeiro</p>
+                <p className='text-xs text-[#323232]/75 text-center py-2'>Selecione uma empresa primeiro</p>
                 )}
             </div>
             <div className='mt-4'>

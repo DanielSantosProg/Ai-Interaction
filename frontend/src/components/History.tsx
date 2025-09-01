@@ -3,7 +3,7 @@ import logo from "../assets/reisoflogo.jpg"
 import HoverCardComponent from "./HoverCard"
 import SelectComponent from "./Select"
 import axios from "axios"
-import { ChevronFirst, ChevronLast, FileStack } from "lucide-react";
+import { ChevronFirst, ChevronLast, FileStack, Loader2Icon } from "lucide-react";
 
 // Interfaces
 interface HistoryProps {
@@ -25,6 +25,7 @@ interface CardData {
 }
 
 const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
+    const [loading, setLoading] = React.useState(true);
     const userId = user ? user.id : null;
     const API_URL = "http://localhost:3000/interactions"
     const [cards, setCards] = React.useState<CardData[]>([]);
@@ -42,6 +43,7 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
                 console.log("Dados do histórico: ", response.data);
                 
                 setCards(response.data);
+                setLoading(false);
                 
             } catch (error) {
                 if (error instanceof Error) {
@@ -49,6 +51,7 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
                 } else {
                 console.error("Erro ao buscar o histórico:", error);
                 }
+                setLoading(false);
                 throw error;
             }
         }
@@ -92,6 +95,12 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
             }
                       
             <div className="flex flex-col items-center w-full scrollbar-thin overflow-y-auto flex-grow">
+                {loading && 
+                    <div className='flex h-screen justify-center items-center'>
+                        <Loader2Icon className="animate-spin mr-2" size={20} />
+                        Carregando...
+                    </div>
+                }
                 {cards.map((card) => (
                     <HoverCardComponent key={card.ID} id={card.ID} title={card.TITULO} date={card.DT_CRIACAO} owner={card.USR_NOME} prompt={card.PROMPT} filters={card.FILTROS} retorno={card.RETORNO} modelo={card.MODELO}/>
                 ))}
