@@ -30,6 +30,7 @@ interface InteractionData {
 
 const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ViewInteractionProps) => {
     const [loading, setLoading] = useState(true);
+    const [pageLoading, setPageLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
     const [interaction, setInteraction] = useState<InteractionData | null>(null);
 
@@ -38,7 +39,7 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
     useEffect(() => {
         const fetchInteraction = async () => {
             if (!id) {
-                setLoading(false);
+                setPageLoading(false);
                 setError("ID da interação não fornecido.");
                 return;
             }
@@ -46,10 +47,10 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
             try {
                 const response = await axios.get(`http://localhost:3000/interactions/${id}`);
                 setInteraction(response.data);
-                setLoading(false);
+                setPageLoading(false);
             } catch (err) {
                 console.error("Erro ao buscar interação:", err);
-                setLoading(false);
+                setPageLoading(false);
                 setError("Não foi possível carregar os dados da interação.");
             }
         };

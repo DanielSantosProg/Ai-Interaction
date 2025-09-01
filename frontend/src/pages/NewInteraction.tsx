@@ -73,28 +73,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
             ...(selectedModelo?.nome === 'modelo1' ? { dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", localizacao: "" } : {}),
             ...(selectedModelo?.nome === 'modelo2' ? { dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", localizacao: "" } : {})
         },
-    });
-
-    useEffect(() => {
-        if (locationValues) {
-            const filters = locationValues.filters.split(",").map((item: string) => item.trim());
-            handleModeloChange(locationValues.modelo);
-            form.setValue("titulo", locationValues.title);
-            form.setValue("prompt", locationValues.prompt);
-            
-
-            setSelectedModelo({ id: 1, nome: locationValues.modelo });            
-          
-            if (locationValues.modelo === 'modelo1' || locationValues.modelo === 'modelo2') {
-                const [dataInicio, dataFim, empresa, estabelecimento, localizacao] = filters;
-                form.setValue("dataInicio", dataInicio || "");
-                form.setValue("dataFim", dataFim || "");
-                form.setValue("empresa", empresa || "");
-                form.setValue("estabelecimento", estabelecimento || "");
-                form.setValue("localizacao", localizacao || "");
-            }
-        }
-    }, [locationValues, form]);
+    });     
 
     const getEmpresas = useCallback(async () => {
         try {
@@ -128,6 +107,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
             return;
         }
         try {
+            setLoading(true);
             const response = await axios.get(URL_ESTABELECIMENTOS, { params: { emp_id: empresaId } });
             const estabelecimentosFormatados = response.data.map((est: { COP_EST_ID: number; COP_EST_DESCRICAO: string, GER_EMP_ID: number }) => ({
                 id: est.COP_EST_ID,
@@ -135,10 +115,31 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                 empresaId: est.GER_EMP_ID
             }));
             setEstabelecimentos(estabelecimentosFormatados);
+            setLoading(false);
         } catch (error) {
             console.error("Erro ao buscar os estabelecimentos:", error);
         }
     }, []);
+
+    useEffect(() => {
+        if (locationValues) {
+            const filters = locationValues.filters.split(",").map((item: string) => item.trim());
+            handleModeloChange(locationValues.modelo, true);
+            form.setValue("titulo", locationValues.title);
+            form.setValue("prompt", locationValues.prompt);
+                      
+            if (locationValues.modelo === 'modelo1' || locationValues.modelo === 'modelo2') {
+                const [dataInicio, dataFim, empresa, estabelecimento, localizacao] = filters;
+                form.setValue("dataInicio", dataInicio || "");
+                form.setValue("dataFim", dataFim || "");
+                form.setValue("empresa", empresa || "");
+                const empresaObj = empresas.find((empresa) => empresa === empresa) || null
+                setSelectedEmpresa(empresaObj)
+                form.setValue("localizacao", localizacao || "");
+                form.setValue("estabelecimento", estabelecimento || "");
+            }
+        }
+    }, [locationValues, form]);    
 
     useEffect(() => {
         if (selectedModelo?.nome === "modelo1" || selectedModelo?.nome == "modelo2"){
@@ -155,32 +156,29 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
         }
     }, [selectedEmpresa, getEstabelecimentos, selectedModelo]);
 
-    const handleModeloChange = (value: string) => {
+    const handleModeloChange = (value: string, isFromLocation = false) => {
         const newModel = { id: 1, nome: value };
-        setSelectedModelo(newModel);
         form.setValue("modelo", value);
-        
-        // Reseta o formulário com os valores padrão do novo schema
-        if (newModel.nome === 'modelo1') {
+        setSelectedModelo(newModel);
+        console.log("Modelo mudado: ", selectedModelo);        
+
+        if (!isFromLocation) {
             form.reset({
-                ...form.getValues(),
-                dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", localizacao: ""
+            ...form.getValues(),
+            dataInicio: "",
+            dataFim: "",
+            empresa: "",
+            estabelecimento: "",
+            localizacao: "",
             });
-            setSelectedEmpresa(null);
-            setSelectedEstabelecimento(null);
-            setSelectedLocalizacao(null);
-            setEstabelecimentos([]);
-        } else if (newModel.nome === 'modelo2') {
-            form.reset({
-                ...form.getValues(),
-                dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", localizacao: ""
-            });
+
             setSelectedEmpresa(null);
             setSelectedEstabelecimento(null);
             setSelectedLocalizacao(null);
             setEstabelecimentos([]);
         }
     };
+
     
     async function onSubmit(values: FormValues) {
         setLoading(true);
@@ -259,9 +257,15 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                                             <FormControl>
                                                 <SelectScrollable
                                                     placeholder="Selecione o Modelo"
-                                                    items={[{ value: 'modelo1', label: 'Modelo 1' }, { value: 'modelo2', label: 'Modelo 2' }]}
-                                                    onValueChange={handleModeloChange}
-                                                    defaultValue={field.value}
+                                                    items={[
+                                                        { value: 'modelo1', label: 'Modelo 1' },
+                                                        { value: 'modelo2', label: 'Modelo 2' },
+                                                    ]}
+                                                    value={field.value}
+                                                    onValueChange={(val) => {
+                                                        field.onChange(val);
+                                                        handleModeloChange(val);
+                                                    }}
                                                 />
                                             </FormControl>
                                             <FormMessage />

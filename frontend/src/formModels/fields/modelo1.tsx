@@ -28,6 +28,7 @@ export const Modelo1Fields: React.FC<Modelo1FieldsProps> = ({
     empresas,
     estabelecimentos,
     localizacoes,
+    selectedEmpresa,
     setSelectedEmpresa,
     setSelectedEstabelecimento,
     setSelectedLocalizacao,
@@ -92,13 +93,17 @@ export const Modelo1Fields: React.FC<Modelo1FieldsProps> = ({
                             <FormControl>
                                 <SelectScrollable
                                     placeholder="Selecione a empresa"
-                                    items={empresas.map((empresa) => ({ value: empresa.nome, label: empresa.nome, id: empresa.id }))}
+                                    items={empresas.map((empresa) => ({
+                                        value: empresa.nome,
+                                        label: empresa.nome,
+                                        id: empresa.id,
+                                    }))}
                                     onValueChange={(value: string) => {
-                                        field.onChange(value);
-                                        const empresaObj = empresas.find((empresa) => empresa.nome === value) || null;
-                                        setSelectedEmpresa(empresaObj);
+                                        field.onChange(value)
+                                        const empresaObj = empresas.find((empresa) => empresa.nome === value) || null
+                                        setSelectedEmpresa(empresaObj)
                                     }}
-                                    defaultValue={field.value}
+                                    value={field.value}
                                 />
                             </FormControl>
                             <FormMessage />
@@ -109,27 +114,33 @@ export const Modelo1Fields: React.FC<Modelo1FieldsProps> = ({
             {/* Estabelecimento e Localização */}
             <div className='mt-4'>
                 <FormLabel className="mb-3 lg:ml-4">Estabelecimento</FormLabel>
+                {selectedEmpresa && estabelecimentos.length > 0 ? (                    
+                <>                    
                 <FormField
                     control={form.control}
                     name="estabelecimento"
                     render={({ field }) => (
-                        <FormItem>
-                            <FormControl>
-                                <SelectScrollable
-                                    placeholder="Selecione o estabelecimento"
-                                    items={estabelecimentos.map(est => ({ id: est.id, value: est.nome, label: est.nome }))}
-                                    onValueChange={(value: string) => {
-                                        field.onChange(value);
-                                        const estabelecimentoObj = estabelecimentos.find((estabelecimento) => estabelecimento.nome === value) || null;
-                                        setSelectedEstabelecimento(estabelecimentoObj);
-                                    }}
-                                    defaultValue={field.value}
-                                />
-                            </FormControl>
-                            <FormMessage />
-                        </FormItem>
+                    <FormItem>
+                        <FormControl>
+                        <SelectScrollable
+                            placeholder="Selecione o estabelecimento"
+                            items={estabelecimentos.map(est => ({ id: est.id, value: est.nome, label: est.nome }))}
+                            onValueChange={(value) => {
+                            field.onChange(value);
+                            const estabelecimentoObj = estabelecimentos.find(e => e.nome === value) || null;
+                            setSelectedEstabelecimento(estabelecimentoObj);
+                            }}
+                            value={field.value}
+                        />
+                        </FormControl>
+                        <FormMessage />
+                    </FormItem>
                     )}
                 />
+                </>                
+                ) : (
+                <p className='text-sm self-center py-2'>Selecione uma empresa primeiro</p>
+                )}
             </div>
             <div className='mt-4'>
                 <FormLabel className="mb-3 lg:ml-4">Localização</FormLabel>
@@ -147,7 +158,7 @@ export const Modelo1Fields: React.FC<Modelo1FieldsProps> = ({
                                         const localizacaoObj = localizacoes.find((localizacao) => localizacao.nome === value) || null;
                                         setSelectedLocalizacao(localizacaoObj);
                                     }}
-                                    defaultValue={field.value}
+                                    value={field.value}
                                 />
                             </FormControl>
                             <FormMessage />
