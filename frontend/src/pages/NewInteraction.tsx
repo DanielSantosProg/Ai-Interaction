@@ -226,11 +226,8 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
 
     if (error) {
         return (
-            <div className="flex flex-row h-screen">
-                <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-                    {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
-                </div>
-                <div className="flex flex-row w-full h-full items-center justify-center text-lg gap-2"><TriangleAlert className="text-red-500" /><span className="text-red-500">Erro:</span> {error}</div>
+            <div className="flex flex-row h-screen items-center justify-center">                
+                <div className="flex flex-col w-[300px] h-full self-center items-center justify-center text-lg gap-2"><TriangleAlert className="text-red-500 animate-pulse" /><span className="text-red-500 animate-pulse">Erro:</span> {error}</div>
             </div>
         );
     }
@@ -247,7 +244,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
             </div>
             <div className={`flex flex-col bg-[#323232]/3 flex-grow items-center py-12 overflow-y-auto scrollbar-thin`}>
                 {!loaded && locationValues &&
-                <div className='flex justify-center absolute rounded-sm p-4 top-1/2 left-1/2 z-50 bg-[#323232]/25'>
+                <div className='flex justify-center text-white absolute rounded-sm p-4 top-1/2 left-3/5 z-50 bg-[#323232]'>
                     <Loader2Icon className="animate-spin mr-2" size={20} />
                     Replicando interação...
                 </div>

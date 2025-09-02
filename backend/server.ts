@@ -4,6 +4,7 @@ import cors from 'cors';
 import mssql from 'mssql'
 
 import { analyseDocument } from './requests/documentAnalysis';
+import { analyseDocumentWithFunctionCall } from './requests/documentAnalysisWithChart';
 import { updateConnectionData } from './services/gerenciarConexao';
 import gerarDocumento from './services/gerarDocumento';
 
@@ -17,7 +18,7 @@ const port = process.env.PORT || 3000;
 
 
 interface Response {
-    response: string | null;
+    response: string | null | undefined;
     error: string | null;
     id: number | null;
 }
@@ -77,7 +78,7 @@ app.post('/analyze', async (req, res) => {
         }
         const { values, userId } = req.body;
 
-        const dir = "C:\\Users\\Usuário\\Documents";
+        const dir = "C:\\Users\\Usuário\\Documents\\InteracoesDados";
 
         let documento;        
         if (values.modelo === "modelo1"){
