@@ -43,6 +43,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
     const [estabelecimentos, setEstabelecimentos] = useState<Estabelecimento[]>([]);
     const [localizacoes, setLocalizacoes] = useState<Localizacao[]>([]);
     const [selectedModelo, setSelectedModelo] = useState<Modelo | null>(null);
+    const [loaded, setLoaded] = useState<boolean | null>(false);
 
     const [selectedEmpresa, setSelectedEmpresa] = useState<Empresa | null>(null);
     const [selectedEstabelecimento, setSelectedEstabelecimento] = useState<Estabelecimento | null>(null);
@@ -83,6 +84,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                 nome: empresa.GER_EMP_NOME_FANTASIA
             }));
             setEmpresas(empresasFormatadas);
+            setLoaded(true);
         } catch (error) {
             console.error("Erro ao buscar as empresas:", error);
         }
@@ -122,36 +124,37 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
     }, []);
 
     useEffect(() => {
-        async function useValues() {
-            if (locationValues) {
-                try{
-                    const filters = locationValues.filters.split(",").map((item: string) => item.trim());
-                    await handleModeloChange(locationValues.modelo, true);
-                    form.setValue("titulo", locationValues.title);
-                    form.setValue("prompt", locationValues.prompt);
-                            
-                    if (locationValues.modelo === 'modelo1' || locationValues.modelo === 'modelo2') {
-                        const [dataInicio, dataFim, empresa, estabelecimento, localizacao] = filters;
-                        form.setValue("dataInicio", dataInicio || "");
-                        form.setValue("dataFim", dataFim || "");
-                        form.setValue("empresa", empresa || "");
-                        const empresaObj = empresas.find((empresa) => empresa === empresa) || null
-                        setSelectedEmpresa(empresaObj)
-                        form.setValue("localizacao", localizacao || "");
-                        form.setValue("estabelecimento", estabelecimento || "");
-                    }
-                }catch(error){
-                    if (error instanceof Error){
-                        console.error(error.message);
-                    } else {
-                        console.error("Erro ao buscar o histórico:", error);
-                    }                    
-                }                
+        if (locationValues) {
+            try {
+            const filters = locationValues.filters.split(",").map((item: string) => item.trim());
+            const [dataInicio, dataFim, empresa, estabelecimento, localizacao] = filters;
+
+            const modeloObj = { id: 1, nome: locationValues.modelo };
+            setSelectedModelo(modeloObj);
+
+            form.reset({
+                titulo: locationValues.title || "",
+                modelo: locationValues.modelo || "",
+                prompt: locationValues.prompt || "",
+                dataInicio: dataInicio || "",
+                dataFim: dataFim || "",
+                empresa: empresa || "",
+                estabelecimento: estabelecimento || "",
+                localizacao: localizacao || "",
+            });
+
+            const empresaObj = empresas.find((e) => e.nome === empresa) || null;
+            setSelectedEmpresa(empresaObj);
+            } catch (error) {
+            if (error instanceof Error) {
+                console.error(error.message);
+            } else {
+                console.error("Erro ao aplicar os valores:", error);
+            }
             }
         }
-        useValues();
-        
-    }, [locationValues, form]);    
+    }, [locationValues, form, loaded]);
+  
 
     useEffect(() => {
         if (selectedModelo?.nome === "modelo1" || selectedModelo?.nome == "modelo2"){
@@ -243,6 +246,13 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                 )}
             </div>
             <div className={`flex flex-col bg-[#323232]/3 flex-grow items-center py-12 overflow-y-auto scrollbar-thin`}>
+                {!loaded && locationValues &&
+                <div className='flex justify-center absolute rounded-sm p-4 top-1/2 left-1/2 z-50 bg-[#323232]/25'>
+                    <Loader2Icon className="animate-spin mr-2" size={20} />
+                    Replicando interação...
+                </div>
+                }
+                
                 <div className="flex flex-col items-center">
                     <div className="flex flex-row items-center gap-2 pb-[12px]">
                         <div className="flex w-[40px] h-[40px] items-center justify-center bg-gradient-to-r rounded-md from-teal-500 via-teal-400 to-teal-200">
