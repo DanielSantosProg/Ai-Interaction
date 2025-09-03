@@ -274,6 +274,8 @@ app.post('/update_data', async (req, res) => {
         }
         const { values } = req.body;
 
+        console.log("Values: ", values)
+
         const result = await updateData(values);        
 
         console.log("Dados de conexão:", result);

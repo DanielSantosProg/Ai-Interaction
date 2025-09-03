@@ -1,6 +1,7 @@
 import express from 'express';
 import type { Request, Response } from 'express';
 import cors from 'cors';
+import crypto from 'crypto';
 
 import { Empresa, User, Config } from './models/Relacionamentos';
 
@@ -12,7 +13,6 @@ import empresasRoutes from './routes/empresaRoutes';
 import usuariosRoutes from './routes/usuarioRoutes';
 import configsRoutes from './routes/configRoutes';
 import { sendDataToEndpoint, updateData } from './services/gerenciarConexao';
-import { error } from 'console';
 
 const app = express();
 const port = 3001;
@@ -48,32 +48,50 @@ app.get('/data', async (req: Request, res: Response) => {
 });
 
 app.post('/change_config', async (req: Request, res: Response) => {
-    try {        
+    try {
         const { values, id_empresa, configType } = req.body;
 
-        const configs = await Config.findAll({ where: { id_empresa: id_empresa } });
+        // Gera uma chave de API aleatória e segura
+        const apiKey = crypto.randomBytes(32).toString('hex');
 
         let result;
+        const [config, created] = await Config.findOrCreate({
+            where: { id_empresa: id_empresa },
+            defaults: {
+                id_empresa: id_empresa,
+                db_database: values.DB_DATABASE,
+                db_user: values.DB_USER,
+                db_password: values.DB_PASSWORD,
+                db_port: values.DB_PORT,
+                db_server: values.DB_SERVER,
+                fileDirectory: "",
+                api_key: apiKey // Salva a chave de API na criação
+            }
+        });
 
-        
-        if (configs.length === 0 && configType == "connection") {
-            result = await Config.create({ id_empresa: id_empresa, db_database: values.DB_DATABASE, db_user: values.DB_USER, db_password: values.DB_PASSWORD, db_port: values.DB_PORT, db_server: values.DB_SERVER, fileDirectory: "" });
-        } else if (configs.length === 0 && configType == "general") {
-            throw new Error("Crie primeiro a conexão ao banco.");
-        } else{
-            result = await updateData(values, id_empresa, configType);
+        const valuesToSend = {
+                ...values,
+                api_key: apiKey
+            }
+
+        if (!created) {
+            result = await updateData(values, id_empresa, configType, apiKey);
+        } else {
+            result = config;            
         }
 
-        const response = await sendDataToEndpoint(values);
+        // Adiciona a chave de API no cabeçalho da requisição para o backend local
+        const response = await sendDataToEndpoint(valuesToSend);
 
         console.log("Dados de conexão:", result);
 
-        res.send({ response: result, localDBResponse: response, error: null });       
+        res.send({ response: result, localDBResponse: response, error: null });
     } catch (error) {
         console.error("Erro: ", error);
         res.status(500).send({ response: null, localDBResponse: null, error: "Erro interno do servidor" });
-    }  
+    }
 });
+
 
 // Usa as rotas existentes
 app.use("/auth", authRoutes);

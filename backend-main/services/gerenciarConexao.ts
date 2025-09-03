@@ -9,12 +9,14 @@ interface ConnectionProps {
         DB_PASSWORD?: string;
         DB_PORT?: number;
         fileDirectory?: string;
+        api_key?: string;
     }
     id_empresa: number;
     configType: string;
+    api_key?: string;
 }
 
-export async function updateData(values: ConnectionProps['values'], id_empresa: number, configType: string): Promise<any> {
+export async function updateData(values: ConnectionProps['values'], id_empresa: number, configType: string, api_key: string): Promise<any> {
     try {
         let result = null;
         if (configType == "general") {
@@ -30,7 +32,8 @@ export async function updateData(values: ConnectionProps['values'], id_empresa: 
                 db_database: values.DB_DATABASE, 
                 db_user: values.DB_USER,
                 db_password: values.DB_PASSWORD, 
-                db_port: values.DB_PORT
+                db_port: values.DB_PORT,
+                api_key: api_key
             }, 
             { 
                 where: { id_empresa: id_empresa } 

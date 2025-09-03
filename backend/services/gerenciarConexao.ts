@@ -11,8 +11,9 @@ interface ConnectionProps {
         DB_USER?: string;
         DB_PASSWORD?: string;
         DB_PORT?: number;
-        fileDirectory: string;
-    }
+        fileDirectory?: string;
+        api_key?: string;
+    }    
 }
 
 export async function updateData(values: ConnectionProps['values']): Promise<void> {

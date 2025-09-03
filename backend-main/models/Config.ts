@@ -11,6 +11,7 @@ interface ConfigAttributes {
   db_password: string;
   db_port: number;
   fileDirectory: string;
+  api_key: string;
 }
 
 // Interface para ID opcional
@@ -26,6 +27,7 @@ class Config extends Model<ConfigAttributes, ConfigCreationAttributes> implement
   public db_password!: string;
   public db_port!: number;
   public fileDirectory!: string;
+  public api_key!: string;
 }
 
 Config.init(
@@ -62,6 +64,10 @@ Config.init(
     },
     fileDirectory: {
       type: DataTypes.STRING(500),
+      allowNull: true,
+    },
+    api_key: {
+      type: DataTypes.STRING(255),
       allowNull: true,
     }
   },
