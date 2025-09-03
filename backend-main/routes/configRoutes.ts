@@ -19,6 +19,7 @@ router.get('/', async (req, res) => {
     DB_USER: config?.db_user || "",
     DB_PASSWORD: config?.db_password || "",
     DB_PORT: config?.db_port || "",
+    fileDirectory: config?.fileDirectory || "",
   });
 });
 

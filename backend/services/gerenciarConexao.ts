@@ -6,15 +6,16 @@ dotenv.config();
 
 interface ConnectionProps {
     values: {
-        DB_SERVER: string;
-        DB_DATABASE: string;
-        DB_USER: string;
-        DB_PASSWORD: string;
-        DB_PORT: number;
+        DB_SERVER?: string;
+        DB_DATABASE?: string;
+        DB_USER?: string;
+        DB_PASSWORD?: string;
+        DB_PORT?: number;
+        fileDirectory: string;
     }
 }
 
-export async function updateConnectionData(values: ConnectionProps['values']): Promise<void> {
+export async function updateData(values: ConnectionProps['values']): Promise<void> {
     const dotenvPath = path.join(__dirname, '../.env');
 
     try {

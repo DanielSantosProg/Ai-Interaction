@@ -5,7 +5,7 @@ import mssql from 'mssql'
 
 import { analyseDocument } from './requests/documentAnalysis';
 import { analyseDocumentWithFunctionCall } from './requests/documentAnalysisWithChart';
-import { updateConnectionData } from './services/gerenciarConexao';
+import { updateData } from './services/gerenciarConexao';
 import gerarDocumento from './services/gerarDocumento';
 
 dotenv.config();
@@ -76,13 +76,11 @@ app.post('/analyze', async (req, res) => {
         if (!sqlPool) {
             throw new Error('Pool de conexões não inicializado.');
         }
-        const { values, userId } = req.body;
-
-        const dir = "C:\\Users\\Usuário\\Documents\\InteracoesDados";
+        const { values, userId } = req.body;        
 
         let documento;        
         if (values.modelo === "modelo1"){
-            documento = await gerarDocumento(dir, values, sqlPool);
+            documento = await gerarDocumento(values, sqlPool);
         }        
 
         let path: string | undefined;
@@ -269,14 +267,14 @@ app.get('/document_data', async (req, res) => {
     }  
 });
 
-app.post('/connection_data', async (req, res) => {
+app.post('/update_data', async (req, res) => {
     try {
         if (!sqlPool) {
             throw new Error('Pool de conexões não inicializado.');
         }
         const { values } = req.body;
 
-        const result = await updateConnectionData(values);
+        const result = await updateData(values);        
 
         console.log("Dados de conexão:", result);
 

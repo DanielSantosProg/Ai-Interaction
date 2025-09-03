@@ -74,9 +74,10 @@ async function gerarDados(values: any, sqlPool: any){
     }
 }
 
-async function gerarDocumento(dir: string, values: any, sqlPool: any): Promise<DocumentResult> {
+async function gerarDocumento(values: any, sqlPool: any): Promise<DocumentResult> {
     try {
         const dados = await gerarDados(values, sqlPool);
+        const dir = process.env.fileDirectory;
         
         // Cria o PDF
         const doc = new PDFDocument({
@@ -87,7 +88,10 @@ async function gerarDocumento(dir: string, values: any, sqlPool: any): Promise<D
         
         // Nome do arquivo
         const nomeArquivo = `${values.titulo}.pdf`;
-        const filePath = path.join(dir, nomeArquivo);
+        let filePath: fs.PathLike;
+        if (dir) {
+            filePath = path.join(dir, nomeArquivo);
+        }
 
         // Retorna uma Promise que resolve quando o arquivo estiver totalmente salvo
         return new Promise((resolve, reject) => {
@@ -156,7 +160,7 @@ async function gerarDocumento(dir: string, values: any, sqlPool: any): Promise<D
 
             stream.on('finish', () => {
                 console.log(`Relatório salvo como ${nomeArquivo}`);
-                resolve({ success: true, path: filePath });
+                resolve({ success: true, path: String(filePath) });
             });
 
             stream.on('error', (err) => {

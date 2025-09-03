@@ -11,7 +11,8 @@ import authRoutes from './routes/authRoutes';
 import empresasRoutes from './routes/empresaRoutes';
 import usuariosRoutes from './routes/usuarioRoutes';
 import configsRoutes from './routes/configRoutes';
-import { sendConnectionDataToEndpoint, updateConnectionData } from './services/gerenciarConexao';
+import { sendDataToEndpoint, updateData } from './services/gerenciarConexao';
+import { error } from 'console';
 
 const app = express();
 const port = 3001;
@@ -48,23 +49,26 @@ app.get('/data', async (req: Request, res: Response) => {
 
 app.post('/change_config', async (req: Request, res: Response) => {
     try {        
-        const { values, id_empresa } = req.body;
+        const { values, id_empresa, configType } = req.body;
 
         const configs = await Config.findAll({ where: { id_empresa: id_empresa } });
 
         let result;
 
-        if (configs.length === 0) {
-            result = await Config.create({ id_empresa: id_empresa, db_database: values.DB_DATABASE, db_user: values.DB_USER, db_password: values.DB_PASSWORD, db_port: values.DB_PORT, db_server: values.DB_SERVER });
+        
+        if (configs.length === 0 && configType == "connection") {
+            result = await Config.create({ id_empresa: id_empresa, db_database: values.DB_DATABASE, db_user: values.DB_USER, db_password: values.DB_PASSWORD, db_port: values.DB_PORT, db_server: values.DB_SERVER, fileDirectory: "" });
+        } else if (configs.length === 0 && configType == "general") {
+            throw new Error("Crie primeiro a conexão ao banco.");
         } else{
-            result = await updateConnectionData(values, id_empresa);
+            result = await updateData(values, id_empresa, configType);
         }
 
-        const response = await sendConnectionDataToEndpoint(values);
+        const response = await sendDataToEndpoint(values);
 
         console.log("Dados de conexão:", result);
 
-        res.send({ response: result, localDBResponse: response, error: null });
+        res.send({ response: result, localDBResponse: response, error: null });       
     } catch (error) {
         console.error("Erro: ", error);
         res.status(500).send({ response: null, localDBResponse: null, error: "Erro interno do servidor" });

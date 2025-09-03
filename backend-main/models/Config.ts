@@ -10,6 +10,7 @@ interface ConfigAttributes {
   db_user: string;
   db_password: string;
   db_port: number;
+  fileDirectory: string;
 }
 
 // Interface para ID opcional
@@ -24,6 +25,7 @@ class Config extends Model<ConfigAttributes, ConfigCreationAttributes> implement
   public db_user!: string;
   public db_password!: string;
   public db_port!: number;
+  public fileDirectory!: string;
 }
 
 Config.init(
@@ -58,6 +60,10 @@ Config.init(
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    fileDirectory: {
+      type: DataTypes.STRING(500),
+      allowNull: true,
+    }
   },
   {
     sequelize,
