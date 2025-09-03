@@ -40,7 +40,7 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
             try {
                 const response = showAll ?  await axios.get(`${API_URL}?id_empresa=${user.id_empresa}`) : await axios.get(`${API_URL}?id_empresa=${user.id_empresa}&id=${userId}`);
 
-                console.log("Dados do histórico: ", response.data);
+                console.log("Dados do histórico carregados com sucesso.");
                 
                 setCards(response.data);
                 setLoading(false);

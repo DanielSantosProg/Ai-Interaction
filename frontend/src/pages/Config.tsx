@@ -46,6 +46,7 @@ const generalFormSchema = z.object({
 
 const Config = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ConfigProps) => {
     const [loading, setLoading] = useState(false);
+    const [configLoading, setConfigLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
     const [config, setConfig] = useState<ConfigData | null>(null);
@@ -130,6 +131,7 @@ const Config = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ConfigPro
 
       useEffect(() => {
         const fetchConfig = async () => {
+            setConfigLoading(true);
             if (!id_empresa) {
                 setLoading(false);
                 setError("ID da empresa não fornecido.");
@@ -138,9 +140,9 @@ const Config = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ConfigPro
 
             try {
                 const response = await axios.get(`http://localhost:3001/configs?id_empresa=${id_empresa}`);
-                console.log("Config Response: ", response.data);
                 setConfig(response.data); 
                 setLoading(false);
+                setConfigLoading(false);
             } catch (err) {
                 console.error("Erro ao buscar Configuração:", err);
                 setLoading(false);
@@ -148,6 +150,7 @@ const Config = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ConfigPro
             }
         };
 
+        setConfigLoading(false);
         fetchConfig();
     }, [id_empresa]);
     
@@ -162,6 +165,16 @@ const Config = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ConfigPro
       }
     }, [config, form]);
 
+  if (configLoading) {
+    return (
+      <div className="flex h-screen justify-center items-center bg-[#323232]/50">
+            <div className='flex flex-row w-[265px] text-white rounded-sm p-4 z-50 bg-[#323232]'>
+              <Loader2Icon className="animate-spin mr-2" size={20} />
+              Carregando configurações...
+            </div>
+          </div> 
+    )
+  }
   return (
     <div className={`flex flex-row h-screen transition-all`}>
         <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
