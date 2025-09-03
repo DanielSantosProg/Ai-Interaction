@@ -362,7 +362,7 @@ const Config = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ConfigPro
                             {loading ? (
                                 <>
                                 <Loader2Icon className="animate-spin mr-2" size={20} />
-                                    Processando...
+                                    Salvando...
                                 </>
                             ) : (
                                 <>

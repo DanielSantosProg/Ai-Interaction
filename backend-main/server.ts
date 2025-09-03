@@ -12,6 +12,7 @@ import authRoutes from './routes/authRoutes';
 import empresasRoutes from './routes/empresaRoutes';
 import usuariosRoutes from './routes/usuarioRoutes';
 import configsRoutes from './routes/configRoutes';
+import localProxyRoutes from "./routes/localProxy";
 import { sendDataToEndpoint, updateData } from './services/gerenciarConexao';
 
 const app = express();
@@ -98,6 +99,7 @@ app.use("/auth", authRoutes);
 app.use("/empresas", empresasRoutes);
 app.use("/usuarios", usuariosRoutes);
 app.use("/configs", configsRoutes);
+app.use("/proxy", localProxyRoutes);
 
 async function startServer() {
     try {

@@ -45,7 +45,7 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
             }
 
             try {
-                const response = await axios.get(`http://localhost:3000/interactions/${id}`);
+                const response = await axios.get(`http://localhost:3001/proxy/interactions/${id}?id_empresa=${user.id_empresa}`);
                 setInteraction(response.data);
                 setPageLoading(false);
             } catch (err) {

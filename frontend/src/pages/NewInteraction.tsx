@@ -53,9 +53,9 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
     const location = useLocation();
     const locationValues = location.state;
     const userId = user?.id ?? 11;
-    const URL_EMPRESAS = "http://localhost:3000/empresas";
-    const URL_ESTABELECIMENTOS = "http://localhost:3000/estabelecimentos";
-    const URL_LOCALIZACOES = "http://localhost:3000/localizacoes";
+    const URL_EMPRESAS = `http://localhost:3001/proxy/empresas?id_empresa=${user.id_empresa}`;
+    const URL_ESTABELECIMENTOS = `http://localhost:3001/proxy/estabelecimentos?id_empresa=${user.id_empresa}`;
+    const URL_LOCALIZACOES = `http://localhost:3001/proxy/localizacoes?id_empresa=${user.id_empresa}`;
     
 
     const currentSchema = useMemo(() => {
@@ -200,10 +200,10 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
         try {
             const payload = getPayload(values, selectedModelo, selectedEmpresa, selectedEstabelecimento, selectedLocalizacao);
             console.log("Payload: ", payload);
-            const response = await fetch("http://localhost:3000/analyze", {
+            const response = await fetch("http://localhost:3001/proxy/analyze", {
                 method: "POST",
                 headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ values: payload, userId }),
+                body: JSON.stringify({ values: payload, userId, id_empresa: user.id_empresa }),
             });
 
             if (!response.ok) {

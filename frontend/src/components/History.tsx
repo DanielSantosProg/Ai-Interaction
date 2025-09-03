@@ -27,7 +27,7 @@ interface CardData {
 const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
     const [loading, setLoading] = React.useState(true);
     const userId = user ? user.id : null;
-    const API_URL = "http://localhost:3000/interactions"
+    const API_URL = "http://localhost:3001/proxy/interactions"
     const [cards, setCards] = React.useState<CardData[]>([]);
     const [showAll, setShowAll] = React.useState<boolean>(true);
 
@@ -38,7 +38,7 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
     React.useEffect(() => {
         async function getHistory() {
             try {
-                const response = showAll ?  await axios.get(`${API_URL}`) : await axios.get(`${API_URL}?userId=${userId}`);
+                const response = showAll ?  await axios.get(`${API_URL}?id_empresa=${user.id_empresa}`) : await axios.get(`${API_URL}?id_empresa=${user.id_empresa}&id=${userId}`);
 
                 console.log("Dados do histórico: ", response.data);
                 

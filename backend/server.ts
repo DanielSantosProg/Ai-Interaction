@@ -66,12 +66,29 @@ async function initializePool() {
 // Inicialização do pool
 initializePool();
 
+// Middleware para validação da chave de API
+const validateApiKey = (req: express.Request, res: express.Response, next: express.NextFunction) => {
+    const mainBackendApiKey = req.headers['x-api-key'];
+    const localApiKey = process.env.api_key;
 
-app.get('/', (_req, res) => {
+    console.log("mainBackendApiKey: ", mainBackendApiKey);
+    console.log("localApiKey: ", localApiKey);
+
+    if (!mainBackendApiKey || mainBackendApiKey !== localApiKey) {
+        console.error("Acesso não autorizado: Chave de API inválida ou ausente.");
+        return res.status(401).send({ error: 'Acesso não autorizado.' });
+    }
+    
+    console.log("Acesso Autorizado.");
+    next(); // Permite que a requisição continue
+};
+
+
+app.get('/', validateApiKey, (_req, res) => {
     res.send('Servidor de Interação com IA rodando.');
 });
 
-app.post('/analyze', async (req, res) => {
+app.post('/analyze', validateApiKey, async (req, res) => {
     try {
         if (!sqlPool) {
             throw new Error('Pool de conexões não inicializado.');
@@ -109,7 +126,7 @@ app.post('/analyze', async (req, res) => {
     }  
 });
 
-app.get('/interactions', async (req, res) => {
+app.get('/interactions', validateApiKey, async (req, res) => {
     try {
         const { userId } = req.query;
 
@@ -142,7 +159,7 @@ app.get('/interactions', async (req, res) => {
     }  
 });
 
-app.get('/interactions/:id', async (req, res) => {
+app.get('/interactions/:id', validateApiKey, async (req, res) => {
     try {
         const { id } = req.params;
 
@@ -170,7 +187,7 @@ app.get('/interactions/:id', async (req, res) => {
     }
 });
 
-app.get('/empresas', async (req, res) => {
+app.get('/empresas', validateApiKey, async (req, res) => {
     try {        
         let result;
         
@@ -185,10 +202,10 @@ app.get('/empresas', async (req, res) => {
     } 
 });
 
-app.get('/estabelecimentos', async (req, res) => {
+app.get('/estabelecimentos', validateApiKey, async (req, res) => {
     try {
         const { emp_id } = req.query;
-        
+                
         let result;
 
         result = await sqlPool.request()
@@ -203,7 +220,7 @@ app.get('/estabelecimentos', async (req, res) => {
     }  
 });
 
-app.get('/localizacoes', async (req, res) => {
+app.get('/localizacoes', validateApiKey, async (req, res) => {
     try {
         
         let result;
@@ -219,7 +236,7 @@ app.get('/localizacoes', async (req, res) => {
     } 
 });
 
-app.get('/document_data', async (req, res) => {
+app.get('/document_data', validateApiKey, async (req, res) => {
     try {
         const { dataInicial, dataFinal, empId, estabelecimentoId, localizacaoId } = req.query;
 
@@ -274,11 +291,9 @@ app.post('/update_data', async (req, res) => {
         }
         const { values } = req.body;
 
-        console.log("Values: ", values)
-
         const result = await updateData(values);        
 
-        console.log("Dados de conexão:", result);
+        console.log("Configurações atualizadas com sucesso!");
 
         res.send({ response: result, error: null });
     } catch (error) {

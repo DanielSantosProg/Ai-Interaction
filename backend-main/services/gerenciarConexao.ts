@@ -55,7 +55,10 @@ export async function sendDataToEndpoint(values: ConnectionProps['values']): Pro
     const endpointUrl ='http://localhost:3000/update_data';
 
     try {
-        const response = await axios.post(endpointUrl, { values });
+        const response = await axios.post(endpointUrl, { values }, { headers: {
+                'x-api-key': values.api_key
+            }
+        });
         console.log("Dados enviados com sucesso: ", response.data);
 
         return response.data;
