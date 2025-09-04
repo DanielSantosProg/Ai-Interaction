@@ -34,7 +34,7 @@ export const modelo2Schema = z.object({
   dataFim: z.string().optional(),
   empresa: z.string().optional(),
   estabelecimento: z.string().optional(),
-  localizacao: z.string().optional(),
+  tipo: z.string().optional(),
   prompt: z.string().min(1,{
     message: "O prompt é requerido para que seja feita a interação."
   }).max(1000, {

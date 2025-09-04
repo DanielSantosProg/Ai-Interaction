@@ -71,9 +71,6 @@ const validateApiKey = (req: express.Request, res: express.Response, next: expre
     const mainBackendApiKey = req.headers['x-api-key'];
     const localApiKey = process.env.api_key;
 
-    console.log("mainBackendApiKey: ", mainBackendApiKey);
-    console.log("localApiKey: ", localApiKey);
-
     if (!mainBackendApiKey || mainBackendApiKey !== localApiKey) {
         console.error("Acesso não autorizado: Chave de API inválida ou ausente.");
         return res.status(401).send({ error: 'Acesso não autorizado.' });
@@ -93,12 +90,10 @@ app.post('/analyze', validateApiKey, async (req, res) => {
         if (!sqlPool) {
             throw new Error('Pool de conexões não inicializado.');
         }
-        const { values, userId } = req.body;        
-
-        let documento;        
-        if (values.modelo === "modelo1"){
-            documento = await gerarDocumento(values, sqlPool);
-        }        
+        const { values, userId } = req.body;       
+        
+        const documento = await gerarDocumento(values, sqlPool);
+             
 
         let path: string | undefined;
         if (documento?.success === true) {

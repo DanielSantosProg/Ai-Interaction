@@ -34,6 +34,7 @@ type Empresa = { id: number; nome: string; };
 type Estabelecimento = { id: number; nome: string; empresaId: number; };
 type Localizacao = { id: number; nome: string; };
 type Modelo = { id: number; nome: string; };
+type Tipo = {id: number; nome: string; };
 
 const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: NewInteractionProps) => {
     const [loading, setLoading] = useState(false);
@@ -48,6 +49,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
     const [selectedEmpresa, setSelectedEmpresa] = useState<Empresa | null>(null);
     const [selectedEstabelecimento, setSelectedEstabelecimento] = useState<Estabelecimento | null>(null);
     const [selectedLocalizacao, setSelectedLocalizacao] = useState<Localizacao | null>(null);
+    const [selectedTipo, setSelectedTipo] = useState<Tipo | null>(null);
 
     const navigate = useNavigate();
     const location = useLocation();
@@ -72,7 +74,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
             modelo: "",
             prompt: "",
             ...(selectedModelo?.nome === 'modelo1' ? { dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", localizacao: "" } : {}),
-            ...(selectedModelo?.nome === 'modelo2' ? { dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", localizacao: "" } : {})
+            ...(selectedModelo?.nome === 'modelo2' ? { dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", tipo: "" } : {})
         },
     });     
 
@@ -109,7 +111,6 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
             return;
         }
         try {
-            setLoading(true);
             const response = await axios.get(URL_ESTABELECIMENTOS, { params: { emp_id: empresaId } });
             const estabelecimentosFormatados = response.data.map((est: { COP_EST_ID: number; COP_EST_DESCRICAO: string, GER_EMP_ID: number }) => ({
                 id: est.COP_EST_ID,
@@ -141,6 +142,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                 empresa: empresa || "",
                 estabelecimento: estabelecimento || "",
                 localizacao: localizacao || "",
+                tipo: "todos"
             });
 
             const empresaObj = empresas.find((e) => e.nome === empresa) || null;
@@ -185,11 +187,13 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
             empresa: "",
             estabelecimento: "",
             localizacao: "",
+            tipo: "",
             });
 
             setSelectedEmpresa(null);
             setSelectedEstabelecimento(null);
             setSelectedLocalizacao(null);
+            setSelectedTipo(null);
             setEstabelecimentos([]);
         }
     };
@@ -333,13 +337,12 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                                     form={form}
                                     empresas={empresas}
                                     estabelecimentos={estabelecimentos}
-                                    localizacoes={localizacoes}
-                                    selectedEmpresa={selectedEmpresa}
-                                    selectedEstabelecimento={selectedEstabelecimento}
-                                    selectedLocalizacao={selectedLocalizacao}
                                     setSelectedEmpresa={setSelectedEmpresa}
                                     setSelectedEstabelecimento={setSelectedEstabelecimento}
-                                    setSelectedLocalizacao={setSelectedLocalizacao}
+                                    setSelectedTipo={setSelectedTipo}
+                                    selectedEmpresa={selectedEmpresa}
+                                    selectedEstabelecimento={selectedEstabelecimento}
+                                    selectedTipo={selectedTipo}                               
                                 />
                             )}
                             {/* Prompt (Campo comum) */}

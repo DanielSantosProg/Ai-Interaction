@@ -2,6 +2,7 @@ import mssql from 'mssql'
 import PDFDocument from 'pdfkit-table';
 import fs from 'fs'
 import path from 'path';
+import { width } from 'pdfkit/js/page';
 
 // Define a interface para o objeto de retorno da função
 interface DocumentResult {
@@ -12,10 +13,10 @@ interface DocumentResult {
 async function gerarDados(values: any, sqlPool: any){
     try {
         let data;
-        if (values.modelo === "modelo1") {
-            let request = sqlPool.request();
-            let stringFilters = "";
+        let request = sqlPool.request();
+        let stringFilters = "";
 
+        if (values.modelo === "modelo1") {
             if (values.dataInicio) {
                 stringFilters += ` AND COR_DUP_DATA_VENCIMENTO >= CONVERT(DATETIME, @dataInicial, 120)`;
                 request.input('dataInicial', mssql.VarChar(10), values.dataInicio);
@@ -37,8 +38,6 @@ async function gerarDados(values: any, sqlPool: any){
                 request.input('localizacaoId', mssql.Int, values.localizacao);
             }
 
-            console.log("String filters: ", stringFilters)
-
             let result = await request.query(`
                 SELECT [COR_DUP_DATA_EMISSAO] AS dataEmissao
                         ,[COR_DUP_VALOR_DUPLICATA] AS valorDuplicata
@@ -57,6 +56,42 @@ async function gerarDados(values: any, sqlPool: any){
                 INNER JOIN GER_EMPRESA e WITH (NOLOCK) ON e.GER_EMP_ID = COR_CADASTRO_DE_DUPLICATAS.COR_DUP_IDEMPRESA 
                 INNER JOIN COP_LOCALIZACAO_CORE_E_COPA l WITH (NOLOCK) ON l.COP_LOC_ID = COR_CADASTRO_DE_DUPLICATAS.COR_DUP_LOCALIZACAO
                 INNER JOIN COP_ESTABELECIMENTO est WITH (NOLOCK) ON est.COP_EST_ID = COR_CADASTRO_DE_DUPLICATAS.COR_DUP_ESTABELECIMENTO
+                WHERE 1=1 ${stringFilters}
+            `);
+
+            console.log("Data: ", result.recordset);
+            data = result.recordset;
+        }
+
+        if (values.modelo === "modelo2") {
+            if (values.dataInicio) {
+                stringFilters += ` AND DATA_VENC >= CONVERT(DATETIME, @dataInicial, 120)`;
+                request.input('dataInicial', mssql.VarChar(10), values.dataInicio);
+            }
+            if (values.dataFim) {
+                stringFilters += ` AND DATA_VENC <= CONVERT(DATETIME, @dataFinal, 120)`;
+                request.input('dataFinal', mssql.VarChar(10), values.dataFim);
+            }
+            if (values.empresa) {
+                stringFilters += ` AND e.GER_EMP_ID = @empId`;
+                request.input('empId', mssql.Int, values.empresa);
+            }
+            if (values.estabelecimento) {
+                stringFilters += ` AND COR_DUP_ESTABELECIMENTO = @estabelecimentoId`;
+                request.input('estabelecimentoId', mssql.Int, values.estabelecimento);
+            }
+            if (values.tipo == "liquidados") {
+                stringFilters += ` AND c.DATA_MOVIMENTO IS NOT NULL`;
+            }
+
+            let result = await request.query(`
+                SELECT 
+                    N_BOLETO AS numBoleto, DATA_VENC AS dataVencimento, DATA_PROCESS AS dataGeracao,
+                    e.GER_EMP_NOME_FANTASIA AS nomeFantasia, est.COP_EST_DESCRICAO AS estabelecimento, VALOR AS valorBoleto, c.DATA_MOVIMENTO AS dataPagamento 
+                FROM COR_BOLETO_BANCARIO c WITH(NOLOCK)
+                INNER JOIN GER_EMPRESA e WITH(NOLOCK) ON c.IDEMPRESA = e.GER_EMP_ID
+                INNER JOIN COR_CADASTRO_DE_DUPLICATAS d WITH(NOLOCK) ON c.ID_DUPLICATA = d.COR_DUP_ID
+                INNER JOIN COP_ESTABELECIMENTO est WITH (NOLOCK) ON d.COR_DUP_ESTABELECIMENTO = est.COP_EST_ID
                 WHERE 1=1 ${stringFilters}
             `);
 
@@ -93,16 +128,14 @@ async function gerarDocumento(values: any, sqlPool: any): Promise<DocumentResult
             filePath = path.join(dir, nomeArquivo);
         }
 
-        // Retorna uma Promise que resolve quando o arquivo estiver totalmente salvo
-        return new Promise((resolve, reject) => {
-            const stream = fs.createWriteStream(filePath);
-            doc.pipe(stream);
+        let titulo: string;
+        let tableData: any;
 
-            doc.fontSize(20).text('Relatório de Duplicatas', { align: 'center' });
-            doc.moveDown();
-            
-            // Mapeia os dados para inserir na tabela
-            const tableData = dados.map((item: { nomeFantasia: any; dataEmissao: string | number | Date; valorDuplicata: number; tipoFatura: any; dataVencimento: string | number | Date; localizacao: any; estabelecimento: any; dataBaixa: string | number | Date; valorBaixa: number; }) => ({
+        if (values.modelo == "modelo1") {
+            titulo = "Relatório de Duplicatas";
+
+            // Mapeia os dados para inserir na tabela do modelo 1
+            tableData = dados.map((item: { nomeFantasia: any; dataEmissao: string | number | Date; valorDuplicata: number; tipoFatura: any; dataVencimento: string | number | Date; localizacao: any; estabelecimento: any; dataBaixa: string | number | Date; valorBaixa: number; }) => ({
                 nomeFantasia: item.nomeFantasia,
                 dataEmissao: new Date(item.dataEmissao).toLocaleDateString(),
                 valorDuplicata: `R$ ${item.valorDuplicata.toFixed(2)}`,
@@ -113,9 +146,31 @@ async function gerarDocumento(values: any, sqlPool: any): Promise<DocumentResult
                 dataBaixa: item.dataBaixa ? new Date(item.dataBaixa).toLocaleDateString() : 'N/A',
                 valorBaixa: item.valorBaixa ? `R$ ${item.valorBaixa.toFixed(2)}` : 'N/A',
             }));
+        } else if (values.modelo == 'modelo2') {
+            titulo = "Relatório de Boletos";
+
+            // Mapeia os dados para inserir na tabela do modelo 2
+            tableData = dados.map((item: { numBoleto: number | string; nomeFantasia: string; dataVencimento: string | number | Date; dataGeracao: string | number | Date; valorBoleto: number; estabelecimento: any; dataPagamento: string | number | Date }) => ({
+                numBoleto: item.numBoleto,
+                nomeFantasia: item.nomeFantasia,
+                estabelecimento: item.estabelecimento,
+                dataVencimento: new Date(item.dataVencimento).toLocaleDateString(),
+                dataGeracao: new Date(item.dataGeracao).toLocaleDateString(),
+                valorBoleto: `R$ ${item.valorBoleto.toFixed(2)}`,
+                dataPagamento: item.dataPagamento ? new Date(item.dataPagamento).toLocaleDateString() : 'Não Liquidado'
+            }));
+        }
+
+        // Retorna uma Promise que resolve quando o arquivo estiver totalmente salvo
+        return new Promise((resolve, reject) => {
+            const stream = fs.createWriteStream(filePath);
+            doc.pipe(stream);
+
+            doc.fontSize(20).text(titulo, { align: 'center' });
+            doc.moveDown();  
 
             // Define a estrutura da tabela
-            let table;
+            let table: any;
             if (values.modelo === "modelo1"){
                 table = {
                     headers: [
@@ -131,24 +186,20 @@ async function gerarDocumento(values: any, sqlPool: any): Promise<DocumentResult
                     ],
                     datas: tableData,
                 };
-            } else {
-                // Alterar futuramente para ifs de outros modelos, com seus campos específicos.
+            } else if (values.modelo == "modelo2") {                
                 table = {
                     headers: [
+                        { label: "Número", property: 'numBoleto', width: 60},
                         { label: "Empresa", property: 'nomeFantasia', width: 90 },
-                        { label: "Emissão", property: 'dataEmissao', width: 60, align: 'center' },
-                        { label: "Valor", property: 'valorDuplicata', width: 60, align: 'right' },
-                        { label: "Tipo", property: 'tipoFatura', width: 40, align: 'center' },
-                        { label: "Vencimento", property: 'dataVencimento', width: 60, align: 'center' },
-                        { label: "Localização", property: 'localizacao', width: 90 },
                         { label: "Estabelecimento", property: 'estabelecimento', width: 90 },
-                        { label: "Dt. Baixa", property: 'dataBaixa', width: 60, align: 'center' },
-                        { label: "Vlr. Baixa", property: 'valorBaixa', width: 60, align: 'right' },
+                        { label: "Vencimento", property: 'dataVencimento', width: 60, align: 'center' },
+                        { label: "Emissão", property: 'dataGeracao', width: 60, align: 'center' },
+                        { label: "Valor", property: 'valor', width: 60, align: 'right' },
+                        { label: "Dt. Baixa", property: 'dataPagamento', width: 60, align: 'center' },
                     ],
                     datas: tableData,
                 };
-            }
-            
+            }            
 
             // Gera a tabela
             doc.table(table, {

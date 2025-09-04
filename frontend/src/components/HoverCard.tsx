@@ -1,6 +1,6 @@
 import { HoverCard } from "radix-ui";
 import { Card } from "./Card";
-import { Building, Building2, Calendar, CopyPlus, Wallet } from "lucide-react";
+import { Building, Building2, Calendar, CopyPlus, SquareArrowOutUpRight, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -153,11 +153,18 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno, 
                             </div>
                             <div className="m-0 text-[14px] text-white">
                                 <span className="font-semibold">Prompt Utilizado:</span>
-                                <p className="py-2 text-[12px]">{prompt.substring(0, 200)}...</p>
+                                <p className="py-2 text-[12px]">{prompt.length > 200 ? `${prompt.substring(0, 200)}...` : prompt.substring(0,200)}</p>
                             </div>
-                            <Button type="button" onClick={handleCopyClick} className="bg-white shadow-gray-700 hover:shadow-white hover:bg-white hover:border-1 hover:border-[#1F3D58] text-[#323232] hover:text-[#1F3D58] w-40 hover:w-42 rounded-md hover:shadow-sm lg:self-start lg:ml-7">
-                                <><CopyPlus size={18}/><p>Replicar Interação</p></>
-                            </Button> 
+                            <div className="flex flex-row items-center justify-center gap-8">
+                                <Link to={`/interaction/${id}`}>
+                                    <Button type="button" className="bg-white shadow-gray-700 hover:shadow-white hover:bg-white hover:border-1 hover:border-[#1F3D58] text-[#323232] hover:text-[#1F3D58] w-44 hover:w-46 rounded-md hover:shadow-sm lg:self-start">
+                                        <><SquareArrowOutUpRight size={18}/><p>Visualizar Interação</p></>
+                                    </Button> 
+                                </Link>
+                                <Button type="button" onClick={handleCopyClick} className="bg-white shadow-gray-700 hover:shadow-white hover:bg-white hover:border-1 hover:border-[#1F3D58] text-[#323232] hover:text-[#1F3D58] w-42 hover:w-44 rounded-md hover:shadow-sm lg:self-start">
+                                    <><CopyPlus size={18}/><p>Replicar Interação</p></>
+                                </Button>                                 
+                            </div>                            
                         </div>
                     </div>
 

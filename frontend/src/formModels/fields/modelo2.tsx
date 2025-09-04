@@ -8,29 +8,27 @@ import type { Modelo2FormValues } from "../models";
 
 type Empresa = { id: number; nome: string; };
 type Estabelecimento = { id: number; nome: string; empresaId: number; };
-type Localizacao = { id: number; nome: string; };
+type Tipo = {id: number; nome: string };
 
 interface Modelo2FieldsProps {
     form: UseFormReturn<Modelo2FormValues>;
     empresas: Empresa[];
     estabelecimentos: Estabelecimento[];
-    localizacoes: Localizacao[];
     selectedEmpresa: Empresa | null;
     selectedEstabelecimento: Estabelecimento | null;
-    selectedLocalizacao: Localizacao | null;
+    selectedTipo: Tipo | null;
     setSelectedEmpresa: (empresa: Empresa | null) => void;
     setSelectedEstabelecimento: (estabelecimento: Estabelecimento | null) => void;
-    setSelectedLocalizacao: (localizacao: Localizacao | null) => void;
+    setSelectedTipo: (tipo: Tipo | null) => void;
 }
 
 export const Modelo2Fields: React.FC<Modelo2FieldsProps> = ({
     form,
     empresas,
     estabelecimentos,
-    localizacoes,
+    setSelectedTipo,
     setSelectedEmpresa,
     setSelectedEstabelecimento,
-    setSelectedLocalizacao,
 }) => (
     <div className="flex flex-col items-center lg:items-stretch bg-white border-2 rounded-md w-full p-4 mt-8">
             <div className="flex flex-row mb-3 gap-2 lg:self-start items-center">
@@ -132,20 +130,20 @@ export const Modelo2Fields: React.FC<Modelo2FieldsProps> = ({
                     />
                 </div>
                 <div className='mt-4'>
-                    <FormLabel className="mb-3 lg:ml-4">Localização</FormLabel>
+                    <FormLabel className="mb-3 lg:ml-4">Selecione o tipo</FormLabel>
                     <FormField
                         control={form.control}
-                        name="localizacao"
+                        name="tipo"
                         render={({ field }) => (
                             <FormItem>
                                 <FormControl>
                                     <SelectScrollable
-                                        placeholder="Selecione a localização"
-                                        items={localizacoes.map(localizacao => ({ id: localizacao.id, value: localizacao.nome, label: localizacao.nome }))}
+                                        placeholder="Selecione o tipo"
+                                        items={[{ id: 1, value: "todos", label: "Todos" }, {id: 2, value: "liquidados", label: "Liquidados"}]}
                                         onValueChange={(value: string) => {
                                             field.onChange(value);
-                                            const localizacaoObj = localizacoes.find((localizacao) => localizacao.nome === value) || null;
-                                            setSelectedLocalizacao(localizacaoObj);
+                                            const tipo = {id: 1, nome: value}
+                                            setSelectedTipo(tipo);                                            
                                         }}
                                         defaultValue={field.value}
                                     />
