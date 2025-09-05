@@ -139,16 +139,16 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno, 
 
                                 {separatedFilters[4] && separatedFilters[4] !== '' ? (
                                     <div className="flex flex-row items-center gap-1 mt-2">
-                                        {modelo == 'modelo1' && <Wallet size={14} />}
-                                        {modelo == 'modelo2' && <ArrowDownWideNarrow size={14} />}
+                                        {modelo == 'duplicatas' && <Wallet size={14} />}
+                                        {modelo == 'boletos' && <ArrowDownWideNarrow size={14} />}
                                         <span className="text-white rounded-full py-1 text-[12px]">
                                             {separatedFilters[4]}
                                         </span>
                                     </div>
                                 ) : (
                                     <div className="flex flex-row items-center gap-1 mt-2">
-                                        {modelo == 'modelo1' && <Wallet size={14} />}
-                                        {modelo == 'modelo2' && <ArrowDownWideNarrow size={14} />}
+                                        {modelo == 'duplicatas' && <Wallet size={14} />}
+                                        {modelo == 'boletos' && <ArrowDownWideNarrow size={14} />}
                                         <span className="text-white rounded-full py-1 text-[12px]">-</span>
                                     </div>
                                 )}

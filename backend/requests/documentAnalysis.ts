@@ -50,8 +50,8 @@ async function analyseDocument(docPath: string, values: any, userId: number, poo
 
         // Formatação dos filtros
         let filters = "";
-        if (values.modelo === "modelo1") filters = `${values.dataInicioDB}, ${values.dataFimDB}, ${values.empresaDB}, ${values.estabelecimentoDB}, ${values.localizacaoDB}`;
-        if (values.modelo === "modelo2") filters = `${values.dataInicioDB}, ${values.dataFimDB}, ${values.empresaDB}, ${values.estabelecimentoDB}, ${values.tipo}`;
+        if (values.modelo === "duplicatas") filters = `${values.dataInicioDB}, ${values.dataFimDB}, ${values.empresaDB}, ${values.estabelecimentoDB}, ${values.localizacaoDB}`;
+        if (values.modelo === "boletos") filters = `${values.dataInicioDB}, ${values.dataFimDB}, ${values.empresaDB}, ${values.estabelecimentoDB}, ${values.tipo}`;
 
         if (response.text) {
             // Operações de inserção no banco

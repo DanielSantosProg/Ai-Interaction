@@ -134,7 +134,7 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
                 `Data: ${dataInicioFormat} - ${dataFimFormat}`,
                 `Empresa: ${empresaFormat}`,
                 `Estabelecimento: ${estabelecimentoFormat}`,
-                `Localização: ${localizacaoFormat}`
+                `${interaction?.MODELO == 'duplicatas'? 'Localização: ' : 'Tipo: '}${localizacaoFormat}`
             ];
             filters.forEach(filter => {
                 yPosition = addText(filter, margin, yPosition);
@@ -256,8 +256,8 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
                         <p className="text-[#323232] text-[12px]">{separatedFilters[3] || '-'}</p>
                     </div>
                     <div className="flex flex-row items-center gap-2 lg:ml-7 lg:self-start">
-                        {interaction?.MODELO == "modelo1" && <Wallet className="text-[#323232]" size={16}/>}
-                        {interaction?.MODELO == "modelo2" && <ArrowDownWideNarrow className="text-[#323232]" size={16}/>}
+                        {interaction?.MODELO == "duplicatas" && <Wallet className="text-[#323232]" size={16}/>}
+                        {interaction?.MODELO == "boletos" && <ArrowDownWideNarrow className="text-[#323232]" size={16}/>}
                         <p className="text-[#323232] text-[12px]">{separatedFilters[4] || '-'}</p>
                     </div>
                 </div>

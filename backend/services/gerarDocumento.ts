@@ -16,7 +16,7 @@ async function gerarDados(values: any, sqlPool: any){
         let request = sqlPool.request();
         let stringFilters = "";
 
-        if (values.modelo === "modelo1") {
+        if (values.modelo === "duplicatas") {
             if (values.dataInicio) {
                 stringFilters += ` AND COR_DUP_DATA_VENCIMENTO >= CONVERT(DATETIME, @dataInicial, 120)`;
                 request.input('dataInicial', mssql.VarChar(10), values.dataInicio);
@@ -63,7 +63,7 @@ async function gerarDados(values: any, sqlPool: any){
             data = result.recordset;
         }
 
-        if (values.modelo === "modelo2") {
+        if (values.modelo === "boletos") {
             if (values.dataInicio) {
                 stringFilters += ` AND DATA_VENC >= CONVERT(DATETIME, @dataInicial, 120)`;
                 request.input('dataInicial', mssql.VarChar(10), values.dataInicio);
@@ -131,7 +131,7 @@ async function gerarDocumento(values: any, sqlPool: any): Promise<DocumentResult
         let titulo: string;
         let tableData: any;
 
-        if (values.modelo == "modelo1") {
+        if (values.modelo == "duplicatas") {
             titulo = "Relatório de Duplicatas";
 
             // Mapeia os dados para inserir na tabela do modelo 1
@@ -146,7 +146,7 @@ async function gerarDocumento(values: any, sqlPool: any): Promise<DocumentResult
                 dataBaixa: item.dataBaixa ? new Date(item.dataBaixa).toLocaleDateString() : 'N/A',
                 valorBaixa: item.valorBaixa ? `R$ ${item.valorBaixa.toFixed(2)}` : 'N/A',
             }));
-        } else if (values.modelo == 'modelo2') {
+        } else if (values.modelo == 'boletos') {
             titulo = "Relatório de Boletos";
 
             // Mapeia os dados para inserir na tabela do modelo 2
@@ -171,7 +171,7 @@ async function gerarDocumento(values: any, sqlPool: any): Promise<DocumentResult
 
             // Define a estrutura da tabela
             let table: any;
-            if (values.modelo === "modelo1"){
+            if (values.modelo === "duplicatas"){
                 table = {
                     headers: [
                         { label: "Empresa", property: 'nomeFantasia', width: 90 },
@@ -186,7 +186,7 @@ async function gerarDocumento(values: any, sqlPool: any): Promise<DocumentResult
                     ],
                     datas: tableData,
                 };
-            } else if (values.modelo == "modelo2") {                
+            } else if (values.modelo == "boletos") {                
                 table = {
                     headers: [
                         { label: "Número", property: 'numBoleto', width: 60},

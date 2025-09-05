@@ -61,7 +61,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
     
 
     const currentSchema = useMemo(() => {
-        if (selectedModelo?.nome === 'modelo2') {
+        if (selectedModelo?.nome === 'boletos') {
             return modelo2Schema;
         }
         return modelo1Schema;
@@ -73,8 +73,8 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
             titulo: "",
             modelo: "",
             prompt: "",
-            ...(selectedModelo?.nome === 'modelo1' ? { dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", localizacao: "" } : {}),
-            ...(selectedModelo?.nome === 'modelo2' ? { dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", tipo: "" } : {})
+            ...(selectedModelo?.nome === 'duplicatas' ? { dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", localizacao: "" } : {}),
+            ...(selectedModelo?.nome === 'boletos' ? { dataInicio: "", dataFim: "", empresa: "", estabelecimento: "", tipo: "" } : {})
         },
     });     
 
@@ -159,14 +159,14 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
   
 
     useEffect(() => {
-        if (selectedModelo?.nome === "modelo1" || selectedModelo?.nome == "modelo2"){
+        if (selectedModelo?.nome === "duplicatas" || selectedModelo?.nome == "boletos"){
             getEmpresas();
             getLocalizacoes();
         }        
     }, [getEmpresas, getLocalizacoes, selectedModelo]);
 
     useEffect(() => {
-        if ((selectedModelo?.nome == "modelo1" || selectedModelo?.nome == "modelo2") && selectedEmpresa) {
+        if ((selectedModelo?.nome == "duplicatas" || selectedModelo?.nome == "boletos") && selectedEmpresa) {
             getEstabelecimentos(selectedEmpresa.id);
         } else {
             setEstabelecimentos([]);
@@ -281,8 +281,8 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                                                 <SelectScrollable
                                                     placeholder="Selecione o Modelo"
                                                     items={[
-                                                        { value: 'modelo1', label: 'Modelo 1' },
-                                                        { value: 'modelo2', label: 'Modelo 2' },
+                                                        { value: 'duplicatas', label: 'Duplicatas' },
+                                                        { value: 'boletos', label: 'Boletos' },
                                                     ]}
                                                     value={field.value}
                                                     onValueChange={(val) => {
@@ -318,7 +318,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                             </div>
                             
                             {/* Renderização condicional dos filtros */}
-                            {selectedModelo?.nome == 'modelo1' && (
+                            {selectedModelo?.nome == 'duplicatas' && (
                                 <Modelo1Fields
                                     form={form}
                                     empresas={empresas}
@@ -332,7 +332,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                                     setSelectedLocalizacao={setSelectedLocalizacao}
                                 />
                             )}
-                            {selectedModelo?.nome == 'modelo2' && (
+                            {selectedModelo?.nome == 'boletos' && (
                                 <Modelo2Fields
                                     form={form}
                                     empresas={empresas}

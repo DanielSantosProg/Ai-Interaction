@@ -13,7 +13,7 @@ export const getPayload = (values: FormValues, selectedModelo: { nome: string } 
     };
 
     let modeloValues;
-    if (selectedModelo?.nome == "modelo1") {
+    if (selectedModelo?.nome == "duplicatas") {
         modeloValues = values as Modelo1FormValues;
 
         return {

@@ -130,7 +130,7 @@ async function analyseDocumentWithFunctionCall(docPath: string, values: any, use
             chartData: functionResult // Salva os dados do gráfico
         }
 
-        const filters = values.modelo === "modelo1" ? `${values.dataInicioDB}, ${values.dataFimDB}, ${values.empresaDB}, ${values.estabelecimentoDB}, ${values.localizacaoDB}` : "";
+        const filters = values.modelo === "duplicatas" ? `${values.dataInicioDB}, ${values.dataFimDB}, ${values.empresaDB}, ${values.estabelecimentoDB}, ${values.localizacaoDB}` : "";
 
         // Salva no banco de dados
         const request = new mssql.Request(pool);

@@ -35,11 +35,16 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
         setShowAll(value === "todas");
     };
 
+    function historyGet() {
+        console.log("Dados carregados.");
+    }
+
     React.useEffect(() => {
         async function getHistory() {
             try {
+                setLoading(true);
                 const response = showAll ?  await axios.get(`${API_URL}?id_empresa=${user.id_empresa}`) : await axios.get(`${API_URL}?id_empresa=${user.id_empresa}&id=${userId}`);
-
+                await setTimeout(historyGet, 5000);
                 console.log("Dados do histórico carregados com sucesso.");
                 
                 setCards(response.data);
@@ -96,7 +101,7 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
                       
             <div className="flex flex-col items-center w-full scrollbar-thin overflow-y-auto flex-grow">
                 {loading && 
-                    <div className='flex h-screen justify-center items-center'>
+                    <div className='flex absolute top-1/2 text-white text-center bg-[#323232] rounded-sm z-55 w-50 h-10 justify-center items-center '>
                         <Loader2Icon className="animate-spin mr-2" size={20} />
                         Carregando...
                     </div>
