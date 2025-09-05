@@ -1,6 +1,6 @@
 import { HoverCard } from "radix-ui";
 import { Card } from "./Card";
-import { Building, Building2, Calendar, CopyPlus, SquareArrowOutUpRight, Wallet } from "lucide-react";
+import { ArrowDownWideNarrow, Building, Building2, Calendar, CopyPlus, SquareArrowOutUpRight, Wallet } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Link, useNavigate } from 'react-router-dom';
 
@@ -139,14 +139,16 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno, 
 
                                 {separatedFilters[4] && separatedFilters[4] !== '' ? (
                                     <div className="flex flex-row items-center gap-1 mt-2">
-                                        <Wallet size={14} />
+                                        {modelo == 'modelo1' && <Wallet size={14} />}
+                                        {modelo == 'modelo2' && <ArrowDownWideNarrow size={14} />}
                                         <span className="text-white rounded-full py-1 text-[12px]">
                                             {separatedFilters[4]}
                                         </span>
                                     </div>
                                 ) : (
                                     <div className="flex flex-row items-center gap-1 mt-2">
-                                        <Wallet size={14} />
+                                        {modelo == 'modelo1' && <Wallet size={14} />}
+                                        {modelo == 'modelo2' && <ArrowDownWideNarrow size={14} />}
                                         <span className="text-white rounded-full py-1 text-[12px]">-</span>
                                     </div>
                                 )}
@@ -157,12 +159,12 @@ const HoverCardComponent = ({ id, title, date, owner, prompt, filters, retorno, 
                             </div>
                             <div className="flex flex-row items-center justify-center gap-8">
                                 <Link to={`/interaction/${id}`}>
-                                    <Button type="button" className="bg-white shadow-gray-700 hover:shadow-white hover:bg-white hover:border-1 hover:border-[#1F3D58] text-[#323232] hover:text-[#1F3D58] w-44 hover:w-46 rounded-md hover:shadow-sm lg:self-start">
-                                        <><SquareArrowOutUpRight size={18}/><p>Visualizar Interação</p></>
+                                    <Button type="button" className="bg-white shadow-gray-700 hover:shadow-white hover:bg-white hover:border-1 hover:border-[#1F3D58] text-[#323232] hover:text-[#1F3D58] w-30 xl:w-44 xl:hover:w-46 rounded-sm hover:shadow-sm lg:self-start">
+                                        <><SquareArrowOutUpRight size={18}/><p>Visualizar</p></>
                                     </Button> 
                                 </Link>
-                                <Button type="button" onClick={handleCopyClick} className="bg-white shadow-gray-700 hover:shadow-white hover:bg-white hover:border-1 hover:border-[#1F3D58] text-[#323232] hover:text-[#1F3D58] w-42 hover:w-44 rounded-md hover:shadow-sm lg:self-start">
-                                    <><CopyPlus size={18}/><p>Replicar Interação</p></>
+                                <Button type="button" onClick={handleCopyClick} className="bg-white shadow-gray-700 hover:shadow-white hover:bg-white hover:border-1 hover:border-[#1F3D58] text-[#323232] hover:text-[#1F3D58] w-30 xl:w-42 xl:hover:w-44 rounded-sm hover:shadow-sm lg:self-start">
+                                    <><CopyPlus size={18}/><p>Replicar</p></>
                                 </Button>                                 
                             </div>                            
                         </div>

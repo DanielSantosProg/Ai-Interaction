@@ -130,7 +130,7 @@ export const Modelo2Fields: React.FC<Modelo2FieldsProps> = ({
                     />
                 </div>
                 <div className='mt-4'>
-                    <FormLabel className="mb-3 lg:ml-4">Selecione o tipo</FormLabel>
+                    <FormLabel className="mb-3 lg:ml-4">Tipo</FormLabel>
                     <FormField
                         control={form.control}
                         name="tipo"
@@ -139,7 +139,7 @@ export const Modelo2Fields: React.FC<Modelo2FieldsProps> = ({
                                 <FormControl>
                                     <SelectScrollable
                                         placeholder="Selecione o tipo"
-                                        items={[{ id: 1, value: "todos", label: "Todos" }, {id: 2, value: "liquidados", label: "Liquidados"}]}
+                                        items={[{ id: 1, value: "Todos", label: "Todos" }, {id: 2, value: "Liquidados", label: "Liquidados"}]}
                                         onValueChange={(value: string) => {
                                             field.onChange(value);
                                             const tipo = {id: 1, nome: value}

@@ -101,7 +101,7 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
                         Carregando...
                     </div>
                 }
-                {cards.map((card) => (
+                {cards.map((card: any) => (
                     <HoverCardComponent key={card.ID} id={card.ID} title={card.TITULO} date={card.DT_CRIACAO} owner={card.USR_NOME} prompt={card.PROMPT} filters={card.FILTROS} retorno={card.RETORNO} modelo={card.MODELO}/>
                 ))}
             </div>

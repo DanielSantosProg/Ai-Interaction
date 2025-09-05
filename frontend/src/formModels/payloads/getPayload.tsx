@@ -1,4 +1,4 @@
-import { type FormValues, type Modelo1FormValues } from "../models";
+import { type FormValues, type Modelo1FormValues, type Modelo2FormValues } from "../models";
 
 const formatDate = (dateString: string) => {
     const [day, month, year] = dateString.split('/');
@@ -11,37 +11,38 @@ export const getPayload = (values: FormValues, selectedModelo: { nome: string } 
         modelo: selectedModelo?.nome,
         prompt: values.prompt,
     };
-    const modelo1Values = values as Modelo1FormValues;
-    if (selectedModelo?.nome === 'modelo1') {
-        
-        return {
-            ...basePayload,
-            dataInicio: modelo1Values.dataInicio ? formatDate(modelo1Values.dataInicio) : undefined,
-            dataFim: modelo1Values.dataFim ? formatDate(modelo1Values.dataFim) : undefined,
-            empresa: selectedEmpresa?.id,
-            estabelecimento: selectedEstabelecimento?.id,
-            localizacao: selectedLocalizacao?.id,
-            dataInicioDB: modelo1Values.dataInicio,
-            dataFimDB: modelo1Values.dataFim,
-            empresaDB: modelo1Values.empresa,
-            estabelecimentoDB: modelo1Values.estabelecimento,
-            localizacaoDB: modelo1Values.localizacao,
-        };
-    } else if (selectedModelo?.nome === 'modelo2') {
-        return {
-            ...basePayload,
-            dataInicio: modelo1Values.dataInicio ? formatDate(modelo1Values.dataInicio) : undefined,
-            dataFim: modelo1Values.dataFim ? formatDate(modelo1Values.dataFim) : undefined,
-            empresa: selectedEmpresa?.id,
-            estabelecimento: selectedEstabelecimento?.id,
-            localizacao: selectedLocalizacao?.id,
-            dataInicioDB: modelo1Values.dataInicio,
-            dataFimDB: modelo1Values.dataFim,
-            empresaDB: modelo1Values.empresa,
-            estabelecimentoDB: modelo1Values.estabelecimento,
-            localizacaoDB: modelo1Values.localizacao,
-        };
-    }
 
-    return basePayload;
+    let modeloValues;
+    if (selectedModelo?.nome == "modelo1") {
+        modeloValues = values as Modelo1FormValues;
+
+        return {
+            ...basePayload,
+            dataInicio: modeloValues.dataInicio ? formatDate(modeloValues.dataInicio) : undefined,
+            dataFim: modeloValues.dataFim ? formatDate(modeloValues.dataFim) : undefined,
+            empresa: selectedEmpresa?.id,
+            estabelecimento: selectedEstabelecimento?.id,
+            localizacao: selectedLocalizacao?.id,
+            dataInicioDB: modeloValues.dataInicio,
+            dataFimDB: modeloValues.dataFim,
+            empresaDB: modeloValues.empresa,
+            estabelecimentoDB: modeloValues.estabelecimento,
+            localizacaoDB: modeloValues.localizacao,
+        };
+    } else {
+        modeloValues = values as Modelo2FormValues;
+
+        return {
+            ...basePayload,
+            dataInicio: modeloValues.dataInicio ? formatDate(modeloValues.dataInicio) : undefined,
+            dataFim: modeloValues.dataFim ? formatDate(modeloValues.dataFim) : undefined,
+            empresa: selectedEmpresa?.id,
+            estabelecimento: selectedEstabelecimento?.id,
+            dataInicioDB: modeloValues.dataInicio,
+            dataFimDB: modeloValues.dataFim,
+            empresaDB: modeloValues.empresa,
+            estabelecimentoDB: modeloValues.estabelecimento,
+            tipo: modeloValues.tipo
+        };
+    }    
 };

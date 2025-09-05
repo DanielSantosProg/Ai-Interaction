@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button"
 import jsPDF from 'jspdf';
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom";
-import { Building, Building2, Calendar, CalendarPlus, FileDown, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, TriangleAlert, Wallet } from "lucide-react"
+import { ArrowDownWideNarrow, Building, Building2, Calendar, CalendarPlus, FileDown, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, TriangleAlert, Wallet } from "lucide-react"
 import axios from "axios";
 import React from "react";
 
@@ -26,6 +26,7 @@ interface InteractionData {
     PROMPT: string;
     FILTROS: string;
     RETORNO: string;
+    MODELO: string;
 }
 
 const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ViewInteractionProps) => {
@@ -55,6 +56,7 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
             }
         };
         fetchInteraction();
+        
     }, [id]);
 
     const separatedFilters = interaction?.FILTROS
@@ -254,7 +256,8 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
                         <p className="text-[#323232] text-[12px]">{separatedFilters[3] || '-'}</p>
                     </div>
                     <div className="flex flex-row items-center gap-2 lg:ml-7 lg:self-start">
-                        <Wallet className="text-[#323232]" size={16}/>
+                        {interaction?.MODELO == "modelo1" && <Wallet className="text-[#323232]" size={16}/>}
+                        {interaction?.MODELO == "modelo2" && <ArrowDownWideNarrow className="text-[#323232]" size={16}/>}
                         <p className="text-[#323232] text-[12px]">{separatedFilters[4] || '-'}</p>
                     </div>
                 </div>

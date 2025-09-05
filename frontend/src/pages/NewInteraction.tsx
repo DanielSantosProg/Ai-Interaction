@@ -142,7 +142,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
                 empresa: empresa || "",
                 estabelecimento: estabelecimento || "",
                 localizacao: localizacao || "",
-                tipo: "todos"
+                tipo: "Todos"
             });
 
             const empresaObj = empresas.find((e) => e.nome === empresa) || null;

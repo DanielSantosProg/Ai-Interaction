@@ -165,7 +165,7 @@ app.get('/interactions/:id', validateApiKey, async (req, res) => {
         const result = await sqlPool.request()
             .input('id', mssql.Int, id)
             .query(`SELECT 
-                    H.ID, H.COD_USUARIO, H.PROMPT, H.TITULO, H.DT_CRIACAO, H.FILTROS, H.RETORNO, F.USR_NOME 
+                    H.ID, H.COD_USUARIO, H.PROMPT, H.TITULO, H.DT_CRIACAO, H.FILTROS, H.RETORNO, H.MODELO, F.USR_NOME 
                     FROM HISTORICO H WITH (NOLOCK)
                     INNER JOIN FR_USUARIO F WITH (NOLOCK) ON H.COD_USUARIO = F.USR_CODIGO
                     WHERE H.ID = @id`);

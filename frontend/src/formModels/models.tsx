@@ -46,4 +46,4 @@ export type Modelo1FormValues = z.infer<typeof modelo1Schema>;
 export type Modelo2FormValues = z.infer<typeof modelo2Schema>;
 
 // Tipo unificado para o esquema
-export type FormValues = Modelo1FormValues | Modelo2FormValues;
+export type FormValues = Modelo2FormValues | Modelo1FormValues;

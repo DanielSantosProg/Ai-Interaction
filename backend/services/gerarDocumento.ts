@@ -80,7 +80,7 @@ async function gerarDados(values: any, sqlPool: any){
                 stringFilters += ` AND COR_DUP_ESTABELECIMENTO = @estabelecimentoId`;
                 request.input('estabelecimentoId', mssql.Int, values.estabelecimento);
             }
-            if (values.tipo == "liquidados") {
+            if (values.tipo == "Liquidados") {
                 stringFilters += ` AND c.DATA_MOVIMENTO IS NOT NULL`;
             }
 
@@ -194,7 +194,7 @@ async function gerarDocumento(values: any, sqlPool: any): Promise<DocumentResult
                         { label: "Estabelecimento", property: 'estabelecimento', width: 90 },
                         { label: "Vencimento", property: 'dataVencimento', width: 60, align: 'center' },
                         { label: "Emissão", property: 'dataGeracao', width: 60, align: 'center' },
-                        { label: "Valor", property: 'valor', width: 60, align: 'right' },
+                        { label: "Valor", property: 'valorBoleto', width: 60, align: 'right' },
                         { label: "Dt. Baixa", property: 'dataPagamento', width: 60, align: 'center' },
                     ],
                     datas: tableData,
