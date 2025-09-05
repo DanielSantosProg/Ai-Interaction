@@ -8,14 +8,18 @@ import { Button } from "@/components/ui/button"
 import jsPDF from 'jspdf';
 import { useState, useEffect } from "react"
 import { useParams } from "react-router-dom";
-import { ArrowDownWideNarrow, Building, Building2, Calendar, CalendarPlus, FileDown, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, TriangleAlert, Wallet } from "lucide-react"
+import { ArrowDownWideNarrow, Building, Building2, Calendar, CalendarPlus, ChartLine, FileDown, ListFilter, Loader2Icon, Paperclip, ScanText, Sparkles, TriangleAlert, Wallet } from "lucide-react"
 import axios from "axios";
 import React from "react";
+import { MyBarChart } from "@/components/BarChart";
+import { MyPieChart } from "@/components/PieChart";
+import { MyAreaChart } from "@/components/AreaChart";
 
 interface ViewInteractionProps {
     isSidebarOpen: boolean;
     isHistoryOpen: boolean;
     toggleHistory: () => void;
+    setCardsLength: (cardsLength: number) => void;
     user: any;
 }
 
@@ -29,7 +33,7 @@ interface InteractionData {
     MODELO: string;
 }
 
-const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ViewInteractionProps) => {
+const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, setCardsLength, toggleHistory, user }: ViewInteractionProps) => {
     const [loading, setLoading] = useState(false);
     const [pageLoading, setPageLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -189,7 +193,7 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
         return (
         <div className="flex flex-row h-screen">
             <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-                {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+                {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} setCardsLength={setCardsLength} user={user} />}
             </div>         
             <div className="flex flex-row w-full h-full items-center justify-center text-lg gap-2"><TriangleAlert className="text-red-500 " /><span className="text-red-500">Erro:</span> {error}</div>
         </div>
@@ -208,7 +212,7 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
     return (
     <div className="flex flex-row h-screen">
         <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-            {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+            {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} setCardsLength={setCardsLength} user={user} />}
         </div> 
 
         {/* Conteúdo da página */}
@@ -268,11 +272,22 @@ const ViewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: 
                 </div>
                 <div className="flex flex-col max-w-xs lg:max-w-full text-justify mb-6 lg:self-start lg:ml-7">           
                     <p className="text-[#323232] self-center whitespace-pre-wrap">{interaction?.RETORNO}</p>                                       
-                </div>  
+                </div>
+                {`
+                <div className="flex flex-row items-center gap-2 my-4 lg:self-start">
+                    <ChartLine className="text-[#1F3D58]" size={18} />
+                    <p className="font-semibold lg:self-start text-[#1F3D58]">Gráficos gerados</p>
+                </div>
+                <div className="flex flex-col gap-4 w-full text-justify mb-6 lg:self-start lg:ml-7">                    
+                    <MyPieChart />   
+                    <MyAreaChart />
+                    <MyBarChart empresa1={'Portpolpas'} empresa2={'Rei'} />
+                </div>
+                `}               
 
                 <Button type="button" onClick={onDownload} disabled={loading} className="bg-white hover:bg-white  border-1 border-[#323232] hover:border-[#4CAF50] text-[#323232] hover:text-[#4CAF50] w-40 hover:w-42 rounded-md shadow-lg hover:shadow-2xl lg:self-start lg:ml-7">
                     {loading ? <Loader2Icon className="animate-spin" />: (<><FileDown size={18}/><p>Baixar Resposta</p></>)}
-                </Button>             
+                </Button>                               
             </div> 
         </div>
     </div>

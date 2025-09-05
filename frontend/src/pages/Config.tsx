@@ -19,6 +19,7 @@ interface ConfigProps {
   isSidebarOpen: boolean;
   isHistoryOpen: boolean;
   toggleHistory: () => void;
+  setCardsLength: (cardsLength: number) => void;
   user: any;
 }
 
@@ -44,7 +45,7 @@ const generalFormSchema = z.object({
     fileDirectory: z.string().min(1, {message: "Insira o endereço do diretório."}),    
 })
 
-const Config = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ConfigProps) => {
+const Config = ({ isSidebarOpen, isHistoryOpen, toggleHistory, setCardsLength, user }: ConfigProps) => {
     const [loading, setLoading] = useState(false);
     const [configLoading, setConfigLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
@@ -178,7 +179,7 @@ const Config = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: ConfigPro
   return (
     <div className={`flex flex-row h-screen transition-all`}>
         <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-          {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+          {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} setCardsLength={setCardsLength} user={user} />}
         </div> 
         <div className="flex justify-center absolute top-1/2 left-1/2 z-50">
             {isAlertOpen && error && (

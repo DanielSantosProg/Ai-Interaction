@@ -10,6 +10,7 @@ interface HistoryProps {
     isSidebarOpen: boolean;
     isOpen: boolean;
     toggleHistory: () => void;
+    setCardsLength: (cardsLength: number) => void;
     user: any;
 }
 
@@ -24,7 +25,7 @@ interface CardData {
     MODELO: string;
 }
 
-const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
+const History = ({ isOpen, toggleHistory, setCardsLength, user }: HistoryProps) => {
     const [loading, setLoading] = React.useState(true);
     const userId = user ? user.id : null;
     const API_URL = "http://localhost:3001/proxy/interactions"
@@ -35,19 +36,15 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
         setShowAll(value === "todas");
     };
 
-    function historyGet() {
-        console.log("Dados carregados.");
-    }
-
     React.useEffect(() => {
         async function getHistory() {
             try {
                 setLoading(true);
                 const response = showAll ?  await axios.get(`${API_URL}?id_empresa=${user.id_empresa}`) : await axios.get(`${API_URL}?id_empresa=${user.id_empresa}&id=${userId}`);
-                await setTimeout(historyGet, 5000);
                 console.log("Dados do histórico carregados com sucesso.");
                 
                 setCards(response.data);
+                setCardsLength(cards.length);                 
                 setLoading(false);
                 
             } catch (error) {
@@ -62,6 +59,10 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
         }
         getHistory();
     }, [showAll]);  
+
+    React.useEffect(() => {
+        setCardsLength(cards.length);        
+    }, [cards])
 
   return (
         <div className={`w-full flex-col items-center h-full flex transition-transform duration-300 ease-in-out ${isOpen ? 'translate-x-0' : '-translate-x-full'}`}>
@@ -100,7 +101,7 @@ const History = ({ isOpen, toggleHistory, user }: HistoryProps) => {
             }
                       
             <div className="flex flex-col items-center w-full scrollbar-thin overflow-y-auto flex-grow">
-                {loading && 
+                {loading && isOpen &&
                     <div className='flex absolute top-1/2 text-white text-center bg-[#323232] rounded-sm z-55 w-50 h-10 justify-center items-center '>
                         <Loader2Icon className="animate-spin mr-2" size={20} />
                         Carregando...

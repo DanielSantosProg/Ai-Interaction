@@ -2,18 +2,20 @@ import { Plus, Wrench, Menu, GalleryVerticalEnd, Home, LogIn, LogOut } from 'luc
 import UserIcon from '../assets/UserIcon.png'
 import { LoginModal } from './LoginDialog';
 import { Dialog, DialogTrigger } from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
 
 interface SidebarProps {
   handleSidebarOpen: () => void;
   isSidebarOpen: boolean;
   isHistoryOpen:boolean;
   toggleHistory: () => void;
+  cardsLength: number;
   user: any;
   login: (userData: any) => void;
   logout: () => void;
 }
 
-const Sidebar = ({ handleSidebarOpen, isSidebarOpen, isHistoryOpen, toggleHistory, user, login, logout }: SidebarProps) => {
+const Sidebar = ({ handleSidebarOpen, isSidebarOpen, isHistoryOpen, toggleHistory, cardsLength, user, login, logout }: SidebarProps) => {
 
   return (
     <>
@@ -81,6 +83,7 @@ const Sidebar = ({ handleSidebarOpen, isSidebarOpen, isHistoryOpen, toggleHistor
                   className="flex justify-center py-3 text-gray-900 hover:bg-white/15 hover:text-emerald-700 transition-colors group"
                 >
                   <GalleryVerticalEnd className="text-[#4CAF50]" size={22} /> 
+                  <Badge className='absolute left-13 text-[8px] shadow-sm shadow-black w-5 rounded-4xl' variant="secondary">{cardsLength}</Badge>
                 </a>
               </li>              
             </ul>

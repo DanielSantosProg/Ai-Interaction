@@ -21,6 +21,7 @@ import Config from './pages/Config';
 function App() {
   const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   const [isHistoryOpen, setIsHistoryOpen] = useState(false);
+  const [cardsLength, setCardsLength] = useState(0);
   const { user, login, logout, loading: authLoading } = useContext(AuthContext); // Pega o estado de loading do contexto
 
   const handleSidebarOpen = () => {
@@ -35,7 +36,7 @@ function App() {
     <ThemeProvider defaultTheme="light" storageKey="vite-ui-theme">
       <div className="flex min-h-screen flex-row overflow-hidden">
         <BrowserRouter>
-          <Sidebar handleSidebarOpen={handleSidebarOpen} isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} login={login} logout={logout} />
+          <Sidebar handleSidebarOpen={handleSidebarOpen} isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} cardsLength={cardsLength} user={user} login={login} logout={logout} />
           <div className='flex-grow sm:ml-22 overflow-hidden'>
             {authLoading ? (
               <div className='flex h-screen justify-center items-center'>
@@ -51,22 +52,22 @@ function App() {
                   {/* Rota pública */}
                   <Route
                     path="/"
-                    element={<Home isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} login={login} logout={logout} />}
+                    element={<Home isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} setCardsLength={setCardsLength} toggleHistory={toggleHistory} user={user} login={login} logout={logout} />}
                   />
 
                   {/* Rotas protegidas */}
                   <Route element={<ProtectedRoute />}>
                     <Route
                       path="/new-interaction"
-                      element={React.cloneElement(<NewInteraction isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />)}
+                      element={React.cloneElement(<NewInteraction isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} setCardsLength={setCardsLength} toggleHistory={toggleHistory} user={user} />)}
                     />
                     <Route
                       path="/interaction/:id"
-                      element={React.cloneElement(<ViewInteraction isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />)}
+                      element={React.cloneElement(<ViewInteraction isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} setCardsLength={setCardsLength} toggleHistory={toggleHistory} user={user} />)}
                     />
                     <Route
                       path="/config"
-                      element={<Config isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+                      element={<Config isSidebarOpen={isSidebarOpen} isHistoryOpen={isHistoryOpen} setCardsLength={setCardsLength} toggleHistory={toggleHistory} user={user} />}
                     />
                   </Route>
                 </Routes>

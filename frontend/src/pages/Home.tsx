@@ -14,18 +14,19 @@ interface HomeProps {
     isSidebarOpen: boolean;
     isHistoryOpen: boolean;
     toggleHistory: () => void;
+    setCardsLength: (cardsLength: number) => void;
     login: (userData: any) => void;
     logout: () => void;
     user: any;
 }
 
-const Home = ({ isSidebarOpen, isHistoryOpen, toggleHistory, login, logout, user }: HomeProps) => {
+const Home = ({ isSidebarOpen, isHistoryOpen, toggleHistory, setCardsLength, login, logout, user }: HomeProps) => {
     const navigate = useNavigate();    
     
     return (
     <div className="flex flex-row h-screen">
         <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-          {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+          {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} setCardsLength={setCardsLength} user={user} />}
         </div>        
 
         {/* Conteúdo da página */}

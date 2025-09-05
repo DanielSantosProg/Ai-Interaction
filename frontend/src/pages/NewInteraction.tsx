@@ -27,6 +27,7 @@ interface NewInteractionProps {
     isSidebarOpen: boolean;
     isHistoryOpen: boolean;
     toggleHistory: () => void;
+    setCardsLength: (cardsLength: number) => void;
     user: any;
 }
 
@@ -36,7 +37,7 @@ type Localizacao = { id: number; nome: string; };
 type Modelo = { id: number; nome: string; };
 type Tipo = {id: number; nome: string; };
 
-const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: NewInteractionProps) => {
+const NewInteraction = ({ isSidebarOpen, isHistoryOpen, setCardsLength, toggleHistory, user }: NewInteractionProps) => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState<string | null>(null);
     const [isAlertOpen, setIsAlertOpen] = useState(false);
@@ -239,7 +240,7 @@ const NewInteraction = ({ isSidebarOpen, isHistoryOpen, toggleHistory, user }: N
     return (
         <div className="flex flex-row h-screen">
             <div className={`flex-shrink-0 ${isHistoryOpen ? 'w-[200px] sm:w-[285px] xl:w-[400px]' : 'w-0'}`}>
-                {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} toggleHistory={toggleHistory} user={user} />}
+                {user && <History isSidebarOpen={isSidebarOpen} isOpen={isHistoryOpen} setCardsLength={setCardsLength} toggleHistory={toggleHistory} user={user} />}
             </div>
             <div className="flex justify-center absolute top-1/2 left-1/2 z-50">
                 {isAlertOpen && error && (
